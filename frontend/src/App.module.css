@@ -1,0 +1,5 @@
+.title {
+    color: var(--color-primary);
+    font-size: var(--font-size-heading-xlarge);
+    font-weight: var(--font-weight-bold);
+}

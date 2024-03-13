@@ -1,3 +1,5 @@
+/* stylelint-disable no-duplicate-selectors */
+
 :global {
     /* CSS RESET */
 
@@ -212,9 +214,48 @@
     /*
       9. Create a root stacking context
     */
-    #root,
-    #__next {
+    #root {
         isolation: isolate;
+    }
+
+
+    /* DESIGN TOKENS */
+
+    html {
+        /* COLORS */
+
+        --color-primary: hsl(242deg 48% 58%);
+        --color-primary-light: hsl(243deg 100% 82%);
+        --color-primary-100: hsl(242deg 48% 58% / 10%);
+        --color-primary-250: hsl(242deg 48% 58% / 25%);
+        --color-danger: hsl(0deg 78% 63%);
+        --color-danger-light: hsl(0deg 100% 80%);
+        --color-white: hsl(0deg 0% 100%);
+        --color-grey-light: hsl(220deg 69% 97%);
+        --color-grey-medium: hsl(216deg 15% 57%);
+        --color-grey-dark: hsl(235deg 12% 19%);
+        --color-grey-very-dark: hsl(235deg 16% 15%);
+        --color-black: hsl(237deg 100% 4%);
+
+        /* TODO: better name? */
+        --color-lines-dark: hsl(236deg 11% 27%);
+        --color-lines-light: hsl(221deg 69% 94%);
+
+        /* FONT WEIGHTS */
+        --font-weight-normal: 400;
+        --font-weight-medium: 500;
+        --font-weight-bold: 700;
+
+        /* FONT FAMILIES */
+        --font-family-sans-serif: "Plus Jakarta Sans", sans-serif;
+
+        /* FONT SIZES */
+        --font-size-heading-xlarge: 2rem;
+        --font-size-heading-large: 1.5rem;
+        --font-size-heading-medium: 1.25rem;
+        --font-size-heading-small: 1rem;
+        --font-size-body-medium: 1rem;
+        --font-size-body-small: 0.75rem;
     }
 
 
@@ -222,5 +263,9 @@
 
     #root {
         height: 100%;
+    }
+
+    body {
+        font-family: var(--font-family-sans-serif);
     }
 }
