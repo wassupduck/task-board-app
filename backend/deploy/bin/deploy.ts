@@ -14,7 +14,14 @@ const env = {
   region: process.env.CDK_DEFAULT_REGION,
 };
 
-const app = new cdk.App();
+const app = new cdk.App({
+  // TODO: non-hacky way to not expose "secret" context while
+  // cdk.context.json is uncommited.
+  context: {
+    vpcId: process.env.CDK_CONTEXT_VPC_ID,
+    ecsClusterName: process.env.CDK_CONTEXT_ECS_CLUSTER_NAME,
+  },
+});
 
 const config = {
   vpcId: String(app.node.getContext('vpcId')),
@@ -43,6 +50,8 @@ const stagingDeployPipelineStack = new StagingDeployPipelineStack(
   'StagingBackendDeployPipelineStack',
   {
     env,
+    vpcId: config.vpcId,
+    ecsClusterName: config.ecsClusterName,
     githubSource: config.githubSource,
     imageRepo: stagingBaseStack.imageRepo,
     stagingAppStack,

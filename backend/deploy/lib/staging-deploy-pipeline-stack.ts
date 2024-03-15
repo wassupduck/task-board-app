@@ -7,6 +7,8 @@ import { Construct } from 'constructs';
 import { AppStack } from './app-stack';
 
 export interface StagingDeployPipelineStackProps extends cdk.StackProps {
+  vpcId: string;
+  ecsClusterName: string;
   githubSource: {
     owner: string;
     repo: string;
@@ -115,6 +117,10 @@ export class StagingDeployPipelineStack extends cdk.Stack {
           files: [`${props.stagingAppStack.stackName}.template.json`],
         },
       }),
+      environmentVariables: {
+        CDK_CONTEXT_VPC_ID: { value: props.vpcId },
+        CDK_CONTEXT_ECS_CLUSTER_NAME: { value: props.ecsClusterName },
+      },
       environment: {
         buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
       },
