@@ -11,7 +11,10 @@ import { AppService } from './app.service';
     GraphQLModule.forRoot<YogaDriverConfig<'fastify'>>({
       driver: YogaDriver<'fastify'>,
       path: '/graphql',
-      autoSchemaFile: path.join(process.cwd(), 'src/schema.gql'),
+      autoSchemaFile:
+        process.env.NODE_ENV !== 'production'
+          ? path.join(process.cwd(), 'src/schema.gql')
+          : true,
       sortSchema: true,
     }),
   ],

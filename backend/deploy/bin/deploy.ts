@@ -1,21 +1,54 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { DeployStack } from '../lib/deploy-stack';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as ecs from 'aws-cdk-lib/aws-ecs';
+import { AppStack } from '../lib/app-stack';
+import { StagingDeployPipelineStack } from '../lib/staging-deploy-pipeline-stack';
+import { BaseStack } from '../lib/base-stack';
+
+function StringOrUndefined(value: any): string | undefined {
+  return value !== undefined ? String(value) : undefined;
+}
+
+const env = {
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: process.env.CDK_DEFAULT_REGION,
+};
 
 const app = new cdk.App();
-new DeployStack(app, 'DeployStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+const config = {
+  vpcId: String(app.node.getContext('vpcId')),
+  ecsClusterName: String(app.node.getContext('ecsClusterName')),
+  githubSource: {
+    owner: String(app.node.getContext('githubSourceOwner')),
+    repo: String(app.node.getContext('githubSourceRepo')),
+    branch: StringOrUndefined(app.node.tryGetContext('githubSourceBranch')),
+    oauthTokenSecretId: StringOrUndefined(
+      app.node.getContext('githubSourceOAuthTokenSecretId'),
+    ),
+  },
+};
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+const vpc = ec2.Vpc.fromLookup(app, 'Vpc', { vpcId: config.vpcId });
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+const cluster = ecs.Cluster.fromClusterAttributes(app, 'EcsCluster', {
+  vpc,
+  clusterName: config.ecsClusterName,
+});
+
+const stagingBaseStack = new BaseStack(app, 'StagingBackendBaseStack');
+
+const stagingAppStack = new AppStack(app, 'StagingBackendAppStack', {
+  env,
+  cluster,
+  imageRepo: stagingBaseStack.imageRepo,
+});
+
+new StagingDeployPipelineStack(app, 'StagingBackendDeployPipelineStack', {
+  env,
+  githubSource: config.githubSource,
+  imageRepo: stagingBaseStack.imageRepo,
+  stagingAppStack,
 });
