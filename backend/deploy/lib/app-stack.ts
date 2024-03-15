@@ -2,10 +2,12 @@ import * as cdk from 'aws-cdk-lib';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 
 export interface AppStackProps extends cdk.StackProps {
-  cluster: ecs.ICluster;
+  vpcId: string;
+  ecsClusterName: string;
   imageRepo: ecr.IRepository;
 }
 
@@ -19,8 +21,15 @@ export class AppStack extends cdk.Stack {
       type: 'String',
     });
 
+    const vpc = ec2.Vpc.fromLookup(this, 'Vpc', { vpcId: props.vpcId });
+
+    const cluster = ecs.Cluster.fromClusterAttributes(this, 'EcsCluster', {
+      vpc,
+      clusterName: props.ecsClusterName,
+    });
+
     new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'Service', {
-      cluster: props.cluster,
+      cluster: cluster,
       memoryLimitMiB: 256,
       cpu: 512,
       taskImageOptions: {

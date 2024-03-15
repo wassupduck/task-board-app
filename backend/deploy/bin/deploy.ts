@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as ecs from 'aws-cdk-lib/aws-ecs';
 import { AppStack } from '../lib/app-stack';
 import { StagingDeployPipelineStack } from '../lib/staging-deploy-pipeline-stack';
 import { BaseStack } from '../lib/base-stack';
@@ -26,29 +24,28 @@ const config = {
     repo: String(app.node.getContext('githubSourceRepo')),
     branch: StringOrUndefined(app.node.tryGetContext('githubSourceBranch')),
     oauthTokenSecretId: StringOrUndefined(
-      app.node.getContext('githubSourceOAuthTokenSecretId'),
+      app.node.tryGetContext('githubSourceOAuthTokenSecretId'),
     ),
   },
 };
 
-const vpc = ec2.Vpc.fromLookup(app, 'Vpc', { vpcId: config.vpcId });
-
-const cluster = ecs.Cluster.fromClusterAttributes(app, 'EcsCluster', {
-  vpc,
-  clusterName: config.ecsClusterName,
-});
-
-const stagingBaseStack = new BaseStack(app, 'StagingBackendBaseStack');
+const stagingBaseStack = new BaseStack(app, 'StagingBackendBaseStack', { env });
 
 const stagingAppStack = new AppStack(app, 'StagingBackendAppStack', {
   env,
-  cluster,
+  vpcId: config.vpcId,
+  ecsClusterName: config.ecsClusterName,
   imageRepo: stagingBaseStack.imageRepo,
 });
 
-new StagingDeployPipelineStack(app, 'StagingBackendDeployPipelineStack', {
-  env,
-  githubSource: config.githubSource,
-  imageRepo: stagingBaseStack.imageRepo,
-  stagingAppStack,
-});
+const stagingDeployPipelineStack = new StagingDeployPipelineStack(
+  app,
+  'StagingBackendDeployPipelineStack',
+  {
+    env,
+    githubSource: config.githubSource,
+    imageRepo: stagingBaseStack.imageRepo,
+    stagingAppStack,
+  },
+);
+stagingDeployPipelineStack.addDependency(stagingBaseStack);

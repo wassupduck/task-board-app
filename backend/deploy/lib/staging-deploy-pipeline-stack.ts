@@ -142,6 +142,7 @@ export class StagingDeployPipelineStack extends cdk.Stack {
       });
 
     new codepipeline.Pipeline(this, 'DeployPipeline', {
+      pipelineType: codepipeline.PipelineType.V2,
       stages: [
         {
           stageName: 'Source',
