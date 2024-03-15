@@ -58,6 +58,7 @@
     "@aws-cdk/aws-cloudwatch-actions:changeLambdaPermissionLogicalIdForLambdaAction": true,
     "@aws-cdk/aws-codepipeline:crossAccountKeysDefaultValueToFalse": true,
     "githubSourceOwner": "wassupduck",
-    "githubSourceRepo": "task-board-app"
+    "githubSourceRepo": "task-board-app",
+    "githubSourceBranch": "backend-deploy"
   }
 }
