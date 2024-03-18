@@ -38,7 +38,18 @@ export class StagingCdPipelineStack extends cdk.Stack {
     // environment before cdk synth is performed.
     // Inspired from: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.pipelines-readme.html#context-lookups
     const cdkContextAsset = new assets.Asset(this, 'CdkContextAsset', {
-      path: path.join(__dirname, '../cdk.context.json'),
+      path: path.join(__dirname, '../'),
+      // CodeBuild needs s3 sources be zip files.
+      // Hack to upload context file in zip file.
+      bundling: {
+        image: cdk.DockerImage.fromRegistry('alpine'),
+        command: [
+          '/bin/sh',
+          '-c',
+          'cp cdk.context.json /asset-output/cdk.context.json',
+        ],
+        outputType: cdk.BundlingOutput.NOT_ARCHIVED,
+      },
     });
     const cdkContextSourceOutput = new codepipeline.Artifact(
       'cdk_context_source',
@@ -78,7 +89,7 @@ export class StagingCdPipelineStack extends cdk.Stack {
             pre_build: {
               commands: [
                 'cd backend',
-                '$(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)',
+                'aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com',
                 'export IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION',
               ],
             },
@@ -94,6 +105,9 @@ export class StagingCdPipelineStack extends cdk.Stack {
           },
         }),
         environmentVariables: {
+          AWS_ACCOUNT_ID: {
+            value: this.account,
+          },
           IMAGE_REPO_URI: {
             value: imageRepo.repositoryUri,
           },
