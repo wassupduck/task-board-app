@@ -11,18 +11,18 @@ const app = new cdk.App();
 
 const config = {
   staging: {
-    accountId: String(app.node.getContext('staging:AccountId')),
-    region: String(app.node.getContext('staging:Region')),
-    vpcId: String(app.node.getContext('staging:VpcId')),
-    ecsClusterName: String(app.node.getContext('staging:EcsClusterName')),
+    accountId: String(app.node.getContext('staging:accountId')),
+    region: String(app.node.getContext('staging:region')),
+    vpcId: String(app.node.getContext('staging:vpcId')),
+    ecsClusterName: String(app.node.getContext('staging:ecsClusterName')),
     githubSource: {
-      owner: String(app.node.getContext('staging:GithubSourceOwner')),
-      repo: String(app.node.getContext('staging:GithubSourceRepo')),
+      owner: String(app.node.getContext('staging:githubSourceOwner')),
+      repo: String(app.node.getContext('staging:githubSourceRepo')),
       branch: StringOrUndefined(
-        app.node.tryGetContext('staging:GithubSourceBranch'),
+        app.node.tryGetContext('staging:githubSourceBranch'),
       ),
       oauthTokenSecretId: StringOrUndefined(
-        app.node.tryGetContext('staging:GithubSourceOAuthTokenSecretId'),
+        app.node.tryGetContext('staging:githubSourceOAuthTokenSecretId'),
       ),
     },
   },

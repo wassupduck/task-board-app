@@ -57,7 +57,7 @@
     "@aws-cdk/aws-codepipeline-actions:useNewDefaultBranchForCodeCommitSource": true,
     "@aws-cdk/aws-cloudwatch-actions:changeLambdaPermissionLogicalIdForLambdaAction": true,
     "@aws-cdk/aws-codepipeline:crossAccountKeysDefaultValueToFalse": true,
-    "staging:GithubSourceOwner": "wassupduck",
+    "staging:githubSourceOwner": "wassupduck",
     "staging:githubSourceRepo": "task-board-app",
     "staging:githubSourceBranch": "backend-deploy"
   }
