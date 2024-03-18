@@ -27,6 +27,7 @@ export class StagingStack extends cdk.Stack {
       clusterName: props.ecsClusterName,
     });
 
+    // TODO: Move to service and deployment pipeline to separate stacks?
     const service = new Service(this, 'Service', { ecsCluster });
     new StagingDeployPipeline(this, 'DeployPipeline', {
       service,
