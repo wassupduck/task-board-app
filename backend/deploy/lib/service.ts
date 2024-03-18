@@ -19,8 +19,8 @@ export class Service extends Construct {
     const loadBalancedFargateService =
       new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'Service', {
         cluster: props.ecsCluster,
-        memoryLimitMiB: 256,
-        cpu: 512,
+        memoryLimitMiB: 512,
+        cpu: 256,
         taskImageOptions: {
           image: ecs.ContainerImage.fromRegistry(starterImage),
           containerPort: 3000,
