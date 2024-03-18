@@ -139,7 +139,7 @@ export class StagingCdPipelineStack extends cdk.Stack {
               'cd backend/deploy',
               'yarn install',
               'yarn build',
-              `cp CODEBUILD_SRC_DIR_${cdkContextSourceOutput.artifactName}/cdk.context.json .`,
+              `cp $CODEBUILD_SRC_DIR_${cdkContextSourceOutput.artifactName}/cdk.context.json .`,
             ],
           },
           build: {
