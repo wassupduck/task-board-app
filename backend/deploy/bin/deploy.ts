@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { StagingStack } from '../lib/staging-stack';
+import { StagingCdPipelineStack } from '../lib/staging-cd-pipeline-stack';
+import { ServiceStack } from '../lib/service-stack';
 
 function StringOrUndefined(value: any): string | undefined {
   return value !== undefined ? String(value) : undefined;
@@ -33,9 +34,14 @@ const stagingEnv = {
   region: config.staging.region,
 };
 
-new StagingStack(app, 'StagingBackendStack', {
+const stagingCdPipelineStack = new StagingCdPipelineStack(
+  app,
+  'StagingBackendCdPipelineStack',
+  { env: stagingEnv, githubSource: config.staging.githubSource },
+);
+new ServiceStack(app, 'StagingBackendServiceStack', {
   env: stagingEnv,
   vpcId: config.staging.vpcId,
   ecsClusterName: config.staging.ecsClusterName,
-  githubSource: config.staging.githubSource,
+  image: stagingCdPipelineStack.tagParameterContainerImage,
 });
