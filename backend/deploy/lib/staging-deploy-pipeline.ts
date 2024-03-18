@@ -4,28 +4,27 @@ import * as codepipelineActions from 'aws-cdk-lib/aws-codepipeline-actions';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
 import { Construct } from 'constructs';
-import { AppStack } from './app-stack';
+import { Service } from './service';
 
-export interface StagingDeployPipelineStackProps extends cdk.StackProps {
-  vpcId: string;
-  ecsClusterName: string;
+export interface StagingDeployPipelineProps extends cdk.StackProps {
+  service: Service;
   githubSource: {
     owner: string;
     repo: string;
     branch?: string;
     oauthTokenSecretId?: string;
   };
-  imageRepo: ecr.IRepository;
-  stagingAppStack: AppStack;
 }
 
-export class StagingDeployPipelineStack extends cdk.Stack {
-  constructor(
-    scope: Construct,
-    id: string,
-    props: StagingDeployPipelineStackProps,
-  ) {
-    super(scope, id, props);
+// Based on: https://github.com/aws-samples/amazon-ecs-fargate-cdk-v2-cicd
+
+export class StagingDeployPipeline extends Construct {
+  constructor(scope: Construct, id: string, props: StagingDeployPipelineProps) {
+    super(scope, id);
+
+    const imageRepo = new ecr.Repository(this, 'ImageRepo', {
+      imageTagMutability: ecr.TagMutability.IMMUTABLE,
+    });
 
     const sourceOutput = new codepipeline.Artifact();
     const sourceAction = new codepipelineActions.GitHubSourceAction({
@@ -54,33 +53,32 @@ export class StagingDeployPipelineStack extends cdk.Stack {
               commands: [
                 'cd backend',
                 'aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com',
-                'COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)',
-                'IMAGE_TAG=$COMMIT_HASH',
+                'export IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION',
               ],
             },
             build: {
               commands: [
                 'docker build -t $IMAGE_REPO_URI:$IMAGE_TAG -f Dockerfile --build-arg BACKEND_VERSION=$IMAGE_TAG .',
+                'docker push $IMAGE_REPO_URI:$IMAGE_TAG',
               ],
             },
             post_build: {
               commands: [
-                'docker push $IMAGE_REPO_URI:$IMAGE_TAG',
-                `printf '{ "imageTag": "%s" }' $IMAGE_TAG > imageTag.json`,
+                `printf '[{"name":"${props.service.taskContainerName}","imageUri":"%s"}]' $IMAGE_REPO_URI:$IMAGE_TAG > imagedefinitions.json`,
               ],
             },
           },
           artifacts: {
-            'base-directory': 'backend/deploy/dist',
-            files: 'imageTag.json',
+            'base-directory': 'backend',
+            files: 'imagedefinitions.json',
           },
         }),
         environmentVariables: {
           AWS_ACCOUNT_ID: {
-            value: this.account,
+            value: cdk.Stack.of(this).account,
           },
           IMAGE_REPO_URI: {
-            value: props.imageRepo.repositoryUri,
+            value: imageRepo.repositoryUri,
           },
         },
         environment: {
@@ -89,7 +87,7 @@ export class StagingDeployPipelineStack extends cdk.Stack {
         },
       },
     );
-    props.imageRepo.grantPush(dockerImageBuild);
+    imageRepo.grantPush(dockerImageBuild);
     const dockerImageBuildAction = new codepipelineActions.CodeBuildAction({
       actionName: 'Docker_Image_Build',
       project: dockerImageBuild,
@@ -97,55 +95,11 @@ export class StagingDeployPipelineStack extends cdk.Stack {
       outputs: [dockerImageBuildOutput],
     });
 
-    const cdkBuildOutput = new codepipeline.Artifact('CdkBuildOutput');
-    const cdkBuild = new codebuild.PipelineProject(this, 'CdkBuild', {
-      buildSpec: codebuild.BuildSpec.fromObject({
-        version: '0.2',
-        phases: {
-          install: {
-            commands: ['cd backend/deploy', 'yarn install'],
-          },
-          build: {
-            commands: [
-              'yarn build',
-              `yarn cdk synth ${props.stagingAppStack.stackName} -- -o dist`,
-            ],
-          },
-        },
-        artifacts: {
-          'base-directory': 'backend/deploy/dist',
-          files: [`${props.stagingAppStack.stackName}.template.json`],
-        },
-      }),
-      environmentVariables: {
-        CDK_CONTEXT_VPC_ID: { value: props.vpcId },
-        CDK_CONTEXT_ECS_CLUSTER_NAME: { value: props.ecsClusterName },
-      },
-      environment: {
-        buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
-      },
+    const deployAction = new codepipelineActions.EcsDeployAction({
+      actionName: 'Ecs_Deploy_Action',
+      service: props.service.ecsService,
+      input: dockerImageBuildOutput,
     });
-    const cdkBuildAction = new codepipelineActions.CodeBuildAction({
-      actionName: 'CDK_Build',
-      project: cdkBuild,
-      input: sourceOutput,
-      outputs: [cdkBuildOutput],
-    });
-
-    const deployAction =
-      new codepipelineActions.CloudFormationCreateUpdateStackAction({
-        actionName: 'CFN_Deploy',
-        stackName: props.stagingAppStack.stackName,
-        templatePath: cdkBuildOutput.atPath(
-          `${props.stagingAppStack.stackName}.template.json`,
-        ),
-        adminPermissions: true,
-        parameterOverrides: {
-          [props.stagingAppStack.imageTagParam.logicalId]:
-            dockerImageBuildOutput.getParam('imageTag.json', 'imageTag'),
-        },
-        extraInputs: [dockerImageBuildOutput],
-      });
 
     new codepipeline.Pipeline(this, 'DeployPipeline', {
       pipelineType: codepipeline.PipelineType.V2,
@@ -156,7 +110,7 @@ export class StagingDeployPipelineStack extends cdk.Stack {
         },
         {
           stageName: 'Build',
-          actions: [dockerImageBuildAction, cdkBuildAction],
+          actions: [dockerImageBuildAction],
         },
         {
           stageName: 'Deploy',
