@@ -15,7 +15,7 @@ export class Service extends Construct {
     super(scope, id);
 
     const starterImage = 'public.ecr.aws/amazonlinux/amazonlinux:2022';
-    const taskContainerName = 'web';
+    const taskContainerName = 'api';
     const loadBalancedFargateService =
       new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'Service', {
         cluster: props.ecsCluster,
@@ -25,6 +25,9 @@ export class Service extends Construct {
           image: ecs.ContainerImage.fromRegistry(starterImage),
           containerPort: 3000,
           containerName: taskContainerName,
+          logDriver: new ecs.AwsLogDriver({
+            streamPrefix: 'backend-api',
+          }),
         },
       });
 
