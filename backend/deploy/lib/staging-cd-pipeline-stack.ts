@@ -76,7 +76,7 @@ export class StagingCdPipelineStack extends cdk.Stack {
     });
 
     const imageRepo = new ecr.Repository(this, 'ImageRepo', {
-      imageTagMutability: ecr.TagMutability.IMMUTABLE,
+      // imageTagMutability: ecr.TagMutability.IMMUTABLE,
     });
 
     const dockerImageBuild = new codebuild.PipelineProject(
