@@ -33,7 +33,7 @@ export class StagingCdPipelineStack extends cdk.Stack {
     // perform context lookups, and the lookups will fail. This is by design.
     // The recommended way of using lookups is by running cdk synth on the developer workstation and
     // checking in the cdk.context.json file, which contains the results of the context lookups.
-    // However given this is a public repo checking in the cdk.context.json is not recommended for security reason.
+    // However given this is a public repo checking in the cdk.context.json is not recommended for security reasons.
     // To get around this we store the cdk.context.json file in s3 and and inject it into the build
     // environment before cdk synth is performed.
     // Inspired from: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.pipelines-readme.html#context-lookups
@@ -151,6 +151,14 @@ export class StagingCdPipelineStack extends cdk.Stack {
           files: '**/*',
         },
       }),
+      environmentVariables: {
+        CDK_STAGING_ACCOUNT: {
+          value: this.account,
+        },
+        CDK_STAGING_REGION: {
+          value: this.region,
+        },
+      },
       environment: {
         buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
       },

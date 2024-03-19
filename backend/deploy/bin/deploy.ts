@@ -12,10 +12,6 @@ const app = new cdk.App();
 
 const config = {
   staging: {
-    accountId: String(app.node.getContext('staging:accountId')),
-    region: String(app.node.getContext('staging:region')),
-    vpcId: String(app.node.getContext('staging:vpcId')),
-    ecsClusterName: String(app.node.getContext('staging:ecsClusterName')),
     githubSource: {
       owner: String(app.node.getContext('staging:githubSourceOwner')),
       repo: String(app.node.getContext('staging:githubSourceRepo')),
@@ -30,8 +26,8 @@ const config = {
 };
 
 const stagingEnv = {
-  account: config.staging.accountId,
-  region: config.staging.region,
+  account: process.env.CDK_STAGING_ACCOUNT,
+  region: process.env.CDK_STAGING_REGION,
 };
 
 const stagingCdPipelineStack = new StagingCdPipelineStack(
@@ -41,7 +37,5 @@ const stagingCdPipelineStack = new StagingCdPipelineStack(
 );
 new ServiceStack(app, 'StagingBackendServiceStack', {
   env: stagingEnv,
-  vpcId: config.staging.vpcId,
-  ecsClusterName: config.staging.ecsClusterName,
   image: stagingCdPipelineStack.tagParameterContainerImage,
 });
