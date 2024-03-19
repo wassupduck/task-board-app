@@ -147,7 +147,7 @@ export class StagingCdPipelineStack extends cdk.Stack {
           },
         },
         artifacts: {
-          'base-directory': 'cdk.out',
+          'base-directory': 'backend/deploy/cdk.out',
           files: '**/*',
         },
       }),
