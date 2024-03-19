@@ -15,17 +15,23 @@ export class Service extends Construct {
     super(scope, id);
 
     const containerImage = new ecs.TagParameterContainerImage(props.imageRepo);
-    new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'Service', {
-      cluster: props.ecsCluster,
-      memoryLimitMiB: 512,
-      cpu: 256,
-      taskImageOptions: {
-        image: containerImage,
-        containerPort: 3000,
-        logDriver: new ecs.AwsLogDriver({
-          streamPrefix: 'backend-service-web',
-        }),
+    new ecsPatterns.ApplicationLoadBalancedFargateService(
+      this,
+      'FargateService',
+      {
+        cluster: props.ecsCluster,
+        memoryLimitMiB: 512,
+        cpu: 256,
+        taskImageOptions: {
+          image: containerImage,
+          containerPort: 3000,
+          logDriver: new ecs.AwsLogDriver({
+            streamPrefix: 'backend-service-web',
+          }),
+        },
       },
-    });
+    );
+
+    this.imageTagParamaterName = containerImage.tagParameterName;
   }
 }

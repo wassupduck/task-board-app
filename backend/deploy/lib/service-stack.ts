@@ -16,7 +16,7 @@ export interface ServiceStackProps extends cdk.StackProps {
 }
 
 export class ServiceStack extends cdk.Stack {
-  readonly service: Service;
+  public readonly service: Service;
 
   constructor(scope: Construct, id: string, props: ServiceStackProps) {
     super(scope, id, props);

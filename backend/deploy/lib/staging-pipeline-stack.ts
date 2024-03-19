@@ -19,8 +19,8 @@ interface StagingPipelineStackConfig {
 }
 
 export interface StagingPipelineStackProps extends cdk.StackProps {
-  imageRepo: ecr.IRepository;
-  serviceStack: ServiceStack;
+  readonly imageRepo: ecr.IRepository;
+  readonly serviceStack: ServiceStack;
 }
 
 // Based on: https://docs.aws.amazon.com/cdk/api/v1/docs/aws-codepipeline-actions-readme.html#deploying-ecs-applications-stored-in-a-separate-source-code-repository
