@@ -1,20 +1,23 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
-import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
+import { Service } from './service';
 
-export interface ServiceStackConfig {
+interface ServiceStackConfig {
   vpcId: string;
   ecsClusterName: string;
 }
 
 export interface ServiceStackProps extends cdk.StackProps {
-  readonly image: ecs.ContainerImage;
+  readonly imageRepo: ecr.IRepository;
 }
 
 export class ServiceStack extends cdk.Stack {
+  readonly service: Service;
+
   constructor(scope: Construct, id: string, props: ServiceStackProps) {
     super(scope, id, props);
 
@@ -27,17 +30,9 @@ export class ServiceStack extends cdk.Stack {
       clusterName: config.ecsClusterName,
     });
 
-    new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'Service', {
-      cluster: cluster,
-      memoryLimitMiB: 512,
-      cpu: 256,
-      taskImageOptions: {
-        image: props.image,
-        containerPort: 3000,
-        logDriver: new ecs.AwsLogDriver({
-          streamPrefix: 'backend-service-api',
-        }),
-      },
+    this.service = new Service(this, 'StagingBackendService', {
+      ecsCluster: cluster,
+      imageRepo: props.imageRepo,
     });
   }
 
@@ -46,12 +41,16 @@ export class ServiceStack extends cdk.Stack {
       this,
       ssmParameterName,
     );
+
     if (configString.includes('dummy-value')) {
+      // Dummy config, see: https://sdhuang32.github.io/ssm-StringParameter-valueFromLookup-use-cases-and-internal-synth-flow/
       return {
         vpcId: 'vpc-01234567890abcdef',
         ecsClusterName: 'ServiceStack-DummyEcsCluster-NT5EUXTNTXXD',
       };
     }
+
+    // TODO: Validation
     return JSON.parse(configString) as ServiceStackConfig;
   }
 }

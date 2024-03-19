@@ -4,39 +4,41 @@ import * as codepipeline from 'aws-cdk-lib/aws-codepipeline';
 import * as codepipelineActions from 'aws-cdk-lib/aws-codepipeline-actions';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as codebuild from 'aws-cdk-lib/aws-codebuild';
-import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as assets from 'aws-cdk-lib/aws-s3-assets';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
+import { ServiceStack } from './service-stack';
 
-export interface StagingCdPipelineStackProps extends cdk.StackProps {
+interface StagingPipelineStackConfig {
   githubSource: {
     owner: string;
     repo: string;
-    branch?: string;
-    oauthTokenSecretId?: string;
+    branch: string;
+    oauthTokenSecretId: string;
   };
 }
 
-export class StagingCdPipelineStack extends cdk.Stack {
-  // Based on: https://docs.aws.amazon.com/cdk/api/v1/docs/aws-codepipeline-actions-readme.html#deploying-ecs-applications-stored-in-a-separate-source-code-repository
+export interface StagingPipelineStackProps extends cdk.StackProps {
+  imageRepo: ecr.IRepository;
+  serviceStack: ServiceStack;
+}
 
-  public readonly tagParameterContainerImage: ecs.TagParameterContainerImage;
-
-  constructor(
-    scope: Construct,
-    id: string,
-    props: StagingCdPipelineStackProps,
-  ) {
+// Based on: https://docs.aws.amazon.com/cdk/api/v1/docs/aws-codepipeline-actions-readme.html#deploying-ecs-applications-stored-in-a-separate-source-code-repository
+export class StagingPipelineStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: StagingPipelineStackProps) {
     super(scope, id, props);
+
+    const config = this.configFromLookup('backend-pipeline-stack-config');
 
     // By default, a cdk synth performed in a pipeline will not have permissions to
     // perform context lookups, and the lookups will fail. This is by design.
     // The recommended way of using lookups is by running cdk synth on the developer workstation and
     // checking in the cdk.context.json file, which contains the results of the context lookups.
     // However given this is a public repo checking in the cdk.context.json is not recommended for security reasons.
-    // To get around this we store the cdk.context.json file in s3 and and inject it into the build
-    // environment before cdk synth is performed.
+    // To get around this we store the cdk.context.json file in s3 and and inject it
+    // into the build environment before cdk synth is performed.
     // Inspired from: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.pipelines-readme.html#context-lookups
+    // TODO: Find a better way to do this.
     const cdkContextAsset = new assets.Asset(this, 'CdkContextAsset', {
       path: path.join(__dirname, '../'),
       // CodeBuild needs s3 sources be zip files.
@@ -65,18 +67,14 @@ export class StagingCdPipelineStack extends cdk.Stack {
     const githubSourceOuput = new codepipeline.Artifact();
     const githubSourceAction = new codepipelineActions.GitHubSourceAction({
       actionName: 'GitHub_Source',
-      owner: props.githubSource.owner,
-      repo: props.githubSource.repo,
+      owner: config.githubSource.owner,
+      repo: config.githubSource.repo,
       oauthToken: cdk.SecretValue.secretsManager(
-        props.githubSource.oauthTokenSecretId ?? 'github-access-token',
+        config.githubSource.oauthTokenSecretId,
       ),
       output: githubSourceOuput,
-      branch: props.githubSource.branch ?? 'main',
+      branch: config.githubSource.branch,
       trigger: codepipelineActions.GitHubTrigger.NONE,
-    });
-
-    const imageRepo = new ecr.Repository(this, 'ImageRepo', {
-      // imageTagMutability: ecr.TagMutability.IMMUTABLE,
     });
 
     const dockerImageBuild = new codebuild.PipelineProject(
@@ -109,7 +107,7 @@ export class StagingCdPipelineStack extends cdk.Stack {
             value: this.account,
           },
           IMAGE_REPO_URI: {
-            value: imageRepo.repositoryUri,
+            value: props.imageRepo.repositoryUri,
           },
         },
         environment: {
@@ -118,7 +116,7 @@ export class StagingCdPipelineStack extends cdk.Stack {
         },
       },
     );
-    imageRepo.grantPush(dockerImageBuild);
+    props.imageRepo.grantPush(dockerImageBuild);
 
     const dockerImageBuildAction = new codepipelineActions.CodeBuildAction({
       actionName: 'Docker_Image_Build',
@@ -126,9 +124,6 @@ export class StagingCdPipelineStack extends cdk.Stack {
       input: githubSourceOuput,
     });
 
-    this.tagParameterContainerImage = new ecs.TagParameterContainerImage(
-      imageRepo,
-    );
     const cdkBuildOutput = new codepipeline.Artifact('CdkBuildOutput');
     const cdkBuild = new codebuild.PipelineProject(this, 'CdkBuild', {
       buildSpec: codebuild.BuildSpec.fromObject({
@@ -171,17 +166,17 @@ export class StagingCdPipelineStack extends cdk.Stack {
       outputs: [cdkBuildOutput],
     });
 
-    const stagingServiceStackName = 'StagingBackendServiceStack';
+    const serviceStackName = props.serviceStack.stackName;
     const deployAction =
       new codepipelineActions.CloudFormationCreateUpdateStackAction({
         actionName: 'CFN_Deploy',
-        stackName: stagingServiceStackName,
+        stackName: serviceStackName,
         templatePath: cdkBuildOutput.atPath(
-          `${stagingServiceStackName}.template.json`,
+          `${serviceStackName}.template.json`,
         ),
         adminPermissions: true,
         parameterOverrides: {
-          [this.tagParameterContainerImage.tagParameterName]:
+          [props.serviceStack.service.imageTagParamaterName]:
             dockerImageBuildAction.variable('IMAGE_TAG'),
         },
       });
@@ -203,5 +198,45 @@ export class StagingCdPipelineStack extends cdk.Stack {
         },
       ],
     });
+  }
+
+  // TODO: Refactor
+  configFromLookup(ssmParameterName: string): StagingPipelineStackConfig {
+    const configString = ssm.StringParameter.valueFromLookup(
+      this,
+      ssmParameterName,
+    );
+
+    if (configString.includes('dummy-value')) {
+      // Dummy config, see: https://sdhuang32.github.io/ssm-StringParameter-valueFromLookup-use-cases-and-internal-synth-flow/
+      return {
+        githubSource: {
+          owner: 'github-source-owner',
+          repo: 'github-source-repo',
+          branch: 'github-source-branch',
+          oauthTokenSecretId: 'github-source-oauth-token-secret-id',
+        },
+      };
+    }
+
+    const defaults = {
+      githubSource: {
+        branch: 'main',
+        oauthTokenSecretId: 'github-access-token',
+      },
+    };
+
+    // TODO: Validation
+    const config = JSON.parse(configString);
+
+    // Yuck! - being lazy.
+    return {
+      ...defaults,
+      ...config,
+      githubSource: {
+        ...defaults.githubSource,
+        ...config.githubSource,
+      },
+    } as StagingPipelineStackConfig;
   }
 }
