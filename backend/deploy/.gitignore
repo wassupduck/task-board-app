@@ -1,0 +1,14 @@
+*.js
+!jest.config.js
+*.d.ts
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+
+# TODO: Find a way to store this context
+# without commiting it to git. This is needed to avoid
+# non-deterministic behaviour.
+# https://docs.aws.amazon.com/cdk/v2/guide/best-practices.html#:~:text=Commit%20cdk.context.json%20to%20avoid%20non%2Ddeterministic%20behavior
+cdk.context.json

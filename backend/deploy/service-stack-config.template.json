@@ -1,0 +1,4 @@
+{
+  "vpcId": "vpc-id",
+  "ecsClusterName": "ecs-cluster-name"
+}
