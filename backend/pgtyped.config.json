@@ -1,0 +1,17 @@
+{
+  "transforms": [
+    {
+      "mode": "sql",
+      "include": "**/*.sql",
+      "emitTemplate": "{{dir}}/{{name}}.queries.ts"
+    }
+  ],
+  "srcDir": "./src/",
+  "failOnError": true,
+  "camelCaseColumnNames": true,
+  "db": {
+    "user": "postgres",
+    "dbName": "task_board_app",
+    "password": "postgres"
+  }
+}
