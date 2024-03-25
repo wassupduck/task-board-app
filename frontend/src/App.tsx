@@ -1,7 +1,16 @@
 import styles from "./App.module.css";
+import BoardArea from "./components/BoardArea";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
 
 function App() {
-  return <h1 className={styles.title}>Task Board App</h1>;
+  return (
+    <div className={styles.wrapper}>
+      <Header />
+      <Sidebar />
+      <BoardArea />
+    </div>
+  );
 }
 
 export default App;

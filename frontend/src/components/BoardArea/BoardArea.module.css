@@ -1,0 +1,18 @@
+.wrapper {
+    grid-area: main;
+    background-color: var(--color-grey-light);
+}
+
+.empty-board-wrapper {
+    min-height: 100%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 2rem;
+}
+
+.empty-board-message {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-grey-medium);
+    text-align: center;
+}

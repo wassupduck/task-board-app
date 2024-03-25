@@ -1,5 +1,7 @@
-.title {
-    color: var(--color-primary);
-    font-size: var(--font-size-heading-xlarge);
-    font-weight: var(--font-weight-bold);
+.wrapper {
+    min-height: 100%;
+    display: grid;
+    grid-template:
+        'header header' 96px
+        'sidebar main' 1fr / 300px 1fr;
 }

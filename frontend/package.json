@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "clsx": "^2.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -29,6 +30,7 @@
     "stylelint-config-css-modules": "^4.4.0",
     "stylelint-config-standard": "^36.0.0",
     "typescript": "^5.2.2",
-    "vite": "^5.1.6"
+    "vite": "^5.1.6",
+    "vite-plugin-svgr": "^4.2.0"
   }
 }

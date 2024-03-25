@@ -1,0 +1,27 @@
+.wrapper {
+    grid-area: header;
+    display: flex;
+}
+
+.heading {
+    font-size: var(--font-size-heading-large);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-black);
+}
+
+.header-logo {
+    min-width: 300px;
+    padding-inline: 32px;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--color-lines-light);
+}
+
+.header-main {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 24px;
+    border-bottom: 1px solid var(--color-lines-light);
+}
