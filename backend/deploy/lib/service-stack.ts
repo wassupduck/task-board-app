@@ -9,6 +9,13 @@ import { Service } from './service';
 interface ServiceStackConfig {
   vpcId: string;
   ecsClusterName: string;
+  db: {
+    instanceResourceId: string;
+    instanceEndpointAddress: string;
+    dbName: string;
+    dbUserName: string;
+    instanceSecurityGroupId: string;
+  };
 }
 
 export interface ServiceStackProps extends cdk.StackProps {
@@ -30,9 +37,20 @@ export class ServiceStack extends cdk.Stack {
       clusterName: config.ecsClusterName,
     });
 
+    const dbSecurityGroup = ec2.SecurityGroup.fromLookupById(
+      this,
+      'DatabaseSecurityGroup',
+      config.db.instanceSecurityGroupId,
+    );
+
     this.service = new Service(this, 'StagingBackendService', {
+      vpc,
       ecsCluster: cluster,
       imageRepo: props.imageRepo,
+      db: {
+        ...config.db,
+        instanceSecurityGroup: dbSecurityGroup,
+      },
     });
   }
 
@@ -47,6 +65,14 @@ export class ServiceStack extends cdk.Stack {
       return {
         vpcId: 'vpc-01234567890abcdef',
         ecsClusterName: 'ServiceStack-DummyEcsCluster-NT5EUXTNTXXD',
+        db: {
+          instanceResourceId: 'db-ABCDEFGHIJKL01234',
+          instanceEndpointAddress:
+            'example.aslfdewrlk.eu-west-2.rds.amazonaws.com',
+          dbUserName: 'dbuser',
+          dbName: 'task_board_app',
+          instanceSecurityGroupId: 'sg-abcdefghijkl01234',
+        },
       };
     }
 

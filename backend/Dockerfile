@@ -66,8 +66,11 @@ COPY package.json .
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/dist ./dist
 
+# Copy database migrations.
+COPY --from=build /usr/src/app/database ./database
+
 # Expose the port that the application listens on.
 EXPOSE 3000
 
-# Run the application.
-CMD yarn start:prod
+# Run the database migrations and then start the application.
+CMD yarn migrate && yarn start:prod

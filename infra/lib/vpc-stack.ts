@@ -14,17 +14,16 @@ export class VpcStack extends cdk.Stack {
       vpnGateway: false,
     }));
 
-    // Create ECR VPC enpoints.
+    // VPC endpoints.
+    // TODO: Endpoint policies.
 
+    vpc.addGatewayEndpoint("S3Endpoint", {
+      service: ec2.GatewayVpcEndpointAwsService.S3,
+    });
     // Amazon ECS tasks hosted on Fargate using Linux platform version 1.4.0 or later
     // require both the com.amazonaws.region.ecr.dkr and com.amazonaws.region.ecr.api
     // Amazon ECR VPC endpoints as well as the Amazon S3 gateway endpoint.
     // https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html
-
-    // TODO: Endpoint policies.
-    vpc.addGatewayEndpoint("S3Endpoint", {
-      service: ec2.GatewayVpcEndpointAwsService.S3,
-    });
     vpc.addInterfaceEndpoint("EcrEndpoint", {
       service: ec2.InterfaceVpcEndpointAwsService.ECR,
       privateDnsEnabled: true,
@@ -33,8 +32,23 @@ export class VpcStack extends cdk.Stack {
       service: ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
       privateDnsEnabled: true,
     });
+    // Amazon ECS tasks hosted on Fargate that use the awslogs log driver to send log information
+    // to CloudWatch Logs require the CloudWatch Logs VPC endpoint.
     vpc.addInterfaceEndpoint("CloudWatchLogsEndpoint", {
       service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+      privateDnsEnabled: true,
+    });
+    // Bastion host communicates with the interface VPC endpoints for Systems Manager and Amazon EC2.
+    vpc.addInterfaceEndpoint("SsmEndpoint", {
+      service: ec2.InterfaceVpcEndpointAwsService.SSM,
+      privateDnsEnabled: true,
+    });
+    vpc.addInterfaceEndpoint("Ec2MessagesEndpoint", {
+      service: ec2.InterfaceVpcEndpointAwsService.EC2_MESSAGES,
+      privateDnsEnabled: true,
+    });
+    vpc.addInterfaceEndpoint("SsmMessagesEndpoint", {
+      service: ec2.InterfaceVpcEndpointAwsService.SSM_MESSAGES,
       privateDnsEnabled: true,
     });
   }
