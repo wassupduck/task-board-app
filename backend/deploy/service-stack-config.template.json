@@ -1,4 +1,11 @@
 {
   "vpcId": "vpc-id",
-  "ecsClusterName": "ecs-cluster-name"
+  "ecsClusterName": "ecs-cluster-name",
+  "db": {
+    "instanceResourceId": "db-ABCDEFGHIJKL01234",
+    "instanceEndpointAddress": "example.aslfdewrlk.eu-west-2.rds.amazonaws.com",
+    "dbUserName": "dbuser",
+    "dbName": "task_board_app",
+    "instanceSecurityGroupId": "sg-abcdefghijkl01234"
+  }
 }
