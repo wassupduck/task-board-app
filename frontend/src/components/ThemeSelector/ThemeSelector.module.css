@@ -1,0 +1,40 @@
+.wrapper {
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    background-color: var(--color-grey-light);
+    border-radius: 8px;
+}
+
+.theme-toggle {
+    display: flex;
+    position: relative;
+    width: 40px;
+    height: 20px;
+    padding: 3px;
+    background-color: var(--color-primary);
+    border-radius: 999rem;
+}
+
+.theme-toggle input {
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+.theme-toggle:has(input:checked) {
+    justify-content: flex-end;
+}
+
+.theme-toggle-indicator {
+    width: 14px;
+    height: 14px;
+    background-color: white;
+    border-radius: 100%;
+}

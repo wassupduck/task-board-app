@@ -7,3 +7,8 @@
     border-radius: 999rem;
     text-align: center;
 }
+
+.button:disabled {
+    background-color: var(--color-primary-250);
+    cursor: unset;
+}
