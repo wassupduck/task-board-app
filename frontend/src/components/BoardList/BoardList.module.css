@@ -7,11 +7,17 @@
     color: var(--color-grey-medium);
 }
 
+.board-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .board-item {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem;
+    padding: 0.75rem;
     padding-left: 0;
     font-weight: var(--font-weight-bold);
     color: var(--color-grey-medium);

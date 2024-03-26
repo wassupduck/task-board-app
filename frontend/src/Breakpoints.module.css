@@ -1,0 +1,4 @@
+@value mobile-max: 544;
+@value tablet-max: 768;
+@value mobileAndSmaller: (max-width: calc(mobile-max / 16 * 1rem));
+@value tabletAndSmaller: (max-width: calc(tablet-max / 16 * 1rem));

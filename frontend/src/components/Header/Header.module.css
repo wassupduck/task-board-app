@@ -1,3 +1,5 @@
+@value tabletAndSmaller from "../../Breakpoints.module.css";
+
 .wrapper {
     grid-area: header;
     display: flex;
@@ -7,6 +9,10 @@
     font-size: var(--font-size-heading-large);
     font-weight: var(--font-weight-bold);
     color: var(--color-black);
+
+    @media tabletAndSmaller {
+        font-size: var(--font-size-heading-medium);
+    }
 }
 
 .header-logo {
@@ -15,6 +21,11 @@
     display: flex;
     align-items: center;
     border-right: 1px solid var(--color-lines-light);
+
+    @media tabletAndSmaller {
+        min-width: 260px;
+        padding-inline: 24px;
+    }
 }
 
 .header-main {

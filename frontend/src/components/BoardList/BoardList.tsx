@@ -7,7 +7,7 @@ export default function BoardList() {
   return (
     <nav>
       <h3 className={styles.heading}>All boards (3)</h3>
-      <ul>
+      <ul className={styles.boardList}>
         <li>
           <a className={clsx(styles.boardItem, styles.selected)}>
             <BoardIcon />

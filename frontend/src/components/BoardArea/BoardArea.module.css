@@ -9,6 +9,7 @@
     place-content: center;
     justify-items: center;
     gap: 2rem;
+    padding-inline: 72px;
 }
 
 .empty-board-message {
