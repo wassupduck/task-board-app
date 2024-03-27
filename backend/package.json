@@ -21,6 +21,7 @@
     "test:e2e": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --config ./test/jest-e2e.json",
     "dev:env:up": "docker-compose -p task-board-app-dev -f docker-compose.dev.yml up -d --wait && yarn migrate",
     "dev:env:down": "docker-compose -p task-board-app-dev -f docker-compose.dev.yml down",
+    "dev:env:restart": "yarn dev:env:down && yarn dev:env:up",
     "knex": "knex --knexfile database/knexfile.js",
     "migrate": "yarn knex migrate:latest",
     "psql": "PGPASSWORD=postgres psql --host localhost --username=postgres --dbname=task_board_app",

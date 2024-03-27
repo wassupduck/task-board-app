@@ -7,6 +7,7 @@ import { AppResolver } from './app.resolver.js';
 import { AppService } from './app.service.js';
 import { DatabaseModule } from './database/database.module.js';
 import { AppRepository } from './app.respository.js';
+import { BoardModule } from './board/board.module.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AppRepository } from './app.respository.js';
       sortSchema: true,
     }),
     DatabaseModule,
+    BoardModule,
   ],
   controllers: [AppController],
   providers: [AppRepository, AppService, AppResolver],

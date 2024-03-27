@@ -33,6 +33,6 @@
     border-bottom-right-radius: 999rem;
 }
 
-.new-board-item {
+.create-board-item {
     color: var(--color-primary);
 }

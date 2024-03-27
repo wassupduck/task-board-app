@@ -3,11 +3,18 @@ import HideSidebarIcon from "../../assets/icon-hide-sidebar.svg?react";
 import BoardList from "../BoardList";
 import ThemeSelector from "../ThemeSelector";
 import styles from "./Sidebar.module.css";
+import { BoardListProps } from "../BoardList/BoardList";
 
-export default function Sidebar() {
+interface SidebarProps extends BoardListProps {}
+
+export default function Sidebar(props: SidebarProps) {
   return (
     <aside className={styles.wrapper}>
-      <BoardList />
+      <BoardList
+        boards={props.boards}
+        selectedBoardId={props.selectedBoardId}
+        onChangeBoard={props.onChangeBoard}
+      />
       <div className={styles.buttonGroup}>
         <div className={styles.themeSelectorWrapper}>
           <ThemeSelector />
