@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import "./Global.module.css";
+import "./global.module.css";
 
 import App from "./components/App/App.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

@@ -1,4 +1,4 @@
-@value tabletAndSmaller from "../../Breakpoints.module.css";
+@value tabletAndSmaller from "../../breakpoints.module.css";
 
 .wrapper {
     min-height: 100%;
