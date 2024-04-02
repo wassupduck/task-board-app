@@ -20,3 +20,8 @@ insert into task(title, board_column_id) values
     ('Review results of usability tests and iterate', 3),
     ('Create wireframe prototype', 3),
     ('Conduct 5 wireframe tests', 3);
+
+insert into subtask(title, completed, task_id) values
+    ('Create account tables', true, 5),
+    ('Create endpoints', false, 5),
+    ('Testing', false, 5);

@@ -3,6 +3,7 @@ import { TaskService } from './task.service.js';
 import { FactoryProvider } from '@nestjs/common';
 import { TaskLoaders } from './interfaces/task-loaders.interface.js';
 import { TASK_LOADERS_FACTORY } from './task.constants.js';
+import { SubtasksConnection } from './entities/subtasks-connection.entity.js';
 
 export function createTaskLoaders(taskService: TaskService): TaskLoaders {
   const tasksInColumnLoader = new Dataloader(
@@ -16,8 +17,40 @@ export function createTaskLoaders(taskService: TaskService): TaskLoaders {
     },
   );
 
+  const subtasksConnectionLoader = new Dataloader(
+    async (taskIds: readonly string[]) => {
+      const subtasksConnections =
+        await taskService.getSubtasksConnectionsByTaskIds(taskIds as string[]);
+      const subtasksConnectionsByTaskId: Partial<
+        Record<string, SubtasksConnection>
+      > = Object.fromEntries(
+        subtasksConnections.map((subtasksConnection) => [
+          subtasksConnection.taskId,
+          subtasksConnection,
+        ]),
+      );
+      return taskIds.map(
+        (taskId) =>
+          subtasksConnectionsByTaskId[taskId] ??
+          new Error(`Task not found: ${taskId}`),
+      );
+    },
+  );
+
+  const subtasksByTaskIdLoader = new Dataloader(
+    async (taskIds: readonly string[]) => {
+      const subtasks = await taskService.getSubtasksByTaskIds(
+        taskIds as string[],
+      );
+      const subtasksByTaskId = Object.groupBy(subtasks, ({ taskId }) => taskId);
+      return taskIds.map((taskId) => subtasksByTaskId[taskId] ?? []);
+    },
+  );
+
   return {
     tasksInColumnLoader,
+    subtasksConnectionLoader,
+    subtasksByTaskIdLoader,
   };
 }
 

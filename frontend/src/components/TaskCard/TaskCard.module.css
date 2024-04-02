@@ -1,4 +1,4 @@
-.wrapper {
+.task-card {
     padding: 24px 16px;
     display: flex;
     flex-direction: column;
@@ -6,6 +6,9 @@
     background-color: var(--color-white);
     border-radius: 8px;
     cursor: pointer;
+
+    /* TODO: fix box shadow */
+    box-shadow: 0 4px 6px var(--color-lines-dark-100);
 }
 
 .title {

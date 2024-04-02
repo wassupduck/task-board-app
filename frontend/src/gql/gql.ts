@@ -20,7 +20,7 @@ const documents = {
     "\n  fragment BoardArea_BoardFragment on Board {\n    columns {\n      id\n    }\n    ...Board_BoardFragment\n  }\n": types.BoardArea_BoardFragmentFragmentDoc,
     "\n  fragment BoardList_BoardFragment on Board {\n    id\n    name\n  }\n": types.BoardList_BoardFragmentFragmentDoc,
     "\n  fragment Header_BoardFragment on Board {\n    name\n  }\n": types.Header_BoardFragmentFragmentDoc,
-    "\n  fragment TaskCard_TaskFragment on Task {\n    title\n  }\n": types.TaskCard_TaskFragmentFragmentDoc,
+    "\n  fragment TaskCard_TaskFragment on Task {\n    title\n    subtasks {\n      totalCount\n      completedCount\n    }\n  }\n": types.TaskCard_TaskFragmentFragmentDoc,
 };
 
 /**
@@ -68,7 +68,7 @@ export function graphql(source: "\n  fragment Header_BoardFragment on Board {\n 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment TaskCard_TaskFragment on Task {\n    title\n  }\n"): (typeof documents)["\n  fragment TaskCard_TaskFragment on Task {\n    title\n  }\n"];
+export function graphql(source: "\n  fragment TaskCard_TaskFragment on Task {\n    title\n    subtasks {\n      totalCount\n      completedCount\n    }\n  }\n"): (typeof documents)["\n  fragment TaskCard_TaskFragment on Task {\n    title\n    subtasks {\n      totalCount\n      completedCount\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

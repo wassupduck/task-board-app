@@ -31,11 +31,26 @@ type Query {
   hello: String!
 }
 
+type Subtask {
+  completed: Boolean!
+  createdAt: DateTime!
+  id: ID!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type SubtasksConnection {
+  completedCount: Int!
+  nodes: [Subtask!]!
+  totalCount: Int!
+}
+
 type Task {
   column: BoardColumn!
   createdAt: DateTime!
   description: String!
   id: ID!
+  subtasks: SubtasksConnection!
   title: String!
   updatedAt: DateTime!
 }

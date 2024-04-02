@@ -9,13 +9,8 @@ export function createBoardLoaders(boardService: BoardService): BoardLoaders {
   const boardColumnByIdLoader = new Dataloader(
     async (ids: readonly string[]) => {
       const columns = await boardService.getBoardColumnsByIds(ids as string[]);
-      const columnsById = columns.reduce(
-        (acc, column) => {
-          acc[column.id] = column;
-          return acc;
-        },
-        {} as Record<string, BoardColumn | undefined>,
-      );
+      const columnsById: Partial<Record<string, BoardColumn>> =
+        Object.fromEntries(columns.map((column) => [column.id, column]));
       return ids.map((id) => columnsById[id] ?? null);
     },
   );

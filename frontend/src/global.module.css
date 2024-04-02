@@ -239,6 +239,7 @@
 
         /* TODO: better name? */
         --color-lines-dark: hsl(236deg 11% 27%);
+        --color-lines-dark-100: hsl(236deg 11% 27% / 10%);
         --color-lines-light: hsl(221deg 69% 94%);
 
         /* FONT WEIGHTS */
