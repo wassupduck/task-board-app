@@ -29,6 +29,9 @@ const config = {
       tableName: 'knex_migrations',
       stub: 'migration.stub.js',
     },
+    seeds: {
+      directory: './seeds/dev',
+    },
   },
   production: {
     client: 'pg',

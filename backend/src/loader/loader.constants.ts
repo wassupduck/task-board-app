@@ -1,0 +1,1 @@
+export const LOADERS_FACTORY = 'LOADERS_FACTORY';

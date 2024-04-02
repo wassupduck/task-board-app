@@ -1,0 +1,21 @@
+.wrapper {
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.title {
+    font-size: var(--font-size-heading-small);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-black);
+}
+
+.subtask-summary {
+    font-size: var(--font-size-body-small);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-grey-medium);
+}

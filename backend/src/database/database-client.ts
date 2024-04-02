@@ -42,4 +42,16 @@ export class DatabaseClient {
     }
     return results[0];
   }
+
+  async queryOneOrNone<Params, Result>(
+    query: PreparedQuery<Params, Result>,
+    params: Params,
+  ): Promise<Result | null> {
+    const results = await this.queryAll(query, params);
+    if (results.length > 1) {
+      // TODO: Custom error
+      throw new Error(`Expected 0 or 1 row, found: ${results.length}`);
+    }
+    return results.length ? results[0] : null;
+  }
 }

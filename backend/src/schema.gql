@@ -3,9 +3,20 @@
 # ------------------------------------------------------
 
 type Board {
+  columns: [BoardColumn!]!
   createdAt: DateTime!
   id: ID!
   name: String!
+  tasks: [Task!]!
+  updatedAt: DateTime!
+}
+
+type BoardColumn {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  position: Int!
+  tasks: [Task!]!
   updatedAt: DateTime!
 }
 
@@ -15,6 +26,16 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Query {
+  board(id: ID!): Board
   boards: [Board!]!
   hello: String!
+}
+
+type Task {
+  column: BoardColumn!
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  title: String!
+  updatedAt: DateTime!
 }

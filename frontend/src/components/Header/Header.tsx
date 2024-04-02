@@ -12,7 +12,7 @@ const Header_BoardFragment = graphql(`
 `);
 
 export interface HeaderProps {
-  currentBoard: FragmentType<typeof Header_BoardFragment> | undefined;
+  currentBoard?: FragmentType<typeof Header_BoardFragment>;
 }
 
 export default function Header(props: HeaderProps) {

@@ -5,23 +5,33 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller.js';
 import { AppResolver } from './app.resolver.js';
 import { AppService } from './app.service.js';
-import { DatabaseModule } from './database/database.module.js';
+import { DatabaseModule } from './database/index.js';
 import { AppRepository } from './app.respository.js';
-import { BoardModule } from './board/board.module.js';
+import { BoardModule } from './board/index.js';
+import { TaskModule } from './task/index.js';
+import { LoaderModule, LOADERS_FACTORY, Loaders } from './loader/index.js';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<YogaDriverConfig<'fastify'>>({
+    GraphQLModule.forRootAsync<YogaDriverConfig<'fastify'>>({
       driver: YogaDriver<'fastify'>,
-      path: '/graphql',
-      autoSchemaFile:
-        process.env.NODE_ENV !== 'production'
-          ? path.join(process.cwd(), 'src/schema.gql')
-          : true,
-      sortSchema: true,
+      useFactory: (createLoaders: () => Loaders) => {
+        return {
+          path: '/graphql',
+          autoSchemaFile:
+            process.env.NODE_ENV !== 'production'
+              ? path.join(process.cwd(), 'src/schema.gql')
+              : true,
+          sortSchema: true,
+          context: () => ({ loaders: createLoaders() }),
+        };
+      },
+      inject: [LOADERS_FACTORY],
+      imports: [LoaderModule],
     }),
     DatabaseModule,
     BoardModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppRepository, AppService, AppResolver],

@@ -18,6 +18,14 @@ const allBoardsQuery = graphql(`
   }
 `);
 
+const boardQuery = graphql(`
+  query boardQuery($id: ID!) {
+    board(id: $id) {
+      ...BoardArea_BoardFragment
+    }
+  }
+`);
+
 function App() {
   // Todo: pending and error handling
   const { data } = useQuery({
@@ -50,6 +58,16 @@ function App() {
   const boards = data?.boards ?? [];
   const currentBoard = boards.find((board) => board.id === currentBoardId);
 
+  // Todo: pending and error handling
+  const { data: currentBoardQueryData } = useQuery({
+    queryKey: ["boards", currentBoardId],
+    queryFn: async () =>
+      request(import.meta.env.VITE_BACKEND_GRAPHQL_URL, boardQuery, {
+        id: currentBoardId!,
+      }),
+    enabled: currentBoardId !== undefined,
+  });
+
   return (
     <div className={styles.wrapper}>
       <Header currentBoard={currentBoard} />
@@ -58,7 +76,7 @@ function App() {
         selectedBoardId={currentBoardId}
         onChangeBoard={(boardId) => setCurrentBoardId(boardId)}
       />
-      <BoardArea />
+      <BoardArea board={currentBoardQueryData?.board ?? undefined} />
     </div>
   );
 }
