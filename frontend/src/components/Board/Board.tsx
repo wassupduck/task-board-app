@@ -13,16 +13,24 @@ const Board_BoardFragment = graphql(`
 
 export interface BoardProps {
   board: FragmentType<typeof Board_BoardFragment>;
+  onTaskClick: (taskId: string) => void;
 }
 
 export function Board(props: BoardProps) {
   const board = getFragmentData(Board_BoardFragment, props.board);
+
   return (
-    <div className={styles.board}>
-      {board.columns.map((column) => (
-        <Column key={column.id} column={column} />
-      ))}
-    </div>
+    <>
+      <div className={styles.board}>
+        {board.columns.map((column) => (
+          <Column
+            key={column.id}
+            column={column}
+            onTaskClick={props.onTaskClick}
+          />
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -38,6 +46,7 @@ const Column_BoardColumnFragment = graphql(`
 
 interface ColumnProps {
   column: FragmentType<typeof Column_BoardColumnFragment>;
+  onTaskClick: (taskId: string) => void;
 }
 
 function Column(props: ColumnProps) {
@@ -49,7 +58,11 @@ function Column(props: ColumnProps) {
       </h2>
       <div className={styles.columnTaskList}>
         {column.tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard
+            key={task.id}
+            task={task}
+            onClick={() => props.onTaskClick(task.id)}
+          />
         ))}
       </div>
     </section>

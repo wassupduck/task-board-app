@@ -1,4 +1,4 @@
-import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class SubtasksConnection {
@@ -6,6 +6,5 @@ export class SubtasksConnection {
   totalCount!: number;
   @Field(() => Int)
   completedCount!: number;
-  @HideField()
   taskId!: string;
 }

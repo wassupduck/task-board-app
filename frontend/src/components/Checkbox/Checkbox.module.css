@@ -1,0 +1,12 @@
+.checkbox-root {
+    background-color: var(--color-white);
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    display: grid;
+    place-content: center;
+}
+
+.checkbox-root[data-state="checked"] {
+    background-color: var(--color-primary);
+}

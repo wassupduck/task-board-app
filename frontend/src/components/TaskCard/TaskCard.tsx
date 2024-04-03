@@ -13,12 +13,14 @@ const TaskCard_TaskFragment = graphql(`
 
 interface TaskCardProps {
   task: FragmentType<typeof TaskCard_TaskFragment>;
+  onClick: () => void;
 }
 
 export function TaskCard(props: TaskCardProps) {
   const task = getFragmentData(TaskCard_TaskFragment, props.task);
+
   return (
-    <article className={styles.taskCard}>
+    <article className={styles.taskCard} onClick={props.onClick}>
       <h3 className={styles.title}>{task.title}</h3>
       {task.subtasks.totalCount > 0 && (
         <p className={styles.subtaskSummary}>

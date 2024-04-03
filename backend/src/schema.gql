@@ -20,15 +20,33 @@ type BoardColumn {
   updatedAt: DateTime!
 }
 
+input CreateTaskInput {
+  boardColumnId: ID!
+  description: String
+  title: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
 
+type Mutation {
+  createTask(input: CreateTaskInput!): Task!
+  updateSubtaskCompleted(completed: Boolean!, id: ID!): UpdateSubtaskCompletedMutationResponse!
+  updateTask(id: ID!, input: UpdateTaskInput!): Task!
+}
+
+interface MutationResponse {
+  message: String!
+  success: Boolean!
+}
+
 type Query {
   board(id: ID!): Board
   boards: [Board!]!
   hello: String!
+  task(id: ID!): Task
 }
 
 type Subtask {
@@ -53,4 +71,16 @@ type Task {
   subtasks: SubtasksConnection!
   title: String!
   updatedAt: DateTime!
+}
+
+type UpdateSubtaskCompletedMutationResponse implements MutationResponse {
+  message: String!
+  subtask: Subtask
+  success: Boolean!
+}
+
+input UpdateTaskInput {
+  boardColumnId: ID
+  description: String
+  title: String
 }

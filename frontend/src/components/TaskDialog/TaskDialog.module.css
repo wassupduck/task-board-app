@@ -1,0 +1,89 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--color-black);
+    opacity: 0.4;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 480px;
+    background-color: var(--color-white);
+    padding: 32px;
+    border-radius: 6px;
+}
+
+.content:focus {
+    outline: none;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.title {
+    font-size: var(--font-size-heading-small);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-black);
+}
+
+.description {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-grey-medium);
+}
+
+.section-heading {
+    font-size: var(--font-size-heading-xsmall);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-grey-medium);
+}
+
+.task-actions-button {
+    margin-right: -14px;
+    min-width: 32px;
+    display: grid;
+    place-content: center;
+}
+
+.subtasks-section-heading {
+    margin-bottom: 16px;
+}
+
+.subtask-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.subtask-list-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    background-color: var(--color-grey-light);
+    border-radius: 4px;
+    font-size: var(--font-size-body-small);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+}
+
+.subtask-list-item:hover {
+    background-color: var(--color-primary-250);
+}
+
+.subtask-list-item p.completed {
+    text-decoration: line-through;
+    color: var(--color-grey-medium);
+}
+
+.status-section-heading {
+    margin-bottom: 8px;
+}

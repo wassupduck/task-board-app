@@ -255,8 +255,9 @@
         --font-size-heading-large: 1.5rem;
         --font-size-heading-medium: 1.25rem;
         --font-size-heading-small: 1rem;
+        --font-size-heading-xsmall: 0.85rem;
         --font-size-body-medium: 1rem;
-        --font-size-body-small: 0.75rem;
+        --font-size-body-small: 0.85rem;
     }
 
 

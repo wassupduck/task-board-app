@@ -8,6 +8,10 @@ import { Subtask } from './entities/subtask.entity.js';
 export class TaskService {
   constructor(private readonly taskRepository: TaskRepository) {}
 
+  async getTaskByIdForUser(id: string, userId: string): Promise<Task | null> {
+    return this.taskRepository.getTaskByIdForUser(id, userId);
+  }
+
   async getTasksByBoardId(boardId: string): Promise<Task[]> {
     return this.taskRepository.getTasksByBoardId(boardId);
   }
@@ -24,5 +28,36 @@ export class TaskService {
 
   async getSubtasksByTaskIds(taskIds: string[]): Promise<Subtask[]> {
     return this.taskRepository.getSubtasksByTaskIds(taskIds);
+  }
+
+  async updateSubtaskCompletedByIdForUser(
+    id: string,
+    completed: boolean,
+    userId: string,
+  ): Promise<Subtask> {
+    return this.taskRepository.updateSubtaskCompletedByIdForUser(
+      id,
+      completed,
+      userId,
+    );
+  }
+
+  async createTask(
+    task: Pick<Task, 'title' | 'boardColumnId'> & {
+      description?: Task['description'];
+    },
+  ): Promise<Task> {
+    // TODO: Check user owns board column.
+    return this.taskRepository.createTask(task);
+  }
+
+  async updateTask(
+    id: string,
+    fieldsToUpdate: Partial<
+      Pick<Task, 'title' | 'description' | 'boardColumnId'>
+    >,
+  ): Promise<Task> {
+    // TODO: Check user owns board column.
+    return this.taskRepository.updateTask(id, fieldsToUpdate);
   }
 }

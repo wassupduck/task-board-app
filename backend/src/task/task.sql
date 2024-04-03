@@ -1,3 +1,11 @@
+/* @name selectTaskByIdForUser */
+SELECT task.*
+FROM task
+INNER JOIN board_column ON board_column.id = task.board_column_id
+INNER JOIN board ON board.id = board_column.board_id
+WHERE task.id = :id!
+AND board.app_user_id = :userId!;
+
 /* @name selectTasksByBoardId */
 SELECT task.*
 FROM task
@@ -31,4 +39,37 @@ GROUP BY task.id;
 */
 SELECT *
 FROM subtask
-WHERE task_id IN :taskIds!;
+WHERE task_id IN :taskIds!
+ORDER BY task_id, created_at, id;
+
+/* @name updateSubtaskCompletedByIdForUser */
+UPDATE subtask
+SET completed = :completed!
+WHERE id = (
+    SELECT subtask.id
+    FROM subtask
+    INNER JOIN task ON task.id = subtask.task_id
+    INNER JOIN board_column ON board_column.id = task.board_column_id
+    INNER JOIN board ON board.id = board_column.board_id
+    WHERE subtask.id = :id!
+    AND board.app_user_id = :userId!
+)
+RETURNING *;
+
+/* 
+    @name insertTask 
+    @param task -> (title!, description!, boardColumnId!)
+*/
+INSERT INTO task(title, description, board_column_id)
+VALUES :task
+RETURNING *;
+
+/*
+    @name updateTask
+*/
+UPDATE task SET
+    title = COALESCE(:title, title),
+    description = COALESCE(:description, description),
+    board_column_id = COALESCE(:boardColumnId, board_column_id)
+WHERE id = :id!
+RETURNING *;
