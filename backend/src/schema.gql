@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 type Board {
-  columns: [BoardColumn!]!
+  columns: BoardColumnsConnection!
   createdAt: DateTime!
   id: ID!
   name: String!
@@ -18,6 +18,11 @@ type BoardColumn {
   position: Int!
   tasks: [Task!]!
   updatedAt: DateTime!
+}
+
+type BoardColumnsConnection {
+  nodes: [BoardColumn!]!
+  totalCount: Int!
 }
 
 input CreateTaskInput {
@@ -57,20 +62,20 @@ type Subtask {
   updatedAt: DateTime!
 }
 
-type SubtasksConnection {
-  completedCount: Int!
-  nodes: [Subtask!]!
-  totalCount: Int!
-}
-
 type Task {
   column: BoardColumn!
   createdAt: DateTime!
   description: String!
   id: ID!
-  subtasks: SubtasksConnection!
+  subtasks: TaskSubtasksConnection!
   title: String!
   updatedAt: DateTime!
+}
+
+type TaskSubtasksConnection {
+  completedCount: Int!
+  nodes: [Subtask!]!
+  totalCount: Int!
 }
 
 type UpdateSubtaskCompletedMutationResponse implements MutationResponse {

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BoardRepository } from './board.repository.js';
 import { Board } from './entities/board.entity.js';
 import { BoardColumn } from './entities/board-column.entity.js';
+import { BoardColumnsConnection } from './entities/board-columns-connection.entity.js';
 
 @Injectable()
 export class BoardService {
@@ -21,5 +22,11 @@ export class BoardService {
 
   async getBoardColumnsByIds(ids: string[]): Promise<BoardColumn[]> {
     return this.boardRepository.getBoardColumnsByIds(ids);
+  }
+
+  async getBoardColumnsConnection(
+    boardId: string,
+  ): Promise<BoardColumnsConnection> {
+    return this.boardRepository.getBoardColumnsConnection(boardId);
   }
 }

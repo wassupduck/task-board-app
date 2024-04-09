@@ -1,7 +1,7 @@
 /// <reference types="vite-plugin-svgr/client" />
 import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react";
 import * as Dialog from "@radix-ui/react-dialog";
-import styles from "./TaskDialog.module.css";
+import styles from "./TaskViewModal.module.css";
 import VisuallyHidden from "../VisuallyHidden";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -49,23 +49,25 @@ const updateTaskColumnMutationDocument = graphql(`
   }
 `);
 
-const TaskDialog_BoardFragment = graphql(`
-  fragment TaskDialog_BoardFragment on Board {
+const TaskViewModal_BoardFragment = graphql(`
+  fragment TaskViewModal_BoardFragment on Board {
     columns {
-      ...TaskColumnSelect_BoardColumnFragment
+      nodes {
+        ...TaskColumnSelect_BoardColumnFragment
+      }
     }
   }
 `);
 
-interface TaskDialogProps {
-  board: FragmentType<typeof TaskDialog_BoardFragment>;
+interface TaskViewModalProps {
+  board: FragmentType<typeof TaskViewModal_BoardFragment>;
   taskId: string;
   onClose: () => void;
   onTaskUpdate: () => void;
 }
 
-export default function TaskDialog(props: TaskDialogProps) {
-  const board = getFragmentData(TaskDialog_BoardFragment, props.board);
+export default function TaskViewModal(props: TaskViewModalProps) {
+  const board = getFragmentData(TaskViewModal_BoardFragment, props.board);
 
   const taskQuery = useQuery({
     queryKey: taskQueryKey(props.taskId),
@@ -184,7 +186,7 @@ export default function TaskDialog(props: TaskDialogProps) {
           </h4>
           <TaskColumnSelect
             selectedColumnId={task.column.id}
-            boardColumns={board.columns}
+            boardColumns={board.columns.nodes}
             onColumnChange={(boardColumnId) =>
               updateTaskColumnMutation.mutate({
                 id: props.taskId,

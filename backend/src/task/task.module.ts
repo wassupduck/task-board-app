@@ -4,14 +4,14 @@ import { TaskRepository } from './task.repository.js';
 import { TaskResolver } from './task.resolver.js';
 import { taskLoadersFactoryProvider } from './task.loaders.js';
 import { TASK_LOADERS_FACTORY } from './task.constants.js';
-import { SubtasksConnectionResolver } from './subtasks-connection.resolver.js';
+import { TaskSubtasksConnectionResolver } from './task-subtasks-connection.resolver.js';
 
 @Module({
   providers: [
     TaskService,
     TaskRepository,
     TaskResolver,
-    SubtasksConnectionResolver,
+    TaskSubtasksConnectionResolver,
     taskLoadersFactoryProvider,
   ],
   exports: [TaskService, TASK_LOADERS_FACTORY],

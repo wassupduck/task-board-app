@@ -6,8 +6,10 @@ import {
   selectBoardByIdForUser,
   selectBoardColumnsByBoardId,
   selectBoardColumnsByIds,
+  selectBoardColumnsConnection,
 } from './board.queries.js';
 import { BoardColumn } from './entities/board-column.entity.js';
+import { BoardColumnsConnection } from './entities/board-columns-connection.entity.js';
 
 @Injectable()
 export class BoardRepository {
@@ -27,5 +29,11 @@ export class BoardRepository {
 
   async getBoardColumnsByIds(ids: string[]): Promise<BoardColumn[]> {
     return this.db.queryAll(selectBoardColumnsByIds, { ids });
+  }
+
+  async getBoardColumnsConnection(
+    boardId: string,
+  ): Promise<BoardColumnsConnection> {
+    return this.db.queryOne(selectBoardColumnsConnection, { boardId });
   }
 }

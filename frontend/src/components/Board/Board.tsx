@@ -5,8 +5,10 @@ import styles from "./Board.module.css";
 const Board_BoardFragment = graphql(`
   fragment Board_BoardFragment on Board {
     columns {
-      id
-      ...Column_BoardColumnFragment
+      nodes {
+        id
+        ...Column_BoardColumnFragment
+      }
     }
   }
 `);
@@ -22,7 +24,7 @@ export function Board(props: BoardProps) {
   return (
     <>
       <div className={styles.board}>
-        {board.columns.map((column) => (
+        {board.columns.nodes.map((column) => (
           <Column
             key={column.id}
             column={column}

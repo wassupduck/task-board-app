@@ -11,7 +11,7 @@ import {
   updateTask,
 } from './task.queries.js';
 import { Task } from './entities/task.entity.js';
-import { SubtasksConnection } from './entities/subtasks-connection.entity.js';
+import { TaskSubtasksConnection } from './entities/task-subtasks-connection.entity.js';
 import { Subtask } from './entities/subtask.entity.js';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class TaskRepository {
 
   async getSubtasksConnectionsByTaskIds(
     taskIds: string[],
-  ): Promise<SubtasksConnection[]> {
+  ): Promise<TaskSubtasksConnection[]> {
     return this.db.queryAll(selectSubtasksConnectionsByTaskIds, { taskIds });
   }
 

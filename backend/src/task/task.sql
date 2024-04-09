@@ -26,8 +26,8 @@ WHERE task.board_column_id IN :columnIds!;
 */
 SELECT
     task.id AS task_id,
-    count(subtask.task_id)::integer AS "total_count!",
-    (count(subtask.task_id) FILTER (WHERE subtask.completed IS true))::integer AS "completed_count!"
+    count(subtask.id)::integer AS "total_count!",
+    (count(subtask.id) FILTER (WHERE subtask.completed IS true))::integer AS "completed_count!"
 FROM task
 LEFT JOIN subtask ON subtask.task_id = task.id
 WHERE task.id IN :taskIds!

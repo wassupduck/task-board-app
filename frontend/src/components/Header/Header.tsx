@@ -8,6 +8,9 @@ import { FragmentType, getFragmentData, graphql } from "../../gql";
 const Header_BoardFragment = graphql(`
   fragment Header_BoardFragment on Board {
     name
+    columns {
+      totalCount
+    }
   }
 `);
 
@@ -27,7 +30,9 @@ export default function Header(props: HeaderProps) {
         <h2 className={styles.heading}>{currentBoard?.name}</h2>
         {currentBoard && (
           <div className={styles.buttonGroup}>
-            <Button disabled>Add New Task</Button>
+            <Button disabled={currentBoard.columns.totalCount === 0}>
+              Add New Task
+            </Button>
             <button className={styles.boardActionsButton}>
               <VerticalEllipsisIcon />
             </button>

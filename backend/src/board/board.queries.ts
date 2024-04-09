@@ -141,3 +141,37 @@ const selectBoardColumnsByIdsIR: any = {"usedParamSet":{"ids":true},"params":[{"
 export const selectBoardColumnsByIds = new PreparedQuery<ISelectBoardColumnsByIdsParams,ISelectBoardColumnsByIdsResult>(selectBoardColumnsByIdsIR);
 
 
+/** 'SelectBoardColumnsConnection' parameters type */
+export interface ISelectBoardColumnsConnectionParams {
+  boardId: NumberOrString;
+}
+
+/** 'SelectBoardColumnsConnection' return type */
+export interface ISelectBoardColumnsConnectionResult {
+  boardId: string;
+  totalCount: number;
+}
+
+/** 'SelectBoardColumnsConnection' query type */
+export interface ISelectBoardColumnsConnectionQuery {
+  params: ISelectBoardColumnsConnectionParams;
+  result: ISelectBoardColumnsConnectionResult;
+}
+
+const selectBoardColumnsConnectionIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":177,"b":185}]}],"statement":"SELECT\n    board.id AS \"board_id!\",\n    count(board_column.id)::integer AS \"total_count!\"\nFROM board\nLEFT JOIN board_column ON board_column.board_id = board.id\nWHERE board.id = :boardId!\nGROUP BY board.id"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT
+ *     board.id AS "board_id!",
+ *     count(board_column.id)::integer AS "total_count!"
+ * FROM board
+ * LEFT JOIN board_column ON board_column.board_id = board.id
+ * WHERE board.id = :boardId!
+ * GROUP BY board.id
+ * ```
+ */
+export const selectBoardColumnsConnection = new PreparedQuery<ISelectBoardColumnsConnectionParams,ISelectBoardColumnsConnectionResult>(selectBoardColumnsConnectionIR);
+
+

@@ -1,6 +1,5 @@
 import {
   Args,
-  Context,
   ID,
   Parent,
   Query,
@@ -9,9 +8,8 @@ import {
 } from '@nestjs/graphql';
 import { BoardService } from './board.service.js';
 import { Board } from './entities/board.entity.js';
-import { BoardColumn } from './entities/board-column.entity.js';
 import { Task, TaskService } from '../task/index.js';
-import { Loaders } from 'src/loader/loaders.interface.js';
+import { BoardColumnsConnection } from './entities/board-columns-connection.entity.js';
 
 @Resolver(Board)
 export class BoardResolver {
@@ -34,16 +32,9 @@ export class BoardResolver {
     return this.boardService.getBoardByIdForUser(id, userId);
   }
 
-  @ResolveField(() => [BoardColumn])
-  async columns(
-    @Parent() board: Board,
-    @Context('loaders') { boardLoaders }: Loaders,
-  ): Promise<BoardColumn[]> {
-    const columns = await this.boardService.getBoardColumns(board.id);
-    columns.forEach((column) =>
-      boardLoaders.boardColumnByIdLoader.prime(column.id, column),
-    );
-    return columns;
+  @ResolveField(() => BoardColumnsConnection)
+  async columns(@Parent() board: Board): Promise<BoardColumnsConnection> {
+    return this.boardService.getBoardColumnsConnection(board.id);
   }
 
   @ResolveField(() => [Task])

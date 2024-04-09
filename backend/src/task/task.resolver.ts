@@ -11,7 +11,7 @@ import {
 import { Task } from './entities/task.entity.js';
 import { BoardColumn } from '../board/index.js';
 import { Loaders } from '../loader/index.js';
-import { SubtasksConnection } from './entities/subtasks-connection.entity.js';
+import { TaskSubtasksConnection } from './entities/task-subtasks-connection.entity.js';
 import { TaskService } from './task.service.js';
 import { UpdateSubtaskCompletedMutationResponse } from './dto/update-subtask-completed-mutation-response.js';
 import { CreateTaskInput } from './dto/create-task.input.js';
@@ -42,12 +42,12 @@ export class TaskResolver {
     return column;
   }
 
-  @ResolveField(() => SubtasksConnection)
+  @ResolveField(() => TaskSubtasksConnection)
   async subtasks(
     @Parent() task: Task,
     @Context('loaders') { taskLoaders }: Loaders,
-  ): Promise<SubtasksConnection> {
-    return taskLoaders.subtasksConnectionLoader.load(task.id);
+  ): Promise<TaskSubtasksConnection> {
+    return taskLoaders.taskSubtasksConnectionLoader.load(task.id);
   }
 
   @Mutation(() => Task)

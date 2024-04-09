@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import request from "graphql-request";
 import styles from "./App.module.css";
@@ -8,47 +8,77 @@ import Sidebar from "../Sidebar";
 import { graphql } from "../../gql";
 import { AllBoardsQueryQuery } from "../../gql/graphql";
 
+const allBoardsQueryKey = ["boards"] as const;
+
 const allBoardsQuery = graphql(`
   query AllBoardsQuery {
     boards {
       id
       ...BoardList_BoardFragment
+    }
+  }
+`);
+
+const boardQueryKey = (boardId: string) => ["boards", boardId] as const;
+
+const boardQuery = graphql(`
+  query BoardQuery($id: ID!) {
+    board(id: $id) {
+      id
       ...Header_BoardFragment
+      ...BoardArea_BoardFragment
     }
   }
 `);
 
 function App() {
+  const queryClient = useQueryClient();
+
   // Todo: pending and error handling
-  const { data } = useQuery({
-    queryKey: ["boards"],
+  const { data: allBoardsQueryData } = useQuery({
+    queryKey: allBoardsQueryKey,
     queryFn: async () =>
       request(import.meta.env.VITE_BACKEND_GRAPHQL_URL, allBoardsQuery),
   });
+
   const [currentBoardId, setCurrentBoardId] = useState<string | undefined>(
     undefined
   );
-
   // Update currentBoardId state while rendering to skip rendering of stale state
-  const [prevData, setPrevData] = useState<AllBoardsQueryQuery | undefined>(
-    undefined
-  );
-  if (data !== prevData) {
-    setPrevData(data);
-    if (data === undefined || data.boards.length === 0) {
+  const [prevAllBoardsQueryData, setPrevAllBoardsQueryData] = useState<
+    AllBoardsQueryQuery | undefined
+  >(undefined);
+  if (allBoardsQueryData !== prevAllBoardsQueryData) {
+    setPrevAllBoardsQueryData(allBoardsQueryData);
+    if (
+      allBoardsQueryData === undefined ||
+      allBoardsQueryData.boards.length === 0
+    ) {
       setCurrentBoardId(undefined);
     } else {
       if (
         currentBoardId === undefined ||
-        data.boards.findIndex((board) => board.id === currentBoardId) < 0
+        allBoardsQueryData.boards.findIndex(
+          (board) => board.id === currentBoardId
+        ) < 0
       ) {
-        setCurrentBoardId(data.boards[0].id);
+        setCurrentBoardId(allBoardsQueryData.boards[0].id);
       }
     }
   }
 
-  const boards = data?.boards ?? [];
-  const currentBoard = boards.find((board) => board.id === currentBoardId);
+  // TODO: pending and error handling
+  const { data: currentBoardQueryData } = useQuery({
+    queryKey: boardQueryKey(currentBoardId!),
+    queryFn: async () =>
+      request(import.meta.env.VITE_BACKEND_GRAPHQL_URL, boardQuery, {
+        id: currentBoardId!,
+      }),
+    enabled: currentBoardId !== undefined,
+  });
+
+  const boards = allBoardsQueryData?.boards ?? [];
+  const currentBoard = currentBoardQueryData?.board ?? undefined;
 
   return (
     <div className={styles.wrapper}>
@@ -58,7 +88,15 @@ function App() {
         selectedBoardId={currentBoardId}
         onChangeBoard={(boardId) => setCurrentBoardId(boardId)}
       />
-      <BoardArea currentBoardId={currentBoardId} />
+      <BoardArea
+        currentBoard={currentBoard}
+        invalidateBoardQuery={() =>
+          currentBoard &&
+          queryClient.invalidateQueries({
+            queryKey: boardQueryKey(currentBoard.id),
+          })
+        }
+      />
     </div>
   );
 }

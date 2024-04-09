@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class SubtasksConnection {
+export class TaskSubtasksConnection {
   @Field(() => Int)
   totalCount!: number;
   @Field(() => Int)

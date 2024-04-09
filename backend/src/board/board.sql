@@ -23,3 +23,12 @@ ORDER BY position ASC;
 SELECT *
 FROM board_column
 WHERE id in :ids!;
+
+/* @name selectBoardColumnsConnection */
+SELECT
+    board.id AS "board_id!",
+    count(board_column.id)::integer AS "total_count!"
+FROM board
+LEFT JOIN board_column ON board_column.board_id = board.id
+WHERE board.id = :boardId!
+GROUP BY board.id;
