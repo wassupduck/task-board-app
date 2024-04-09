@@ -1,6 +1,5 @@
 /// <reference types="vite-plugin-svgr/client" />
 import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react";
-import * as Dialog from "@radix-ui/react-dialog";
 import styles from "./TaskViewModal.module.css";
 import VisuallyHidden from "../VisuallyHidden";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
@@ -9,6 +8,7 @@ import request from "graphql-request";
 import clsx from "clsx";
 import Checkbox from "../Checkbox";
 import Select from "../Select";
+import Modal from "../Modal";
 
 const taskQueryKey = (taskId: string) => ["tasks", taskId] as const;
 
@@ -144,10 +144,7 @@ export default function TaskViewModal(props: TaskViewModalProps) {
     content = (
       <>
         <VisuallyHidden>
-          <Dialog.Title>Todo</Dialog.Title>
-        </VisuallyHidden>
-        <VisuallyHidden>
-          <Dialog.Description>Todo</Dialog.Description>
+          <Modal.Title>Todo</Modal.Title>
         </VisuallyHidden>
         <header className={styles.header}>
           <h3 className={styles.title}>{task.title}</h3>
@@ -200,16 +197,9 @@ export default function TaskViewModal(props: TaskViewModalProps) {
   }
 
   return (
-    <Dialog.Root open={true} onOpenChange={props.onClose}>
-      <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        {content && (
-          <Dialog.Content asChild={true}>
-            <article className={styles.content}>{content}</article>
-          </Dialog.Content>
-        )}
-      </Dialog.Portal>
-    </Dialog.Root>
+    <Modal onClose={props.onClose}>
+      {content && <article className={styles.content}>{content}</article>}
+    </Modal>
   );
 }
 
