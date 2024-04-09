@@ -143,44 +143,32 @@ export default function TaskViewModal(props: TaskViewModalProps) {
     const task = taskQuery.data.task;
     content = (
       <>
-        <VisuallyHidden>
-          <Modal.Title>Todo</Modal.Title>
-        </VisuallyHidden>
         <header className={styles.header}>
-          <h3 className={styles.title}>{task.title}</h3>
+          <Modal.Title>{task.title}</Modal.Title>
           <button className={styles.taskActionsButton}>
             <VerticalEllipsisIcon />
             <VisuallyHidden>Task actions</VisuallyHidden>
           </button>
         </header>
         {task.description.length > 0 && (
-          <p className={styles.description}>{task.description}</p>
+          <Modal.Description>{task.description}</Modal.Description>
         )}
         {task.subtasks.totalCount > 0 && (
-          <section>
-            <h4
-              className={clsx(
-                styles.sectionHeading,
-                styles.subtasksSectionHeading
-              )}
-            >
+          <Modal.Section>
+            <Modal.SectionHeading>
               Subtasks ({task.subtasks.completedCount} of{" "}
               {task.subtasks.totalCount})
-            </h4>
+            </Modal.SectionHeading>
             <SubtasksList
               subtasks={task.subtasks.nodes}
               onSubtaskCompletedChange={(subtaskId, completed) =>
                 updateSubtaskCompletedMutation.mutate({ subtaskId, completed })
               }
             />
-          </section>
+          </Modal.Section>
         )}
-        <section>
-          <h4
-            className={clsx(styles.sectionHeading, styles.statusSectionHeading)}
-          >
-            Current Status
-          </h4>
+        <Modal.Section>
+          <Modal.SectionHeading>Current Status</Modal.SectionHeading>
           <TaskColumnSelect
             selectedColumnId={task.column.id}
             boardColumns={board.columns.nodes}
@@ -191,16 +179,12 @@ export default function TaskViewModal(props: TaskViewModalProps) {
               })
             }
           />
-        </section>
+        </Modal.Section>
       </>
     );
   }
 
-  return (
-    <Modal onClose={props.onClose}>
-      {content && <article className={styles.content}>{content}</article>}
-    </Modal>
-  );
+  return <Modal onClose={props.onClose}>{content}</Modal>;
 }
 
 const SubtaskList_SubtaskFragment = graphql(`

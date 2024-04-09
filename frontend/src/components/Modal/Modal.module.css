@@ -5,7 +5,7 @@
     opacity: 0.4;
 }
 
-.content {
+.modal {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -14,4 +14,27 @@
     background-color: var(--color-white);
     padding: 32px;
     border-radius: 6px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.title {
+    font-size: var(--font-size-heading-small);
+    font-weight: var(--font-weight-bold);
+}
+
+.description {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-grey-medium);
+}
+
+.section-heading {
+    font-size: var(--font-size-heading-xsmall);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-grey-medium);
+    margin-bottom: 8px;
 }
