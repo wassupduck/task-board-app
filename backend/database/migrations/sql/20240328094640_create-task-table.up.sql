@@ -10,7 +10,7 @@ create table if not exists task (
 
 create index if not exists task_board_column_id_idx on task(board_column_id);
 
-create trigger task_set_updated_at_trigger
+create or replace trigger task_set_updated_at_trigger
 before update on task
 for each row
 execute procedure set_updated_at();

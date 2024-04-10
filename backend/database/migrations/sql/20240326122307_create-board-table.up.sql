@@ -9,7 +9,7 @@ create table if not exists board (
 
 create unique index if not exists board_app_user_id_name_unique_idx on board(app_user_id, name);
 
-create trigger board_set_updated_at_trigger
+create or replace trigger board_set_updated_at_trigger
 before update on board
 for each row
 execute procedure set_updated_at();

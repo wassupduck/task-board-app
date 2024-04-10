@@ -4,7 +4,7 @@ create table if not exists app_user (
   updated_at  timestamptz not null default current_timestamp
 );
 
-create trigger app_user_set_updated_at_trigger
+create or replace trigger app_user_set_updated_at_trigger
 before update on app_user
 for each row
 execute procedure set_updated_at();

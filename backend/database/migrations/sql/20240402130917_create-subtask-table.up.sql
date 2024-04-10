@@ -10,7 +10,7 @@ create table if not exists subtask (
 
 create unique index if not exists subtask_task_id_title_unique_idx on subtask(task_id, title);
 
-create trigger subtask_set_updated_at_trigger
+create or replace trigger subtask_set_updated_at_trigger
 before update on subtask
 for each row
 execute procedure set_updated_at();
