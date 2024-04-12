@@ -32,3 +32,19 @@ FROM board
 LEFT JOIN board_column ON board_column.board_id = board.id
 WHERE board.id = :boardId!
 GROUP BY board.id;
+
+/*
+    @name insertBoard 
+    @param board -> (name, userId)
+*/
+INSERT INTO board(name, app_user_id)
+VALUES :board!
+RETURNING *;
+
+/* 
+    @name insertBoardColumns
+    @param columns -> ((name, position, boardId)...)
+*/
+INSERT INTO board_column(name, position, board_id)
+VALUES :columns!
+RETURNING *;

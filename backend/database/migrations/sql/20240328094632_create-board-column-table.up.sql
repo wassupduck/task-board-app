@@ -10,6 +10,7 @@ create table if not exists board_column (
 );
 
 create unique index if not exists board_column_board_id_name_unique_idx on board_column(board_id, name);
+create unique index if not exists board_column_board_id_position_unique_idx on board_column(board_id, position);
 
 create or replace trigger board_column_set_updated_at_trigger
 before update on board_column

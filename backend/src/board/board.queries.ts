@@ -175,3 +175,77 @@ const selectBoardColumnsConnectionIR: any = {"usedParamSet":{"boardId":true},"pa
 export const selectBoardColumnsConnection = new PreparedQuery<ISelectBoardColumnsConnectionParams,ISelectBoardColumnsConnectionResult>(selectBoardColumnsConnectionIR);
 
 
+/** 'InsertBoard' parameters type */
+export interface IInsertBoardParams {
+  board: {
+    name: string | null | void,
+    userId: NumberOrString | null | void
+  };
+}
+
+/** 'InsertBoard' return type */
+export interface IInsertBoardResult {
+  appUserId: string;
+  createdAt: Date;
+  id: string;
+  name: string;
+  updatedAt: Date;
+}
+
+/** 'InsertBoard' query type */
+export interface IInsertBoardQuery {
+  params: IInsertBoardParams;
+  result: IInsertBoardResult;
+}
+
+const insertBoardIR: any = {"usedParamSet":{"board":true},"params":[{"name":"board","required":true,"transform":{"type":"pick_tuple","keys":[{"name":"name","required":false},{"name":"userId","required":false}]},"locs":[{"a":44,"b":50}]}],"statement":"INSERT INTO board(name, app_user_id)\nVALUES :board!\nRETURNING *"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * INSERT INTO board(name, app_user_id)
+ * VALUES :board!
+ * RETURNING *
+ * ```
+ */
+export const insertBoard = new PreparedQuery<IInsertBoardParams,IInsertBoardResult>(insertBoardIR);
+
+
+/** 'InsertBoardColumns' parameters type */
+export interface IInsertBoardColumnsParams {
+  columns: readonly ({
+    name: string | null | void,
+    position: number | null | void,
+    boardId: NumberOrString | null | void
+  })[];
+}
+
+/** 'InsertBoardColumns' return type */
+export interface IInsertBoardColumnsResult {
+  boardId: string;
+  createdAt: Date;
+  id: string;
+  name: string;
+  position: number;
+  updatedAt: Date;
+}
+
+/** 'InsertBoardColumns' query type */
+export interface IInsertBoardColumnsQuery {
+  params: IInsertBoardColumnsParams;
+  result: IInsertBoardColumnsResult;
+}
+
+const insertBoardColumnsIR: any = {"usedParamSet":{"columns":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"name","required":false},{"name":"position","required":false},{"name":"boardId","required":false}]},"locs":[{"a":58,"b":66}]}],"statement":"INSERT INTO board_column(name, position, board_id)\nVALUES :columns!\nRETURNING *"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * INSERT INTO board_column(name, position, board_id)
+ * VALUES :columns!
+ * RETURNING *
+ * ```
+ */
+export const insertBoardColumns = new PreparedQuery<IInsertBoardColumnsParams,IInsertBoardColumnsResult>(insertBoardColumnsIR);
+
+

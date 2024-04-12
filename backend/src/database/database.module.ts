@@ -3,10 +3,11 @@ import { DatabaseClient } from './database-client.js';
 import { pgPoolProvider } from './database.providers.js';
 import type { Pool } from 'pg';
 import { PG_POOL } from './database.constants.js';
+import { TransactionManager } from './transaction-manager.js';
 
 @Global()
 @Module({
-  providers: [DatabaseClient, pgPoolProvider],
+  providers: [DatabaseClient, TransactionManager, pgPoolProvider],
   exports: [DatabaseClient],
 })
 export class DatabaseModule implements OnApplicationShutdown {

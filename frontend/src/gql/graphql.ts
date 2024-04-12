@@ -44,17 +44,53 @@ export type BoardColumnsConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
+export type BoardNameConflictError = ErrorResponse & {
+  __typename?: 'BoardNameConflictError';
+  message: Scalars['String']['output'];
+};
+
+export type CreateBoardInput = {
+  columns?: InputMaybe<Array<CreateBoardInputColumnInput>>;
+  name: Scalars['String']['input'];
+};
+
+export type CreateBoardInputColumnInput = {
+  name: Scalars['String']['input'];
+};
+
+export type CreateBoardResponse = BoardNameConflictError | CreateBoardSuccess | InvalidInputError;
+
+export type CreateBoardSuccess = {
+  __typename?: 'CreateBoardSuccess';
+  board: Board;
+};
+
 export type CreateTaskInput = {
   boardColumnId: Scalars['ID']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   title: Scalars['String']['input'];
 };
 
+export type ErrorResponse = {
+  message: Scalars['String']['output'];
+};
+
+export type InvalidInputError = ErrorResponse & {
+  __typename?: 'InvalidInputError';
+  message: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createBoard: CreateBoardResponse;
   createTask: Task;
   updateSubtaskCompleted: UpdateSubtaskCompletedMutationResponse;
   updateTask: Task;
+};
+
+
+export type MutationCreateBoardArgs = {
+  input: CreateBoardInput;
 };
 
 

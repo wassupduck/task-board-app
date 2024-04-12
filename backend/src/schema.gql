@@ -25,6 +25,25 @@ type BoardColumnsConnection {
   totalCount: Int!
 }
 
+type BoardNameConflictError implements ErrorResponse {
+  message: String!
+}
+
+input CreateBoardInput {
+  columns: [CreateBoardInputColumnInput!]
+  name: String!
+}
+
+input CreateBoardInputColumnInput {
+  name: String!
+}
+
+union CreateBoardResponse = BoardNameConflictError | CreateBoardSuccess | InvalidInputError
+
+type CreateBoardSuccess {
+  board: Board!
+}
+
 input CreateTaskInput {
   boardColumnId: ID!
   description: String
@@ -36,7 +55,16 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+interface ErrorResponse {
+  message: String!
+}
+
+type InvalidInputError implements ErrorResponse {
+  message: String!
+}
+
 type Mutation {
+  createBoard(input: CreateBoardInput!): CreateBoardResponse!
   createTask(input: CreateTaskInput!): Task!
   updateSubtaskCompleted(completed: Boolean!, id: ID!): UpdateSubtaskCompletedMutationResponse!
   updateTask(id: ID!, input: UpdateTaskInput!): Task!

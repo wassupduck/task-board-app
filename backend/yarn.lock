@@ -3166,6 +3166,11 @@ dataloader@^2.2.2:
   resolved "https://registry.yarnpkg.com/dataloader/-/dataloader-2.2.2.tgz#216dc509b5abe39d43a9b9d97e6e5e473dfbe3e0"
   integrity sha512-8YnDaaf7N3k/q5HnTJVuzSyLETjoZjVmHc4AeKAzOvKHEFQKcn64OKBfzHYtE9zGjctNM7V9I0MfnUVLpi7M5g==
 
+db-errors@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/db-errors/-/db-errors-0.2.3.tgz#a6a38952e00b20e790f2695a6446b3c65497ffa2"
+  integrity sha512-OOgqgDuCavHXjYSJoV2yGhv6SeG8nk42aoCSoyXLZUH7VwFG27rxbavU1z+VrZbZjphw5UkDQwUlD21MwZpUng==
+
 debug@4.3.4, debug@^4.0.0, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4:
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
@@ -6503,3 +6508,8 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zod@^3.22.4:
+  version "3.22.4"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
+  integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==

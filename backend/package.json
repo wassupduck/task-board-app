@@ -36,12 +36,14 @@
     "@nestjs/platform-fastify": "^10.3.3",
     "@pgtyped/runtime": "^2.3.0",
     "dataloader": "^2.2.2",
+    "db-errors": "^0.2.3",
     "graphql": "^16.8.1",
     "graphql-yoga": "^5.2.0",
     "knex": "^3.1.0",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
