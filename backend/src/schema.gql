@@ -20,6 +20,10 @@ type BoardColumn {
   updatedAt: DateTime!
 }
 
+type BoardColumnNameConflictError implements ErrorResponse {
+  message: String!
+}
+
 type BoardColumnsConnection {
   nodes: [BoardColumn!]!
   totalCount: Int!
@@ -30,12 +34,7 @@ type BoardNameConflictError implements ErrorResponse {
 }
 
 input CreateBoardInput {
-  columns: [CreateBoardInputColumnInput!]
-  name: String!
-}
-
-input CreateBoardInputColumnInput {
-  name: String!
+  board: NewBoardInput!
 }
 
 union CreateBoardResponse = BoardNameConflictError | CreateBoardSuccess | InvalidInputError
@@ -66,6 +65,8 @@ type InvalidInputError implements ErrorResponse {
 type Mutation {
   createBoard(input: CreateBoardInput!): CreateBoardResponse!
   createTask(input: CreateTaskInput!): Task!
+  updateBoard(input: UpdateBoardInput!): UpdateBoardResponse!
+  updateBoardColumns(input: UpdateBoardColumnsInput!): UpdateBoardColumnsResponse!
   updateSubtaskCompleted(completed: Boolean!, id: ID!): UpdateSubtaskCompletedMutationResponse!
   updateTask(id: ID!, input: UpdateTaskInput!): Task!
 }
@@ -73,6 +74,19 @@ type Mutation {
 interface MutationResponse {
   message: String!
   success: Boolean!
+}
+
+input NewBoardColumnInput {
+  name: String!
+}
+
+input NewBoardInput {
+  columns: [NewBoardColumnInput!]
+  name: String!
+}
+
+type NotFoundError implements ErrorResponse {
+  message: String!
 }
 
 type Query {
@@ -104,6 +118,57 @@ type TaskSubtasksConnection {
   completedCount: Int!
   nodes: [Subtask!]!
   totalCount: Int!
+}
+
+input UpdateBoardColumnInput {
+  id: ID!
+  patch: UpdateBoardColumnPatchInput!
+}
+
+input UpdateBoardColumnPatchInput {
+  name: String
+}
+
+input UpdateBoardColumnsInput {
+  boardId: ID!
+  patch: UpdateBoardColumnsPatchInput!
+}
+
+input UpdateBoardColumnsPatchAdditionInput {
+  column: NewBoardColumnInput!
+
+  """
+  Alias for the ID of the created column. Can be referenced in the "UpdateBoardColumnsPatchInput.columnOrder" array to add and order columns in a single request.
+  """
+  idAlias: ID
+}
+
+input UpdateBoardColumnsPatchInput {
+  additions: [UpdateBoardColumnsPatchAdditionInput!]
+  columnOrder: [ID!]
+  deletions: [ID!]
+  updates: [UpdateBoardColumnInput!]
+}
+
+union UpdateBoardColumnsResponse = BoardColumnNameConflictError | InvalidInputError | NotFoundError | UpdateBoardColumnsSuccess
+
+type UpdateBoardColumnsSuccess {
+  board: Board!
+}
+
+input UpdateBoardInput {
+  id: ID!
+  patch: UpdateBoardPatchInput!
+}
+
+input UpdateBoardPatchInput {
+  name: String
+}
+
+union UpdateBoardResponse = BoardNameConflictError | InvalidInputError | NotFoundError | UpdateBoardSuccess
+
+type UpdateBoardSuccess {
+  board: Board!
 }
 
 type UpdateSubtaskCompletedMutationResponse implements MutationResponse {

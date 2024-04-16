@@ -6,6 +6,7 @@ export class Board {
   id!: string;
   @Field()
   name!: string;
+  appUserId!: string;
   @Field()
   createdAt!: Date;
   @Field()

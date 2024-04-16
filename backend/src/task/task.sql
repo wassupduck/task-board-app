@@ -64,9 +64,7 @@ INSERT INTO task(title, description, board_column_id)
 VALUES :task
 RETURNING *;
 
-/*
-    @name updateTask
-*/
+/* @name updateTask */
 UPDATE task SET
     title = COALESCE(:title, title),
     description = COALESCE(:description, description),

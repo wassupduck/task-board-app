@@ -14,10 +14,19 @@ import { BoardColumnsConnection } from './entities/board-columns-connection.enti
 import { CreateBoardInput } from './dto/create-board.input.js';
 import { CreateBoardResponse } from './dto/create-board-response.dto.js';
 import { CreateBoardSuccess } from './dto/create-board-success.dto.js';
-import { ValidationError } from '../common/errors/validation-error.js';
-import { InvalidInputErrorResponse } from '../common/dto/invalid-input-error.js';
 import { BoardNameConflictErrorResponse } from './dto/board-name-conflict-error.dto.js';
-import { BoardNameConflictError } from './board.errors.js';
+import {
+  BoardColumnNameConflictError,
+  BoardNameConflictError,
+} from './board.errors.js';
+import { UpdateBoardInput } from './dto/update-board.input.js';
+import { UpdateBoardResponse } from './dto/update-board-response.dto.js';
+import { UpdateBoardSuccess } from './dto/update-board-success.dto.js';
+import { UpdateBoardColumnsResponse } from './dto/update-board-columns-response.dto.js';
+import { UpdateBoardColumnsInput } from './dto/update-board-columns.input.js';
+import { UpdateBoardColumnsSuccess } from './dto/update-board-columns-success.dto.js';
+import { responseFromCommonError } from '../common/errors/response-from-common-error.js';
+import { BoardColumnNameConflictErrorResponse } from './dto/board-column-name-conflict-error.dto.js';
 
 @Resolver(Board)
 export class BoardResolver {
@@ -56,18 +65,60 @@ export class BoardResolver {
   ): Promise<typeof CreateBoardResponse> {
     const userId = '1'; // TODO
 
-    let board;
+    let board: Board;
     try {
-      board = await this.boardService.createBoard(input, userId);
+      board = await this.boardService.createBoard(input.board, userId);
     } catch (error) {
-      if (error instanceof ValidationError) {
-        return new InvalidInputErrorResponse(error.message);
-      } else if (error instanceof BoardNameConflictError) {
+      if (error instanceof BoardNameConflictError) {
         return new BoardNameConflictErrorResponse(error.message);
       }
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
       throw error;
     }
 
     return new CreateBoardSuccess(board);
+  }
+
+  @Mutation(() => UpdateBoardResponse)
+  async updateBoard(
+    @Args('input') input: UpdateBoardInput,
+  ): Promise<typeof UpdateBoardResponse> {
+    const userId = '1'; // TODO
+
+    let board: Board;
+    try {
+      board = await this.boardService.updateBoard(input, userId);
+    } catch (error) {
+      if (error instanceof BoardNameConflictError) {
+        return new BoardNameConflictErrorResponse(error.message);
+      }
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
+    }
+
+    return new UpdateBoardSuccess(board);
+  }
+
+  @Mutation(() => UpdateBoardColumnsResponse)
+  async updateBoardColumns(
+    @Args('input') input: UpdateBoardColumnsInput,
+  ): Promise<typeof UpdateBoardColumnsResponse> {
+    const userId = '1'; // TODO
+
+    let board: Board;
+    try {
+      board = await this.boardService.updateBoardColumns(input, userId);
+    } catch (error) {
+      if (error instanceof BoardColumnNameConflictError) {
+        return new BoardColumnNameConflictErrorResponse(error.message);
+      }
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
+    }
+
+    return new UpdateBoardColumnsSuccess(board);
   }
 }

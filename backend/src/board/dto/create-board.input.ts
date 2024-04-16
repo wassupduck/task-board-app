@@ -1,15 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { NewBoardInput } from './new-board-input.js';
 
 @InputType()
 export class CreateBoardInput {
-  @Field()
-  name!: string;
-  @Field(() => [CreateBoardInputColumnInput], { nullable: true })
-  columns?: CreateBoardInputColumnInput[] | null;
-}
-
-@InputType()
-export class CreateBoardInputColumnInput {
-  @Field()
-  name!: string;
+  @Field(() => NewBoardInput)
+  board!: NewBoardInput;
 }
