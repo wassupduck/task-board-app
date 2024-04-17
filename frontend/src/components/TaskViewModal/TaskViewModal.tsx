@@ -33,10 +33,14 @@ const taskQueryDocument = graphql(`
 `);
 
 const updateSubtaskCompletedMutationDocument = graphql(`
-  mutation UpdateSubtaskCompletedMutation($id: ID!, $completed: Boolean!) {
-    updateSubtaskCompleted(id: $id, completed: $completed) {
-      success
-      message
+  mutation UpdateSubtaskCompletedMutation(
+    $input: UpdateSubtaskCompletedInput!
+  ) {
+    updateSubtaskCompleted(input: $input) {
+      __typename
+      ... on ErrorResponse {
+        message
+      }
     }
   }
 `);
@@ -91,11 +95,17 @@ export default function TaskViewModal(props: TaskViewModalProps) {
         import.meta.env.VITE_BACKEND_GRAPHQL_URL,
         updateSubtaskCompletedMutationDocument,
         {
-          id: subtaskId,
-          completed,
+          input: {
+            id: subtaskId,
+            completed,
+          },
         }
       );
-      if (!resp.updateSubtaskCompleted.success) {
+      console.log(resp.updateSubtaskCompleted);
+      if (
+        resp.updateSubtaskCompleted.__typename !==
+        "UpdateSubtaskCompletedSuccess"
+      ) {
         throw new Error(resp.updateSubtaskCompleted.message);
       }
       return resp;

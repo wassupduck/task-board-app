@@ -88,13 +88,7 @@ export class BoardService {
       return board;
     }
 
-    const updatedBoard = await this.boardRepository.updateBoard(id, patch);
-    if (!updatedBoard) {
-      // Board deleted between fetch and update
-      throw new NotFoundError(`Board not found: ${id}`);
-    }
-
-    return updatedBoard;
+    return await this.boardRepository.updateBoard(id, patch);
   }
 
   async updateBoardColumns(

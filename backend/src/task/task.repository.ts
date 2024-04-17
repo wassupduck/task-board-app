@@ -13,6 +13,7 @@ import {
 import { Task } from './entities/task.entity.js';
 import { TaskSubtasksConnection } from './entities/task-subtasks-connection.entity.js';
 import { Subtask } from './entities/subtask.entity.js';
+import { NotFoundError } from '../common/errors/not-found-error.js';
 
 @Injectable()
 export class TaskRepository {
@@ -53,9 +54,8 @@ export class TaskRepository {
         completed,
       },
     );
-    // TODO: Error handling
-    if (subtask === null) {
-      throw new Error(`Subtask not found: ${id}`);
+    if (!subtask) {
+      throw new NotFoundError(`Subtask not found: ${id}`);
     }
     return subtask;
   }

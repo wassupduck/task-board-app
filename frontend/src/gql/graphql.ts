@@ -38,6 +38,11 @@ export type BoardColumn = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type BoardColumnNameConflictError = ErrorResponse & {
+  __typename?: 'BoardColumnNameConflictError';
+  message: Scalars['String']['output'];
+};
+
 export type BoardColumnsConnection = {
   __typename?: 'BoardColumnsConnection';
   nodes: Array<BoardColumn>;
@@ -50,12 +55,7 @@ export type BoardNameConflictError = ErrorResponse & {
 };
 
 export type CreateBoardInput = {
-  columns?: InputMaybe<Array<CreateBoardInputColumnInput>>;
-  name: Scalars['String']['input'];
-};
-
-export type CreateBoardInputColumnInput = {
-  name: Scalars['String']['input'];
+  board: NewBoardInput;
 };
 
 export type CreateBoardResponse = BoardNameConflictError | CreateBoardSuccess | InvalidInputError;
@@ -84,7 +84,9 @@ export type Mutation = {
   __typename?: 'Mutation';
   createBoard: CreateBoardResponse;
   createTask: Task;
-  updateSubtaskCompleted: UpdateSubtaskCompletedMutationResponse;
+  updateBoard: UpdateBoardResponse;
+  updateBoardColumns: UpdateBoardColumnsResponse;
+  updateSubtaskCompleted: UpdateSubtaskCompletedResponse;
   updateTask: Task;
 };
 
@@ -99,9 +101,18 @@ export type MutationCreateTaskArgs = {
 };
 
 
+export type MutationUpdateBoardArgs = {
+  input: UpdateBoardInput;
+};
+
+
+export type MutationUpdateBoardColumnsArgs = {
+  input: UpdateBoardColumnsInput;
+};
+
+
 export type MutationUpdateSubtaskCompletedArgs = {
-  completed: Scalars['Boolean']['input'];
-  id: Scalars['ID']['input'];
+  input: UpdateSubtaskCompletedInput;
 };
 
 
@@ -110,9 +121,18 @@ export type MutationUpdateTaskArgs = {
   input: UpdateTaskInput;
 };
 
-export type MutationResponse = {
+export type NewBoardColumnInput = {
+  name: Scalars['String']['input'];
+};
+
+export type NewBoardInput = {
+  columns?: InputMaybe<Array<NewBoardColumnInput>>;
+  name: Scalars['String']['input'];
+};
+
+export type NotFoundError = ErrorResponse & {
+  __typename?: 'NotFoundError';
   message: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
 };
 
 export type Query = {
@@ -160,11 +180,66 @@ export type TaskSubtasksConnection = {
   totalCount: Scalars['Int']['output'];
 };
 
-export type UpdateSubtaskCompletedMutationResponse = MutationResponse & {
-  __typename?: 'UpdateSubtaskCompletedMutationResponse';
-  message: Scalars['String']['output'];
-  subtask?: Maybe<Subtask>;
-  success: Scalars['Boolean']['output'];
+export type UpdateBoardColumnInput = {
+  id: Scalars['ID']['input'];
+  patch: UpdateBoardColumnPatchInput;
+};
+
+export type UpdateBoardColumnPatchInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateBoardColumnsInput = {
+  boardId: Scalars['ID']['input'];
+  patch: UpdateBoardColumnsPatchInput;
+};
+
+export type UpdateBoardColumnsPatchAdditionInput = {
+  column: NewBoardColumnInput;
+  /** Alias for the ID of the created column. Can be referenced in the "UpdateBoardColumnsPatchInput.columnOrder" array to add and order columns in a single request. */
+  idAlias?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type UpdateBoardColumnsPatchInput = {
+  additions?: InputMaybe<Array<UpdateBoardColumnsPatchAdditionInput>>;
+  columnOrder?: InputMaybe<Array<Scalars['ID']['input']>>;
+  deletions?: InputMaybe<Array<Scalars['ID']['input']>>;
+  updates?: InputMaybe<Array<UpdateBoardColumnInput>>;
+};
+
+export type UpdateBoardColumnsResponse = BoardColumnNameConflictError | InvalidInputError | NotFoundError | UpdateBoardColumnsSuccess;
+
+export type UpdateBoardColumnsSuccess = {
+  __typename?: 'UpdateBoardColumnsSuccess';
+  board: Board;
+};
+
+export type UpdateBoardInput = {
+  id: Scalars['ID']['input'];
+  patch: UpdateBoardPatchInput;
+};
+
+export type UpdateBoardPatchInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateBoardResponse = BoardNameConflictError | InvalidInputError | NotFoundError | UpdateBoardSuccess;
+
+export type UpdateBoardSuccess = {
+  __typename?: 'UpdateBoardSuccess';
+  board: Board;
+};
+
+export type UpdateSubtaskCompletedInput = {
+  completed: Scalars['Boolean']['input'];
+  id: Scalars['ID']['input'];
+};
+
+export type UpdateSubtaskCompletedResponse = NotFoundError | UpdateSubtaskCompletedSuccess;
+
+export type UpdateSubtaskCompletedSuccess = {
+  __typename?: 'UpdateSubtaskCompletedSuccess';
+  subtask: Subtask;
 };
 
 export type UpdateTaskInput = {
@@ -223,12 +298,11 @@ export type TaskQueryQuery = { __typename?: 'Query', task?: { __typename?: 'Task
       )> } } | null };
 
 export type UpdateSubtaskCompletedMutationMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
-  completed: Scalars['Boolean']['input'];
+  input: UpdateSubtaskCompletedInput;
 }>;
 
 
-export type UpdateSubtaskCompletedMutationMutation = { __typename?: 'Mutation', updateSubtaskCompleted: { __typename?: 'UpdateSubtaskCompletedMutationResponse', success: boolean, message: string } };
+export type UpdateSubtaskCompletedMutationMutation = { __typename?: 'Mutation', updateSubtaskCompleted: { __typename: 'NotFoundError', message: string } | { __typename: 'UpdateSubtaskCompletedSuccess' } };
 
 export type UpdateTaskColumnMutationMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -265,5 +339,5 @@ export const SubtaskList_SubtaskFragmentFragmentDoc = {"kind":"Document","defini
 export const AllBoardsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllBoardsQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"boards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"BoardList_BoardFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BoardList_BoardFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Board"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]} as unknown as DocumentNode<AllBoardsQueryQuery, AllBoardsQueryQueryVariables>;
 export const BoardQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"BoardQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"board"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"Header_BoardFragment"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"BoardArea_BoardFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TaskCard_TaskFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Task"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"subtasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"completedCount"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Column_BoardColumnFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BoardColumn"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"TaskCard_TaskFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Board_BoardFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Board"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"columns"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"Column_BoardColumnFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TaskColumnSelect_BoardColumnFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BoardColumn"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TaskViewModal_BoardFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Board"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"columns"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TaskColumnSelect_BoardColumnFragment"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Header_BoardFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Board"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"columns"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BoardArea_BoardFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Board"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"columns"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"Board_BoardFragment"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"TaskViewModal_BoardFragment"}}]}}]} as unknown as DocumentNode<BoardQueryQuery, BoardQueryQueryVariables>;
 export const TaskQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TaskQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"task"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"column"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subtasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"completedCount"}},{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SubtaskList_SubtaskFragment"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SubtaskListItem_SubtaskFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Subtask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"completed"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SubtaskList_SubtaskFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Subtask"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"SubtaskListItem_SubtaskFragment"}}]}}]} as unknown as DocumentNode<TaskQueryQuery, TaskQueryQueryVariables>;
-export const UpdateSubtaskCompletedMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateSubtaskCompletedMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"completed"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateSubtaskCompleted"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"completed"},"value":{"kind":"Variable","name":{"kind":"Name","value":"completed"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]} as unknown as DocumentNode<UpdateSubtaskCompletedMutationMutation, UpdateSubtaskCompletedMutationMutationVariables>;
+export const UpdateSubtaskCompletedMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateSubtaskCompletedMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateSubtaskCompletedInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateSubtaskCompleted"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ErrorResponse"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateSubtaskCompletedMutationMutation, UpdateSubtaskCompletedMutationMutationVariables>;
 export const UpdateTaskColumnMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateTaskColumnMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"boardColumnId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTask"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"boardColumnId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"boardColumnId"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdateTaskColumnMutationMutation, UpdateTaskColumnMutationMutationVariables>;

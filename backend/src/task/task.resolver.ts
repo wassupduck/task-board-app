@@ -13,9 +13,13 @@ import { BoardColumn } from '../board/index.js';
 import { Loaders } from '../loader/index.js';
 import { TaskSubtasksConnection } from './entities/task-subtasks-connection.entity.js';
 import { TaskService } from './task.service.js';
-import { UpdateSubtaskCompletedMutationResponse } from './dto/update-subtask-completed-mutation-response.js';
 import { CreateTaskInput } from './dto/create-task.input.js';
 import { UpdateTaskInput } from './dto/update-task.input.js';
+import { UpdateSubtaskCompletedInput } from './dto/update-subtask-completed.input.js';
+import { Subtask } from './entities/subtask.entity.js';
+import { UpdateSubtaskCompletedResponse } from './dto/update-subtask-completed-response.dto.js';
+import { UpdateSubtaskCompletedSuccess } from './dto/update-subtask-completed-success.dto.js';
+import { responseFromCommonError } from '../common/errors/response-from-common-error.js';
 
 @Resolver(Task)
 export class TaskResolver {
@@ -72,32 +76,25 @@ export class TaskResolver {
     });
   }
 
-  @Mutation(() => UpdateSubtaskCompletedMutationResponse)
+  @Mutation(() => UpdateSubtaskCompletedResponse)
   async updateSubtaskCompleted(
-    @Args('id', { type: () => ID }) id: string,
-    @Args('completed') completed: boolean,
-  ): Promise<UpdateSubtaskCompletedMutationResponse> {
+    @Args('input') input: UpdateSubtaskCompletedInput,
+  ): Promise<typeof UpdateSubtaskCompletedResponse> {
     const userId = '1';
-    let subtask;
 
+    let subtask: Subtask;
     try {
       subtask = await this.taskService.updateSubtaskCompletedByIdForUser(
-        id,
-        completed,
+        input.id,
+        input.completed,
         userId,
       );
-    } catch (err) {
-      // TODO: Error handling
-      return {
-        success: false,
-        message: 'subtask not found',
-      };
+    } catch (error) {
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
     }
 
-    return {
-      success: true,
-      message: 'successfully updated subtask completed status',
-      subtask: subtask,
-    };
+    return new UpdateSubtaskCompletedSuccess(subtask);
   }
 }

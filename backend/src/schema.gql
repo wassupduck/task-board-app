@@ -67,13 +67,8 @@ type Mutation {
   createTask(input: CreateTaskInput!): Task!
   updateBoard(input: UpdateBoardInput!): UpdateBoardResponse!
   updateBoardColumns(input: UpdateBoardColumnsInput!): UpdateBoardColumnsResponse!
-  updateSubtaskCompleted(completed: Boolean!, id: ID!): UpdateSubtaskCompletedMutationResponse!
+  updateSubtaskCompleted(input: UpdateSubtaskCompletedInput!): UpdateSubtaskCompletedResponse!
   updateTask(id: ID!, input: UpdateTaskInput!): Task!
-}
-
-interface MutationResponse {
-  message: String!
-  success: Boolean!
 }
 
 input NewBoardColumnInput {
@@ -171,10 +166,15 @@ type UpdateBoardSuccess {
   board: Board!
 }
 
-type UpdateSubtaskCompletedMutationResponse implements MutationResponse {
-  message: String!
-  subtask: Subtask
-  success: Boolean!
+input UpdateSubtaskCompletedInput {
+  completed: Boolean!
+  id: ID!
+}
+
+union UpdateSubtaskCompletedResponse = NotFoundError | UpdateSubtaskCompletedSuccess
+
+type UpdateSubtaskCompletedSuccess {
+  subtask: Subtask!
 }
 
 input UpdateTaskInput {

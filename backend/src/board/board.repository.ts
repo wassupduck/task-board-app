@@ -22,6 +22,7 @@ import {
   BoardColumnNameConflictError,
   BoardNameConflictError,
 } from './board.errors.js';
+import { NotFoundError } from '../common/errors/not-found-error.js';
 
 @Injectable()
 export class BoardRepository {
@@ -82,9 +83,10 @@ export class BoardRepository {
   async updateBoard(
     id: string,
     fieldsToUpdate: Partial<Pick<Board, 'name'>>,
-  ): Promise<Board | null> {
+  ): Promise<Board> {
+    let board: Board | null;
     try {
-      return await this.db.queryOneOrNone(updateBoard, {
+      board = await this.db.queryOneOrNone(updateBoard, {
         id,
         ...fieldsToUpdate,
       });
@@ -98,6 +100,10 @@ export class BoardRepository {
       }
       throw error;
     }
+    if (!board) {
+      throw new NotFoundError(`Board not found: ${id}`);
+    }
+    return board;
   }
 
   async createBoardColumns(

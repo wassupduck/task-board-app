@@ -22,7 +22,7 @@ const documents = {
     "\n  fragment Header_BoardFragment on Board {\n    name\n    columns {\n      totalCount\n    }\n  }\n": types.Header_BoardFragmentFragmentDoc,
     "\n  fragment TaskCard_TaskFragment on Task {\n    title\n    subtasks {\n      totalCount\n      completedCount\n    }\n  }\n": types.TaskCard_TaskFragmentFragmentDoc,
     "\n  query TaskQuery($id: ID!) {\n    task(id: $id) {\n      title\n      description\n      column {\n        id\n        name\n      }\n      subtasks {\n        totalCount\n        completedCount\n        nodes {\n          ...SubtaskList_SubtaskFragment\n        }\n      }\n    }\n  }\n": types.TaskQueryDocument,
-    "\n  mutation UpdateSubtaskCompletedMutation($id: ID!, $completed: Boolean!) {\n    updateSubtaskCompleted(id: $id, completed: $completed) {\n      success\n      message\n    }\n  }\n": types.UpdateSubtaskCompletedMutationDocument,
+    "\n  mutation UpdateSubtaskCompletedMutation(\n    $input: UpdateSubtaskCompletedInput!\n  ) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateSubtaskCompletedMutationDocument,
     "\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(id: $id, input: { boardColumnId: $boardColumnId }) {\n      id\n    }\n  }\n": types.UpdateTaskColumnMutationDocument,
     "\n  fragment TaskViewModal_BoardFragment on Board {\n    columns {\n      nodes {\n        ...TaskColumnSelect_BoardColumnFragment\n      }\n    }\n  }\n": types.TaskViewModal_BoardFragmentFragmentDoc,
     "\n  fragment SubtaskList_SubtaskFragment on Subtask {\n    id\n    ...SubtaskListItem_SubtaskFragment\n  }\n": types.SubtaskList_SubtaskFragmentFragmentDoc,
@@ -83,7 +83,7 @@ export function graphql(source: "\n  query TaskQuery($id: ID!) {\n    task(id: $
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation UpdateSubtaskCompletedMutation($id: ID!, $completed: Boolean!) {\n    updateSubtaskCompleted(id: $id, completed: $completed) {\n      success\n      message\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateSubtaskCompletedMutation($id: ID!, $completed: Boolean!) {\n    updateSubtaskCompleted(id: $id, completed: $completed) {\n      success\n      message\n    }\n  }\n"];
+export function graphql(source: "\n  mutation UpdateSubtaskCompletedMutation(\n    $input: UpdateSubtaskCompletedInput!\n  ) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateSubtaskCompletedMutation(\n    $input: UpdateSubtaskCompletedInput!\n  ) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
