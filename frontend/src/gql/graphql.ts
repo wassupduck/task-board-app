@@ -43,6 +43,11 @@ export type BoardColumnNameConflictError = ErrorResponse & {
   message: Scalars['String']['output'];
 };
 
+export type BoardColumnNotFoundError = ErrorResponse & {
+  __typename?: 'BoardColumnNotFoundError';
+  message: Scalars['String']['output'];
+};
+
 export type BoardColumnsConnection = {
   __typename?: 'BoardColumnsConnection';
   nodes: Array<BoardColumn>;
@@ -66,9 +71,14 @@ export type CreateBoardSuccess = {
 };
 
 export type CreateTaskInput = {
-  boardColumnId: Scalars['ID']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  title: Scalars['String']['input'];
+  task: NewTaskInput;
+};
+
+export type CreateTaskResponse = BoardColumnNotFoundError | CreateTaskSuccess;
+
+export type CreateTaskSuccess = {
+  __typename?: 'CreateTaskSuccess';
+  task: Task;
 };
 
 export type ErrorResponse = {
@@ -83,7 +93,7 @@ export type InvalidInputError = ErrorResponse & {
 export type Mutation = {
   __typename?: 'Mutation';
   createBoard: CreateBoardResponse;
-  createTask: Task;
+  createTask: CreateTaskResponse;
   updateBoard: UpdateBoardResponse;
   updateBoardColumns: UpdateBoardColumnsResponse;
   updateSubtaskCompleted: UpdateSubtaskCompletedResponse;
@@ -127,6 +137,12 @@ export type NewBoardColumnInput = {
 export type NewBoardInput = {
   columns?: InputMaybe<Array<NewBoardColumnInput>>;
   name: Scalars['String']['input'];
+};
+
+export type NewTaskInput = {
+  boardColumnId: Scalars['ID']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
 };
 
 export type NotFoundError = ErrorResponse & {
@@ -252,7 +268,7 @@ export type UpdateTaskPatchInput = {
   title?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpdateTaskResponse = NotFoundError | UpdateTaskSuccess;
+export type UpdateTaskResponse = BoardColumnNotFoundError | NotFoundError | UpdateTaskSuccess;
 
 export type UpdateTaskSuccess = {
   __typename?: 'UpdateTaskSuccess';
@@ -321,7 +337,7 @@ export type UpdateTaskColumnMutationMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTaskColumnMutationMutation = { __typename?: 'Mutation', updateTask: { __typename: 'NotFoundError', message: string } | { __typename: 'UpdateTaskSuccess' } };
+export type UpdateTaskColumnMutationMutation = { __typename?: 'Mutation', updateTask: { __typename: 'BoardColumnNotFoundError', message: string } | { __typename: 'NotFoundError', message: string } | { __typename: 'UpdateTaskSuccess' } };
 
 export type TaskViewModal_BoardFragmentFragment = { __typename?: 'Board', columns: { __typename?: 'BoardColumnsConnection', nodes: Array<(
       { __typename?: 'BoardColumn' }

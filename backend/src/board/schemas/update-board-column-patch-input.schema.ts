@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import { boardColumnNameSchema } from './new-board-column-input.schema.js';
+import { newBoardColumnInputSchema } from './new-board-column-input.schema.js';
+
+const boardColumn = newBoardColumnInputSchema.shape;
 
 export const updateBoardColumnPatchInputSchema = z.object({
-  name: boardColumnNameSchema.nullish().transform((x) => x ?? undefined),
+  name: boardColumn.name.nullish().transform((x) => x ?? undefined),
 });

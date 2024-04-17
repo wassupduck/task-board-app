@@ -8,10 +8,17 @@ import { updateTaskPatchInputSchema } from './schemas/update-task-patch-input.sc
 import { ValidationError } from '../common/errors/validation-error.js';
 import { emptyPatch } from '../common/helpers/empty-patch.js';
 import { NotFoundError } from '../common/errors/not-found-error.js';
+import { newTaskInputSchema } from './schemas/new-task-input.schema.js';
+import { BoardService } from '../board/index.js';
+import { NewTaskInput } from './dto/new-task.input.js';
+import { BoardColumnNotFoundError } from './task.errors.js';
 
 @Injectable()
 export class TaskService {
-  constructor(private readonly taskRepository: TaskRepository) {}
+  constructor(
+    private readonly taskRepository: TaskRepository,
+    private readonly boardService: BoardService,
+  ) {}
 
   async getTaskByIdForUser(id: string, userId: string): Promise<Task | null> {
     return this.taskRepository.getTaskByIdForUser(id, userId);
@@ -47,13 +54,28 @@ export class TaskService {
     );
   }
 
-  async createTask(
-    task: Pick<Task, 'title' | 'boardColumnId'> & {
-      description?: Task['description'];
-    },
-  ): Promise<Task> {
-    // TODO: Check user owns board column.
-    return this.taskRepository.createTask(task);
+  async createTask(input: NewTaskInput, userId: string): Promise<Task> {
+    // Parse and validate input
+    const validation = newTaskInputSchema.safeParse(input);
+    if (!validation.success) {
+      // TODO: Better validation errors
+      const issue = validation.error.issues[0];
+      throw new ValidationError(`${issue.path.join('.')}: ${issue.message}`);
+    }
+
+    const newTask = validation.data;
+
+    // Check user can create task for board column
+    const boardColumn = await this.boardService.getBoardColumnByIdForUser(
+      newTask.boardColumnId,
+      userId,
+    );
+    if (!boardColumn) {
+      throw new BoardColumnNotFoundError(newTask.boardColumnId);
+    }
+
+    // Create task
+    return this.taskRepository.createTask(newTask);
   }
 
   async updateTask(
@@ -75,12 +97,24 @@ export class TaskService {
       throw new NotFoundError(`Task not found ${id}`);
     }
 
-    const update = validation.data;
-    if (emptyPatch(update)) {
+    const fieldsToUpdate = validation.data;
+    if (emptyPatch(fieldsToUpdate)) {
       // No change
       return task;
     }
 
-    return await this.taskRepository.updateTask(id, update);
+    if (fieldsToUpdate.boardColumnId !== undefined) {
+      // Check user can move task to board column
+      const boardColumn = await this.boardService.getBoardColumnByIdForUser(
+        fieldsToUpdate.boardColumnId,
+        userId,
+      );
+      if (!boardColumn) {
+        throw new BoardColumnNotFoundError(fieldsToUpdate.boardColumnId);
+      }
+    }
+
+    // Update task
+    return await this.taskRepository.updateTask(id, fieldsToUpdate);
   }
 }

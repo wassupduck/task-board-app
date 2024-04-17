@@ -24,6 +24,10 @@ type BoardColumnNameConflictError implements ErrorResponse {
   message: String!
 }
 
+type BoardColumnNotFoundError implements ErrorResponse {
+  message: String!
+}
+
 type BoardColumnsConnection {
   nodes: [BoardColumn!]!
   totalCount: Int!
@@ -44,9 +48,13 @@ type CreateBoardSuccess {
 }
 
 input CreateTaskInput {
-  boardColumnId: ID!
-  description: String
-  title: String!
+  task: NewTaskInput!
+}
+
+union CreateTaskResponse = BoardColumnNotFoundError | CreateTaskSuccess
+
+type CreateTaskSuccess {
+  task: Task!
 }
 
 """
@@ -64,7 +72,7 @@ type InvalidInputError implements ErrorResponse {
 
 type Mutation {
   createBoard(input: CreateBoardInput!): CreateBoardResponse!
-  createTask(input: CreateTaskInput!): Task!
+  createTask(input: CreateTaskInput!): CreateTaskResponse!
   updateBoard(input: UpdateBoardInput!): UpdateBoardResponse!
   updateBoardColumns(input: UpdateBoardColumnsInput!): UpdateBoardColumnsResponse!
   updateSubtaskCompleted(input: UpdateSubtaskCompletedInput!): UpdateSubtaskCompletedResponse!
@@ -78,6 +86,12 @@ input NewBoardColumnInput {
 input NewBoardInput {
   columns: [NewBoardColumnInput!]
   name: String!
+}
+
+input NewTaskInput {
+  boardColumnId: ID!
+  description: String
+  title: String!
 }
 
 type NotFoundError implements ErrorResponse {
@@ -188,7 +202,7 @@ input UpdateTaskPatchInput {
   title: String
 }
 
-union UpdateTaskResponse = NotFoundError | UpdateTaskSuccess
+union UpdateTaskResponse = BoardColumnNotFoundError | NotFoundError | UpdateTaskSuccess
 
 type UpdateTaskSuccess {
   task: Task!

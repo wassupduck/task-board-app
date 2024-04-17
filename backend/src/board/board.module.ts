@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { BoardResolver } from './board.resolver.js';
 import { BoardService } from './board.service.js';
 import { BoardRepository } from './board.repository.js';
@@ -9,7 +9,7 @@ import { BOARD_LOADERS_FACTORY } from './board.constants.js';
 import { BoardColumnsConnectionResolver } from './board-columns-connection.resolver.js';
 
 @Module({
-  imports: [TaskModule],
+  imports: [forwardRef(() => TaskModule)],
   providers: [
     BoardResolver,
     BoardColumnResolver,
@@ -18,6 +18,6 @@ import { BoardColumnsConnectionResolver } from './board-columns-connection.resol
     BoardRepository,
     boardLoadersFactoryProvider,
   ],
-  exports: [BOARD_LOADERS_FACTORY],
+  exports: [BOARD_LOADERS_FACTORY, BoardService],
 })
 export class BoardModule {}

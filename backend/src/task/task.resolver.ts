@@ -22,6 +22,10 @@ import { UpdateSubtaskCompletedSuccess } from './dto/update-subtask-completed-su
 import { responseFromCommonError } from '../common/errors/response-from-common-error.js';
 import { UpdateTaskResponse } from './dto/update-task-response.dto.js';
 import { UpdateTaskSuccess } from './dto/update-task-success.dto.js';
+import { CreateTaskResponse } from './dto/create-task-response.dto.js';
+import { CreateTaskSuccess } from './dto/create-task-success.dto.js';
+import { BoardColumnNotFoundError } from './task.errors.js';
+import { BoardColumnNotFoundErrorResponse } from './dto/board-column-not-found-error.dto.js';
 
 @Resolver(Task)
 export class TaskResolver {
@@ -55,13 +59,25 @@ export class TaskResolver {
     return taskLoaders.taskSubtasksConnectionLoader.load(task.id);
   }
 
-  @Mutation(() => Task)
-  async createTask(@Args('input') input: CreateTaskInput): Promise<Task> {
-    // TODO: Mutation response type and error handling
-    return this.taskService.createTask({
-      ...input,
-      description: input.description ?? undefined,
-    });
+  @Mutation(() => CreateTaskResponse)
+  async createTask(
+    @Args('input') input: CreateTaskInput,
+  ): Promise<typeof CreateTaskResponse> {
+    const userId = '1'; // TODO
+
+    let task: Task;
+    try {
+      task = await this.taskService.createTask(input.task, userId);
+    } catch (error) {
+      if (error instanceof BoardColumnNotFoundError) {
+        return new BoardColumnNotFoundErrorResponse(error.message);
+      }
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
+    }
+
+    return new CreateTaskSuccess(task);
   }
 
   @Mutation(() => UpdateTaskResponse)
@@ -74,6 +90,9 @@ export class TaskResolver {
     try {
       task = await this.taskService.updateTask(input.id, input.patch, userId);
     } catch (error) {
+      if (error instanceof BoardColumnNotFoundError) {
+        return new BoardColumnNotFoundErrorResponse(error.message);
+      }
       const commonErrorResponse = responseFromCommonError(error);
       if (commonErrorResponse) return commonErrorResponse;
       throw error;

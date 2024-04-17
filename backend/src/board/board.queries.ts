@@ -108,6 +108,43 @@ const selectBoardByIdForUserIR: any = {"usedParamSet":{"id":true,"userId":true},
 export const selectBoardByIdForUser = new PreparedQuery<ISelectBoardByIdForUserParams,ISelectBoardByIdForUserResult>(selectBoardByIdForUserIR);
 
 
+/** 'SelectBoardColumnByIdForUser' parameters type */
+export interface ISelectBoardColumnByIdForUserParams {
+  id: NumberOrString;
+  userId: NumberOrString;
+}
+
+/** 'SelectBoardColumnByIdForUser' return type */
+export interface ISelectBoardColumnByIdForUserResult {
+  boardId: string;
+  createdAt: Date;
+  id: string;
+  name: string;
+  position: number;
+  updatedAt: Date;
+}
+
+/** 'SelectBoardColumnByIdForUser' query type */
+export interface ISelectBoardColumnByIdForUserQuery {
+  params: ISelectBoardColumnByIdForUserParams;
+  result: ISelectBoardColumnByIdForUserResult;
+}
+
+const selectBoardColumnByIdForUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":117,"b":120}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":146,"b":153}]}],"statement":"SELECT board_column.*\nFROM board_column\nINNER JOIN board ON board.id = board_column.board_id\nWHERE board_column.id = :id!\nAND board.app_user_id = :userId!"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT board_column.*
+ * FROM board_column
+ * INNER JOIN board ON board.id = board_column.board_id
+ * WHERE board_column.id = :id!
+ * AND board.app_user_id = :userId!
+ * ```
+ */
+export const selectBoardColumnByIdForUser = new PreparedQuery<ISelectBoardColumnByIdForUserParams,ISelectBoardColumnByIdForUserResult>(selectBoardColumnByIdForUserIR);
+
+
 /** 'SelectBoardColumnsByBoardId' parameters type */
 export interface ISelectBoardColumnsByBoardIdParams {
   boardId: NumberOrString;

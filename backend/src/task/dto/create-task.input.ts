@@ -1,11 +1,8 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
+import { NewTaskInput } from './new-task.input.js';
 
 @InputType()
 export class CreateTaskInput {
-  @Field()
-  title!: string;
-  @Field(() => String, { nullable: true })
-  description?: string | null;
-  @Field(() => ID)
-  boardColumnId!: string;
+  @Field(() => NewTaskInput)
+  task!: NewTaskInput;
 }

@@ -8,6 +8,7 @@ import {
   insertBoardColumns,
   selectAllBoardsForUser,
   selectBoardByIdForUser,
+  selectBoardColumnByIdForUser,
   selectBoardColumnsByBoardId,
   selectBoardColumnsByIds,
   selectBoardColumnsConnection,
@@ -41,6 +42,16 @@ export class BoardRepository {
     userId: string,
   ): Promise<Board | null> {
     return await this.db.queryOneOrNone(selectForUpdateBoardByIdForUser, {
+      id,
+      userId,
+    });
+  }
+
+  async getBoardColumnByIdForUser(
+    id: string,
+    userId: string,
+  ): Promise<BoardColumn | null> {
+    return await this.db.queryOneOrNone(selectBoardColumnByIdForUser, {
       id,
       userId,
     });

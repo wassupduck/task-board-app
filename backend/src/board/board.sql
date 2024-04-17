@@ -17,6 +17,13 @@ FROM board
 WHERE id = :id!
 AND app_user_id = :userId!;
 
+/* @name selectBoardColumnByIdForUser */
+SELECT board_column.*
+FROM board_column
+INNER JOIN board ON board.id = board_column.board_id
+WHERE board_column.id = :id!
+AND board.app_user_id = :userId!;
+
 /* @name selectBoardColumnsByBoardId */
 SELECT *
 FROM board_column

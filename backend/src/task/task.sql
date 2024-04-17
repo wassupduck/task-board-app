@@ -57,7 +57,7 @@ WHERE id = (
 RETURNING *;
 
 /* 
-    @name insertTask 
+    @name insertTask
     @param task -> (title!, description!, boardColumnId!)
 */
 INSERT INTO task(title, description, board_column_id)

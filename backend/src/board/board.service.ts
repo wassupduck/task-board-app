@@ -12,7 +12,7 @@ import { updateBoardPatchInputSchema } from './schemas/update-board-patch-input.
 import { NotFoundError } from '../common/errors/not-found-error.js';
 import { updateBoardColumnsPatchInputSchema } from './schemas/update-board-columns-patch-input.schema.js';
 import { emptyPatch } from '../common/helpers/empty-patch.js';
-import { NewBoardInput } from './dto/new-board-input.js';
+import { NewBoardInput } from './dto/new-board.input.js';
 
 @Injectable()
 export class BoardService {
@@ -27,6 +27,13 @@ export class BoardService {
 
   async getBoardByIdForUser(id: string, userId: string): Promise<Board | null> {
     return this.boardRepository.getBoardByIdForUser(id, userId);
+  }
+
+  async getBoardColumnByIdForUser(
+    id: string,
+    userId: string,
+  ): Promise<BoardColumn | null> {
+    return await this.boardRepository.getBoardColumnByIdForUser(id, userId);
   }
 
   async getBoardColumns(boardId: string): Promise<BoardColumn[]> {

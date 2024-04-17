@@ -61,13 +61,9 @@ export class TaskRepository {
   }
 
   async createTask(
-    task: Pick<Task, 'title' | 'boardColumnId'> & {
-      description?: Task['description'];
-    },
+    task: Pick<Task, 'title' | 'description' | 'boardColumnId'>,
   ): Promise<Task> {
-    return this.db.queryOne(insertTask, {
-      task: { ...task, description: task.description ?? '' },
-    });
+    return this.db.queryOne(insertTask, { task });
   }
 
   async updateTask(
