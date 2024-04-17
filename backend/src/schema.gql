@@ -68,7 +68,7 @@ type Mutation {
   updateBoard(input: UpdateBoardInput!): UpdateBoardResponse!
   updateBoardColumns(input: UpdateBoardColumnsInput!): UpdateBoardColumnsResponse!
   updateSubtaskCompleted(input: UpdateSubtaskCompletedInput!): UpdateSubtaskCompletedResponse!
-  updateTask(id: ID!, input: UpdateTaskInput!): Task!
+  updateTask(input: UpdateTaskInput!): UpdateTaskResponse!
 }
 
 input NewBoardColumnInput {
@@ -178,7 +178,18 @@ type UpdateSubtaskCompletedSuccess {
 }
 
 input UpdateTaskInput {
+  id: ID!
+  patch: UpdateTaskPatchInput!
+}
+
+input UpdateTaskPatchInput {
   boardColumnId: ID
   description: String
   title: String
+}
+
+union UpdateTaskResponse = NotFoundError | UpdateTaskSuccess
+
+type UpdateTaskSuccess {
+  task: Task!
 }

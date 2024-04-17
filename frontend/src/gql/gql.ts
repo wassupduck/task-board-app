@@ -23,7 +23,7 @@ const documents = {
     "\n  fragment TaskCard_TaskFragment on Task {\n    title\n    subtasks {\n      totalCount\n      completedCount\n    }\n  }\n": types.TaskCard_TaskFragmentFragmentDoc,
     "\n  query TaskQuery($id: ID!) {\n    task(id: $id) {\n      title\n      description\n      column {\n        id\n        name\n      }\n      subtasks {\n        totalCount\n        completedCount\n        nodes {\n          ...SubtaskList_SubtaskFragment\n        }\n      }\n    }\n  }\n": types.TaskQueryDocument,
     "\n  mutation UpdateSubtaskCompletedMutation(\n    $input: UpdateSubtaskCompletedInput!\n  ) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateSubtaskCompletedMutationDocument,
-    "\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(id: $id, input: { boardColumnId: $boardColumnId }) {\n      id\n    }\n  }\n": types.UpdateTaskColumnMutationDocument,
+    "\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(input: { id: $id, patch: { boardColumnId: $boardColumnId } }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateTaskColumnMutationDocument,
     "\n  fragment TaskViewModal_BoardFragment on Board {\n    columns {\n      nodes {\n        ...TaskColumnSelect_BoardColumnFragment\n      }\n    }\n  }\n": types.TaskViewModal_BoardFragmentFragmentDoc,
     "\n  fragment SubtaskList_SubtaskFragment on Subtask {\n    id\n    ...SubtaskListItem_SubtaskFragment\n  }\n": types.SubtaskList_SubtaskFragmentFragmentDoc,
     "\n  fragment SubtaskListItem_SubtaskFragment on Subtask {\n    id\n    title\n    completed\n  }\n": types.SubtaskListItem_SubtaskFragmentFragmentDoc,
@@ -87,7 +87,7 @@ export function graphql(source: "\n  mutation UpdateSubtaskCompletedMutation(\n 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(id: $id, input: { boardColumnId: $boardColumnId }) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(id: $id, input: { boardColumnId: $boardColumnId }) {\n      id\n    }\n  }\n"];
+export function graphql(source: "\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(input: { id: $id, patch: { boardColumnId: $boardColumnId } }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(input: { id: $id, patch: { boardColumnId: $boardColumnId } }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -1,7 +1,7 @@
 import { Field, ID, InputType } from '@nestjs/graphql';
 
 @InputType()
-class UpdateBoardPatchInput {
+export class UpdateBoardPatchInput {
   @Field(() => String, { nullable: true })
   name?: string | null;
 }

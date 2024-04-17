@@ -6,7 +6,7 @@ import { BoardColumnsConnection } from './entities/board-columns-connection.enti
 import { DatabaseClient, DatabaseTransactor } from '../database/index.js';
 import { newBoardInputSchema } from './schemas/new-board-input.schema.js';
 import { ValidationError } from '../common/errors/validation-error.js';
-import { UpdateBoardInput } from './dto/update-board.input.js';
+import { UpdateBoardPatchInput } from './dto/update-board.input.js';
 import { UpdateBoardColumnsInput } from './dto/update-board-columns.input.js';
 import { updateBoardPatchInputSchema } from './schemas/update-board-patch-input.schema.js';
 import { NotFoundError } from '../common/errors/not-found-error.js';
@@ -65,11 +65,13 @@ export class BoardService {
     });
   }
 
-  async updateBoard(input: UpdateBoardInput, userId: string): Promise<Board> {
-    const id = input.id;
-
+  async updateBoard(
+    id: string,
+    patch: UpdateBoardPatchInput,
+    userId: string,
+  ): Promise<Board> {
     // Parse and validate patch
-    const validation = updateBoardPatchInputSchema.safeParse(input.patch);
+    const validation = updateBoardPatchInputSchema.safeParse(patch);
     if (!validation.success) {
       // TODO: Better validation errors
       const issue = validation.error.issues[0];
@@ -82,13 +84,13 @@ export class BoardService {
       throw new NotFoundError(`Board not found: ${id}`);
     }
 
-    const patch = validation.data;
-    if (emptyPatch(patch)) {
+    const update = validation.data;
+    if (emptyPatch(update)) {
       // No change
       return board;
     }
 
-    return await this.boardRepository.updateBoard(id, patch);
+    return await this.boardRepository.updateBoard(id, update);
   }
 
   async updateBoardColumns(

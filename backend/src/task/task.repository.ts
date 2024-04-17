@@ -80,9 +80,8 @@ export class TaskRepository {
       id,
       ...fieldsToUpdate,
     });
-    // TODO: Error handling
-    if (task === null) {
-      throw new Error(`task not found ${id}`);
+    if (!task) {
+      throw new NotFoundError(`Task not found: ${id}`);
     }
     return task;
   }

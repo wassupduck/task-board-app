@@ -47,8 +47,11 @@ const updateSubtaskCompletedMutationDocument = graphql(`
 
 const updateTaskColumnMutationDocument = graphql(`
   mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {
-    updateTask(id: $id, input: { boardColumnId: $boardColumnId }) {
-      id
+    updateTask(input: { id: $id, patch: { boardColumnId: $boardColumnId } }) {
+      __typename
+      ... on ErrorResponse {
+        message
+      }
     }
   }
 `);
@@ -82,7 +85,7 @@ export default function TaskViewModal(props: TaskViewModalProps) {
   });
 
   const queryClient = useQueryClient();
-  // TODO: Error handling
+
   const updateSubtaskCompletedMutation = useMutation({
     mutationFn: async ({
       subtaskId,
@@ -101,11 +104,11 @@ export default function TaskViewModal(props: TaskViewModalProps) {
           },
         }
       );
-      console.log(resp.updateSubtaskCompleted);
       if (
         resp.updateSubtaskCompleted.__typename !==
         "UpdateSubtaskCompletedSuccess"
       ) {
+        // TODO: Error handling
         throw new Error(resp.updateSubtaskCompleted.message);
       }
       return resp;
@@ -126,12 +129,16 @@ export default function TaskViewModal(props: TaskViewModalProps) {
       id: string;
       boardColumnId: string;
     }) => {
-      // TODO: Error handling
-      return request(
+      const resp = await request(
         import.meta.env.VITE_BACKEND_GRAPHQL_URL,
         updateTaskColumnMutationDocument,
         { id, boardColumnId }
       );
+      if (resp.updateTask.__typename !== "UpdateTaskSuccess") {
+        // TODO: Error handling
+        throw new Error(resp.updateTask.message);
+      }
+      return resp;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

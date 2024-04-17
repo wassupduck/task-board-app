@@ -88,7 +88,11 @@ export class BoardResolver {
 
     let board: Board;
     try {
-      board = await this.boardService.updateBoard(input, userId);
+      board = await this.boardService.updateBoard(
+        input.id,
+        input.patch,
+        userId,
+      );
     } catch (error) {
       if (error instanceof BoardNameConflictError) {
         return new BoardNameConflictErrorResponse(error.message);

@@ -20,6 +20,8 @@ import { Subtask } from './entities/subtask.entity.js';
 import { UpdateSubtaskCompletedResponse } from './dto/update-subtask-completed-response.dto.js';
 import { UpdateSubtaskCompletedSuccess } from './dto/update-subtask-completed-success.dto.js';
 import { responseFromCommonError } from '../common/errors/response-from-common-error.js';
+import { UpdateTaskResponse } from './dto/update-task-response.dto.js';
+import { UpdateTaskSuccess } from './dto/update-task-success.dto.js';
 
 @Resolver(Task)
 export class TaskResolver {
@@ -40,8 +42,7 @@ export class TaskResolver {
       task.boardColumnId,
     );
     if (!column) {
-      // TODO: Error handling
-      throw new Error('column not found');
+      throw new Error('Task column not found');
     }
     return column;
   }
@@ -63,24 +64,29 @@ export class TaskResolver {
     });
   }
 
-  @Mutation(() => Task)
+  @Mutation(() => UpdateTaskResponse)
   async updateTask(
-    @Args('id', { type: () => ID }) id: string,
     @Args('input') input: UpdateTaskInput,
-  ): Promise<Task> {
-    // TODO: Mutation response type and error handling
-    return await this.taskService.updateTask(id, {
-      title: input.title ?? undefined,
-      description: input.description ?? undefined,
-      boardColumnId: input.boardColumnId ?? undefined,
-    });
+  ): Promise<typeof UpdateTaskResponse> {
+    const userId = '1'; // TODO
+
+    let task: Task;
+    try {
+      task = await this.taskService.updateTask(input.id, input.patch, userId);
+    } catch (error) {
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
+    }
+
+    return new UpdateTaskSuccess(task);
   }
 
   @Mutation(() => UpdateSubtaskCompletedResponse)
   async updateSubtaskCompleted(
     @Args('input') input: UpdateSubtaskCompletedInput,
   ): Promise<typeof UpdateSubtaskCompletedResponse> {
-    const userId = '1';
+    const userId = '1'; // TODO
 
     let subtask: Subtask;
     try {

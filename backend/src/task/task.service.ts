@@ -3,6 +3,11 @@ import { TaskRepository } from './task.repository.js';
 import { Task } from './entities/task.entity.js';
 import { TaskSubtasksConnection } from './entities/task-subtasks-connection.entity.js';
 import { Subtask } from './entities/subtask.entity.js';
+import { UpdateTaskPatchInput } from './dto/update-task.input.js';
+import { updateTaskPatchInputSchema } from './schemas/update-task-patch-input.schema.js';
+import { ValidationError } from '../common/errors/validation-error.js';
+import { emptyPatch } from '../common/helpers/empty-patch.js';
+import { NotFoundError } from '../common/errors/not-found-error.js';
 
 @Injectable()
 export class TaskService {
@@ -53,11 +58,29 @@ export class TaskService {
 
   async updateTask(
     id: string,
-    fieldsToUpdate: Partial<
-      Pick<Task, 'title' | 'description' | 'boardColumnId'>
-    >,
+    patch: UpdateTaskPatchInput,
+    userId: string,
   ): Promise<Task> {
-    // TODO: Check user owns board column.
-    return this.taskRepository.updateTask(id, fieldsToUpdate);
+    // Parse and validate patch
+    const validation = updateTaskPatchInputSchema.safeParse(patch);
+    if (!validation.success) {
+      // TODO: Better validation errors
+      const issue = validation.error.issues[0];
+      throw new ValidationError(`${issue.path.join('.')}: ${issue.message}`);
+    }
+
+    // Check user can edit task
+    const task = await this.getTaskByIdForUser(id, userId);
+    if (!task) {
+      throw new NotFoundError(`Task not found ${id}`);
+    }
+
+    const update = validation.data;
+    if (emptyPatch(update)) {
+      // No change
+      return task;
+    }
+
+    return await this.taskRepository.updateTask(id, update);
   }
 }
