@@ -117,4 +117,8 @@ export class TaskService {
     // Update task
     return await this.taskRepository.updateTask(id, fieldsToUpdate);
   }
+
+  async deleteTask(id: string, userId: string): Promise<void> {
+    await this.taskRepository.deleteTaskForUser(id, userId);
+  }
 }

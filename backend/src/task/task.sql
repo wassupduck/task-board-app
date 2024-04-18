@@ -71,3 +71,15 @@ UPDATE task SET
     board_column_id = COALESCE(:boardColumnId, board_column_id)
 WHERE id = :id!
 RETURNING *;
+
+/* @name deleteTaskForUser */
+DELETE FROM task
+WHERE id = (
+    SELECT task.id
+    FROM task
+    INNER JOIN board_column ON board_column.id = task.board_column_id
+    INNER JOIN board ON board.id = board_column.board_id
+    WHERE task.id = :id!
+    AND board.app_user_id = :userId!
+)
+RETURNING *;

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseClient } from '../database/index.js';
 import {
+  deleteTaskForUser,
   insertTask,
   selectSubtasksByTaskIds,
   selectSubtasksConnectionsByTaskIds,
@@ -80,5 +81,15 @@ export class TaskRepository {
       throw new NotFoundError(`Task not found: ${id}`);
     }
     return task;
+  }
+
+  async deleteTaskForUser(id: string, userId: string) {
+    const deletedTask = await this.db.queryOneOrNone(deleteTaskForUser, {
+      id,
+      userId,
+    });
+    if (!deletedTask) {
+      throw new NotFoundError(`Task not found: ${id}`);
+    }
   }
 }

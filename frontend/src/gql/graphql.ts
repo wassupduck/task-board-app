@@ -81,6 +81,17 @@ export type CreateTaskSuccess = {
   task: Task;
 };
 
+export type DeleteTaskInput = {
+  id: Scalars['ID']['input'];
+};
+
+export type DeleteTaskResponse = DeleteTaskSuccess | NotFoundError;
+
+export type DeleteTaskSuccess = {
+  __typename?: 'DeleteTaskSuccess';
+  deletedId: Scalars['ID']['output'];
+};
+
 export type ErrorResponse = {
   message: Scalars['String']['output'];
 };
@@ -94,6 +105,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createBoard: CreateBoardResponse;
   createTask: CreateTaskResponse;
+  deleteTask: DeleteTaskResponse;
   updateBoard: UpdateBoardResponse;
   updateBoardColumns: UpdateBoardColumnsResponse;
   updateSubtaskCompleted: UpdateSubtaskCompletedResponse;
@@ -108,6 +120,11 @@ export type MutationCreateBoardArgs = {
 
 export type MutationCreateTaskArgs = {
   input: CreateTaskInput;
+};
+
+
+export type MutationDeleteTaskArgs = {
+  input: DeleteTaskInput;
 };
 
 

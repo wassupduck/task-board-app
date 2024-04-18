@@ -26,6 +26,9 @@ import { CreateTaskResponse } from './dto/create-task-response.dto.js';
 import { CreateTaskSuccess } from './dto/create-task-success.dto.js';
 import { BoardColumnNotFoundError } from './task.errors.js';
 import { BoardColumnNotFoundErrorResponse } from './dto/board-column-not-found-error.dto.js';
+import { DeleteTaskResponse } from './dto/delete-task-response.dto.js';
+import { DeleteTaskInput } from './dto/delete-task.input.js';
+import { DeleteTaskSuccess } from './dto/delete-task-success.dto.js';
 
 @Resolver(Task)
 export class TaskResolver {
@@ -121,5 +124,22 @@ export class TaskResolver {
     }
 
     return new UpdateSubtaskCompletedSuccess(subtask);
+  }
+
+  @Mutation(() => DeleteTaskResponse)
+  async deleteTask(
+    @Args('input') input: DeleteTaskInput,
+  ): Promise<typeof DeleteTaskResponse> {
+    const userId = '1'; // TODO
+
+    try {
+      await this.taskService.deleteTask(input.id, userId);
+    } catch (error) {
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
+    }
+
+    return new DeleteTaskSuccess(input.id);
   }
 }

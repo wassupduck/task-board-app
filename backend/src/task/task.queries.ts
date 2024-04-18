@@ -304,3 +304,45 @@ const updateTaskIR: any = {"usedParamSet":{"title":true,"description":true,"boar
 export const updateTask = new PreparedQuery<IUpdateTaskParams,IUpdateTaskResult>(updateTaskIR);
 
 
+/** 'DeleteTaskForUser' parameters type */
+export interface IDeleteTaskForUserParams {
+  id: NumberOrString;
+  userId: NumberOrString;
+}
+
+/** 'DeleteTaskForUser' return type */
+export interface IDeleteTaskForUserResult {
+  boardColumnId: string;
+  createdAt: Date;
+  description: string;
+  id: string;
+  title: string;
+  updatedAt: Date;
+}
+
+/** 'DeleteTaskForUser' query type */
+export interface IDeleteTaskForUserQuery {
+  params: IDeleteTaskForUserParams;
+  result: IDeleteTaskForUserResult;
+}
+
+const deleteTaskForUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":210,"b":213}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":243,"b":250}]}],"statement":"DELETE FROM task\nWHERE id = (\n    SELECT task.id\n    FROM task\n    INNER JOIN board_column ON board_column.id = task.board_column_id\n    INNER JOIN board ON board.id = board_column.board_id\n    WHERE task.id = :id!\n    AND board.app_user_id = :userId!\n)\nRETURNING *"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * DELETE FROM task
+ * WHERE id = (
+ *     SELECT task.id
+ *     FROM task
+ *     INNER JOIN board_column ON board_column.id = task.board_column_id
+ *     INNER JOIN board ON board.id = board_column.board_id
+ *     WHERE task.id = :id!
+ *     AND board.app_user_id = :userId!
+ * )
+ * RETURNING *
+ * ```
+ */
+export const deleteTaskForUser = new PreparedQuery<IDeleteTaskForUserParams,IDeleteTaskForUserResult>(deleteTaskForUserIR);
+
+
