@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { BoardRepository } from './board.repository.js';
+import { AliasToIdMapping, BoardRepository } from './board.repository.js';
 import { Board } from './entities/board.entity.js';
 import { BoardColumn } from './entities/board-column.entity.js';
 import { BoardColumnsConnection } from './entities/board-columns-connection.entity.js';
@@ -7,7 +7,7 @@ import { DatabaseClient, DatabaseTransactor } from '../database/index.js';
 import { newBoardInputSchema } from './schemas/new-board-input.schema.js';
 import { ValidationError } from '../common/errors/validation-error.js';
 import { UpdateBoardPatchInput } from './dto/update-board.input.js';
-import { UpdateBoardColumnsInput } from './dto/update-board-columns.input.js';
+import { UpdateBoardColumnsPatchInput } from './dto/update-board-columns.input.js';
 import { updateBoardPatchInputSchema } from './schemas/update-board-patch-input.schema.js';
 import { NotFoundError } from '../common/errors/not-found-error.js';
 import { updateBoardColumnsPatchInputSchema } from './schemas/update-board-columns-patch-input.schema.js';
@@ -21,19 +21,19 @@ export class BoardService {
     @Inject(DatabaseClient) private readonly db: DatabaseTransactor,
   ) {}
 
-  async getBoardsForUser(userId: string): Promise<Board[]> {
-    return this.boardRepository.getBoardsForUser(userId);
+  async getUserBoards(userId: string): Promise<Board[]> {
+    return this.boardRepository.getBoardsByUserId(userId);
   }
 
-  async getBoardByIdForUser(id: string, userId: string): Promise<Board | null> {
-    return this.boardRepository.getBoardByIdForUser(id, userId);
+  async getBoardByIdAsUser(id: string, userId: string): Promise<Board | null> {
+    return this.boardRepository.getBoardByIdAsUser(id, userId);
   }
 
-  async getBoardColumnByIdForUser(
+  async getBoardColumnByIdAsUser(
     id: string,
     userId: string,
   ): Promise<BoardColumn | null> {
-    return await this.boardRepository.getBoardColumnByIdForUser(id, userId);
+    return await this.boardRepository.getBoardColumnByIdAsUser(id, userId);
   }
 
   async getBoardColumns(boardId: string): Promise<BoardColumn[]> {
@@ -58,13 +58,18 @@ export class BoardService {
       throw new ValidationError(`${issue.path.join('.')}: ${issue.message}`);
     }
 
-    return await this.db.inTransaction(async () => {
-      const board = await this.boardRepository.createBoard(input, userId);
+    const newBoard = validation.data;
 
-      if (input.columns && input.columns.length > 0) {
+    return await this.db.inTransaction(async () => {
+      const board = await this.boardRepository.createBoard({
+        ...newBoard,
+        appUserId: userId,
+      });
+
+      if (newBoard.columns && newBoard.columns.length > 0) {
         await this.boardRepository.createBoardColumns(
           board.id,
-          input.columns.map((column, position) => ({ ...column, position })),
+          newBoard.columns.map((column, position) => ({ ...column, position })),
         );
       }
 
@@ -74,11 +79,11 @@ export class BoardService {
 
   async updateBoard(
     id: string,
-    patch: UpdateBoardPatchInput,
+    input: UpdateBoardPatchInput,
     userId: string,
   ): Promise<Board> {
     // Parse and validate patch
-    const validation = updateBoardPatchInputSchema.safeParse(patch);
+    const validation = updateBoardPatchInputSchema.safeParse(input);
     if (!validation.success) {
       // TODO: Better validation errors
       const issue = validation.error.issues[0];
@@ -86,30 +91,27 @@ export class BoardService {
     }
 
     // Check user can edit board
-    const board = await this.getBoardByIdForUser(id, userId);
+    const board = await this.getBoardByIdAsUser(id, userId);
     if (!board) {
       throw new NotFoundError(`Board not found: ${id}`);
     }
 
-    const update = validation.data;
-    if (emptyPatch(update)) {
+    const patch = validation.data;
+    if (emptyPatch(patch)) {
       // No change
       return board;
     }
 
-    return await this.boardRepository.updateBoard(id, update);
+    return await this.boardRepository.updateBoard(id, patch);
   }
 
   async updateBoardColumns(
-    input: UpdateBoardColumnsInput,
+    boardId: string,
+    input: UpdateBoardColumnsPatchInput,
     userId: string,
   ): Promise<Board> {
-    const boardId = input.boardId;
-
     // Parse and validate patch
-    const validation = updateBoardColumnsPatchInputSchema.safeParse(
-      input.patch,
-    );
+    const validation = updateBoardColumnsPatchInputSchema.safeParse(input);
     if (!validation.success) {
       // TODO: Better validation errors
       const issue = validation.error.issues[0];
@@ -119,7 +121,7 @@ export class BoardService {
     return await this.db.inTransaction(async () => {
       // Fetch board for update to prevent concurrent column position updates
       // And check user can edit board
-      const board = await this.boardRepository.getForUpdateBoardByIdForUser(
+      const board = await this.boardRepository.getForUpdateBoardByIdAsUser(
         boardId,
         userId,
       );
@@ -145,7 +147,7 @@ export class BoardService {
 
       // Add new columns
       let addedColumns: BoardColumn[] = [];
-      let idAliasMapping: { [key: string]: string | undefined } = {};
+      let aliasToIdMapping: AliasToIdMapping = {};
       if (patch.additions.length > 0) {
         const columnsToAdd = patch.additions.map((addition, idx) => ({
           ...addition.column,
@@ -158,7 +160,7 @@ export class BoardService {
           position: idx,
         }));
 
-        [addedColumns, idAliasMapping] =
+        [addedColumns, aliasToIdMapping] =
           // New columns will be returned in position order
           await this.boardRepository.createBoardColumns(boardId, columnsToAdd);
       }
@@ -185,7 +187,7 @@ export class BoardService {
             .map((idOrAlias) => {
               return columnIds.has(idOrAlias)
                 ? idOrAlias
-                : idAliasMapping[idOrAlias];
+                : aliasToIdMapping[idOrAlias];
             })
             .filter((c) => c !== undefined) as string[];
           const orderedColumnIds = new Set(newColumnOrder);
@@ -229,6 +231,6 @@ export class BoardService {
   }
 
   async deleteBoard(id: string, userId: string): Promise<void> {
-    await this.boardRepository.deleteBoardForUser(id, userId);
+    await this.boardRepository.deleteBoardAsUser(id, userId);
   }
 }

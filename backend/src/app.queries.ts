@@ -15,15 +15,15 @@ export interface ISelectCurrentMigrationVersionQuery {
   result: ISelectCurrentMigrationVersionResult;
 }
 
-const selectCurrentMigrationVersionIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT SPLIT_PART(name, '_', 1) as \"current_version!\"\nFROM knex_migrations\nORDER BY migration_time DESC\nLIMIT 1"};
+const selectCurrentMigrationVersionIR: any = {"usedParamSet":{},"params":[],"statement":"select split_part(name, '_', 1) as \"current_version!\"\nfrom knex_migrations\norder by migration_time desc\nlimit 1"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT SPLIT_PART(name, '_', 1) as "current_version!"
- * FROM knex_migrations
- * ORDER BY migration_time DESC
- * LIMIT 1
+ * select split_part(name, '_', 1) as "current_version!"
+ * from knex_migrations
+ * order by migration_time desc
+ * limit 1
  * ```
  */
 export const selectCurrentMigrationVersion = new PreparedQuery<ISelectCurrentMigrationVersionParams,ISelectCurrentMigrationVersionResult>(selectCurrentMigrationVersionIR);

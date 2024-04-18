@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseClient } from '../database/index.js';
 import {
-  deleteTaskForUser,
+  deleteTaskAsUser,
   insertTask,
   selectSubtasksByTaskIds,
   selectSubtasksConnectionsByTaskIds,
-  selectTaskByIdForUser,
+  selectTaskByIdAsUser,
   selectTasksByBoardId,
   selectTasksByColumnIds,
-  updateSubtaskCompletedByIdForUser,
+  updateSubtaskCompletedByIdAsUser,
   updateTask,
 } from './task.queries.js';
 import { Task } from './entities/task.entity.js';
@@ -20,8 +20,8 @@ import { NotFoundError } from '../common/errors/not-found-error.js';
 export class TaskRepository {
   constructor(private readonly db: DatabaseClient) {}
 
-  async getTaskByIdForUser(id: string, userId: string): Promise<Task | null> {
-    return this.db.queryOneOrNone(selectTaskByIdForUser, { id, userId });
+  async getTaskByIdAsUser(id: string, userId: string): Promise<Task | null> {
+    return this.db.queryOneOrNone(selectTaskByIdAsUser, { id, userId });
   }
 
   async getTasksByBoardId(boardId: string): Promise<Task[]> {
@@ -42,13 +42,13 @@ export class TaskRepository {
     return this.db.queryAll(selectSubtasksByTaskIds, { taskIds });
   }
 
-  async updateSubtaskCompletedByIdForUser(
+  async updateSubtaskCompletedByIdAsUser(
     id: string,
     completed: boolean,
     userId: string,
   ): Promise<Subtask> {
     const subtask = await this.db.queryOneOrNone(
-      updateSubtaskCompletedByIdForUser,
+      updateSubtaskCompletedByIdAsUser,
       {
         id,
         userId,
@@ -83,8 +83,8 @@ export class TaskRepository {
     return task;
   }
 
-  async deleteTaskForUser(id: string, userId: string) {
-    const deletedTask = await this.db.queryOneOrNone(deleteTaskForUser, {
+  async deleteTaskAsUser(id: string, userId: string) {
+    const deletedTask = await this.db.queryOneOrNone(deleteTaskAsUser, {
       id,
       userId,
     });

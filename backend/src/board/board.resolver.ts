@@ -41,7 +41,7 @@ export class BoardResolver {
   @Query(() => [Board])
   async boards(): Promise<Board[]> {
     const userId = '1'; // TODO
-    return this.boardService.getBoardsForUser(userId);
+    return this.boardService.getUserBoards(userId);
   }
 
   @Query(() => Board, { nullable: true })
@@ -49,7 +49,7 @@ export class BoardResolver {
     @Args('id', { type: () => ID }) id: string,
   ): Promise<Board | null> {
     const userId = '1'; // TODO
-    return this.boardService.getBoardByIdForUser(id, userId);
+    return this.boardService.getBoardByIdAsUser(id, userId);
   }
 
   @ResolveField(() => BoardColumnsConnection)
@@ -116,7 +116,11 @@ export class BoardResolver {
 
     let board: Board;
     try {
-      board = await this.boardService.updateBoardColumns(input, userId);
+      board = await this.boardService.updateBoardColumns(
+        input.boardId,
+        input.patch,
+        userId,
+      );
     } catch (error) {
       if (error instanceof BoardColumnNameConflictError) {
         return new BoardColumnNameConflictErrorResponse(error.message);

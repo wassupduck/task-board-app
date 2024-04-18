@@ -3,13 +3,13 @@ import { PreparedQuery } from '@pgtyped/runtime';
 
 export type NumberOrString = number | string;
 
-/** 'SelectAllBoardsForUser' parameters type */
-export interface ISelectAllBoardsForUserParams {
+/** 'SelectBoardsByUserId' parameters type */
+export interface ISelectBoardsByUserIdParams {
   userId: NumberOrString;
 }
 
-/** 'SelectAllBoardsForUser' return type */
-export interface ISelectAllBoardsForUserResult {
+/** 'SelectBoardsByUserId' return type */
+export interface ISelectBoardsByUserIdResult {
   appUserId: string;
   createdAt: Date;
   id: string;
@@ -17,34 +17,34 @@ export interface ISelectAllBoardsForUserResult {
   updatedAt: Date;
 }
 
-/** 'SelectAllBoardsForUser' query type */
-export interface ISelectAllBoardsForUserQuery {
-  params: ISelectAllBoardsForUserParams;
-  result: ISelectAllBoardsForUserResult;
+/** 'SelectBoardsByUserId' query type */
+export interface ISelectBoardsByUserIdQuery {
+  params: ISelectBoardsByUserIdParams;
+  result: ISelectBoardsByUserIdResult;
 }
 
-const selectAllBoardsForUserIR: any = {"usedParamSet":{"userId":true},"params":[{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":40,"b":47}]}],"statement":"SELECT *\nFROM board\nWHERE app_user_id = :userId!\nORDER BY name ASC"};
+const selectBoardsByUserIdIR: any = {"usedParamSet":{"userId":true},"params":[{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":40,"b":47}]}],"statement":"select *\nfrom board\nwhere app_user_id = :userId!\norder by name asc"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT *
- * FROM board
- * WHERE app_user_id = :userId!
- * ORDER BY name ASC
+ * select *
+ * from board
+ * where app_user_id = :userId!
+ * order by name asc
  * ```
  */
-export const selectAllBoardsForUser = new PreparedQuery<ISelectAllBoardsForUserParams,ISelectAllBoardsForUserResult>(selectAllBoardsForUserIR);
+export const selectBoardsByUserId = new PreparedQuery<ISelectBoardsByUserIdParams,ISelectBoardsByUserIdResult>(selectBoardsByUserIdIR);
 
 
-/** 'SelectForUpdateBoardByIdForUser' parameters type */
-export interface ISelectForUpdateBoardByIdForUserParams {
+/** 'SelectForUpdateBoardByIdAsUser' parameters type */
+export interface ISelectForUpdateBoardByIdAsUserParams {
   id: NumberOrString;
   userId: NumberOrString;
 }
 
-/** 'SelectForUpdateBoardByIdForUser' return type */
-export interface ISelectForUpdateBoardByIdForUserResult {
+/** 'SelectForUpdateBoardByIdAsUser' return type */
+export interface ISelectForUpdateBoardByIdAsUserResult {
   appUserId: string;
   createdAt: Date;
   id: string;
@@ -52,35 +52,35 @@ export interface ISelectForUpdateBoardByIdForUserResult {
   updatedAt: Date;
 }
 
-/** 'SelectForUpdateBoardByIdForUser' query type */
-export interface ISelectForUpdateBoardByIdForUserQuery {
-  params: ISelectForUpdateBoardByIdForUserParams;
-  result: ISelectForUpdateBoardByIdForUserResult;
+/** 'SelectForUpdateBoardByIdAsUser' query type */
+export interface ISelectForUpdateBoardByIdAsUserQuery {
+  params: ISelectForUpdateBoardByIdAsUserParams;
+  result: ISelectForUpdateBoardByIdAsUserResult;
 }
 
-const selectForUpdateBoardByIdForUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":34}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":54,"b":61}]}],"statement":"SELECT *\nFROM board\nWHERE id = :id!\nAND app_user_id = :userId!\nFOR UPDATE"};
+const selectForUpdateBoardByIdAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":34}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":54,"b":61}]}],"statement":"select *\nfrom board\nwhere id = :id!\nand app_user_id = :userId!\nfor update"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT *
- * FROM board
- * WHERE id = :id!
- * AND app_user_id = :userId!
- * FOR UPDATE
+ * select *
+ * from board
+ * where id = :id!
+ * and app_user_id = :userId!
+ * for update
  * ```
  */
-export const selectForUpdateBoardByIdForUser = new PreparedQuery<ISelectForUpdateBoardByIdForUserParams,ISelectForUpdateBoardByIdForUserResult>(selectForUpdateBoardByIdForUserIR);
+export const selectForUpdateBoardByIdAsUser = new PreparedQuery<ISelectForUpdateBoardByIdAsUserParams,ISelectForUpdateBoardByIdAsUserResult>(selectForUpdateBoardByIdAsUserIR);
 
 
-/** 'SelectBoardByIdForUser' parameters type */
-export interface ISelectBoardByIdForUserParams {
+/** 'SelectBoardByIdAsUser' parameters type */
+export interface ISelectBoardByIdAsUserParams {
   id: NumberOrString;
   userId: NumberOrString;
 }
 
-/** 'SelectBoardByIdForUser' return type */
-export interface ISelectBoardByIdForUserResult {
+/** 'SelectBoardByIdAsUser' return type */
+export interface ISelectBoardByIdAsUserResult {
   appUserId: string;
   createdAt: Date;
   id: string;
@@ -88,34 +88,34 @@ export interface ISelectBoardByIdForUserResult {
   updatedAt: Date;
 }
 
-/** 'SelectBoardByIdForUser' query type */
-export interface ISelectBoardByIdForUserQuery {
-  params: ISelectBoardByIdForUserParams;
-  result: ISelectBoardByIdForUserResult;
+/** 'SelectBoardByIdAsUser' query type */
+export interface ISelectBoardByIdAsUserQuery {
+  params: ISelectBoardByIdAsUserParams;
+  result: ISelectBoardByIdAsUserResult;
 }
 
-const selectBoardByIdForUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":34}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":54,"b":61}]}],"statement":"SELECT *\nFROM board\nWHERE id = :id!\nAND app_user_id = :userId!"};
+const selectBoardByIdAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":34}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":54,"b":61}]}],"statement":"select *\nfrom board\nwhere id = :id!\nand app_user_id = :userId!"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT *
- * FROM board
- * WHERE id = :id!
- * AND app_user_id = :userId!
+ * select *
+ * from board
+ * where id = :id!
+ * and app_user_id = :userId!
  * ```
  */
-export const selectBoardByIdForUser = new PreparedQuery<ISelectBoardByIdForUserParams,ISelectBoardByIdForUserResult>(selectBoardByIdForUserIR);
+export const selectBoardByIdAsUser = new PreparedQuery<ISelectBoardByIdAsUserParams,ISelectBoardByIdAsUserResult>(selectBoardByIdAsUserIR);
 
 
-/** 'SelectBoardColumnByIdForUser' parameters type */
-export interface ISelectBoardColumnByIdForUserParams {
+/** 'SelectBoardColumnByIdAsUser' parameters type */
+export interface ISelectBoardColumnByIdAsUserParams {
   id: NumberOrString;
   userId: NumberOrString;
 }
 
-/** 'SelectBoardColumnByIdForUser' return type */
-export interface ISelectBoardColumnByIdForUserResult {
+/** 'SelectBoardColumnByIdAsUser' return type */
+export interface ISelectBoardColumnByIdAsUserResult {
   boardId: string;
   createdAt: Date;
   id: string;
@@ -124,25 +124,25 @@ export interface ISelectBoardColumnByIdForUserResult {
   updatedAt: Date;
 }
 
-/** 'SelectBoardColumnByIdForUser' query type */
-export interface ISelectBoardColumnByIdForUserQuery {
-  params: ISelectBoardColumnByIdForUserParams;
-  result: ISelectBoardColumnByIdForUserResult;
+/** 'SelectBoardColumnByIdAsUser' query type */
+export interface ISelectBoardColumnByIdAsUserQuery {
+  params: ISelectBoardColumnByIdAsUserParams;
+  result: ISelectBoardColumnByIdAsUserResult;
 }
 
-const selectBoardColumnByIdForUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":117,"b":120}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":146,"b":153}]}],"statement":"SELECT board_column.*\nFROM board_column\nINNER JOIN board ON board.id = board_column.board_id\nWHERE board_column.id = :id!\nAND board.app_user_id = :userId!"};
+const selectBoardColumnByIdAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":117,"b":120}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":146,"b":153}]}],"statement":"select board_column.*\nfrom board_column\ninner join board on board.id = board_column.board_id\nwhere board_column.id = :id!\nand board.app_user_id = :userId!"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT board_column.*
- * FROM board_column
- * INNER JOIN board ON board.id = board_column.board_id
- * WHERE board_column.id = :id!
- * AND board.app_user_id = :userId!
+ * select board_column.*
+ * from board_column
+ * inner join board on board.id = board_column.board_id
+ * where board_column.id = :id!
+ * and board.app_user_id = :userId!
  * ```
  */
-export const selectBoardColumnByIdForUser = new PreparedQuery<ISelectBoardColumnByIdForUserParams,ISelectBoardColumnByIdForUserResult>(selectBoardColumnByIdForUserIR);
+export const selectBoardColumnByIdAsUser = new PreparedQuery<ISelectBoardColumnByIdAsUserParams,ISelectBoardColumnByIdAsUserResult>(selectBoardColumnByIdAsUserIR);
 
 
 /** 'SelectBoardColumnsByBoardId' parameters type */
@@ -166,15 +166,15 @@ export interface ISelectBoardColumnsByBoardIdQuery {
   result: ISelectBoardColumnsByBoardIdResult;
 }
 
-const selectBoardColumnsByBoardIdIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":44,"b":52}]}],"statement":"SELECT *\nFROM board_column\nWHERE board_id = :boardId!\nORDER BY position ASC"};
+const selectBoardColumnsByBoardIdIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":44,"b":52}]}],"statement":"select *\nfrom board_column\nwhere board_id = :boardId!\norder by position asc"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT *
- * FROM board_column
- * WHERE board_id = :boardId!
- * ORDER BY position ASC
+ * select *
+ * from board_column
+ * where board_id = :boardId!
+ * order by position asc
  * ```
  */
 export const selectBoardColumnsByBoardId = new PreparedQuery<ISelectBoardColumnsByBoardIdParams,ISelectBoardColumnsByBoardIdResult>(selectBoardColumnsByBoardIdIR);
@@ -201,14 +201,14 @@ export interface ISelectBoardColumnsByIdsQuery {
   result: ISelectBoardColumnsByIdsResult;
 }
 
-const selectBoardColumnsByIdsIR: any = {"usedParamSet":{"ids":true},"params":[{"name":"ids","required":true,"transform":{"type":"array_spread"},"locs":[{"a":39,"b":43}]}],"statement":"SELECT *\nFROM board_column\nWHERE id in :ids!"};
+const selectBoardColumnsByIdsIR: any = {"usedParamSet":{"ids":true},"params":[{"name":"ids","required":true,"transform":{"type":"array_spread"},"locs":[{"a":39,"b":43}]}],"statement":"select *\nfrom board_column\nwhere id in :ids!"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT *
- * FROM board_column
- * WHERE id in :ids!
+ * select *
+ * from board_column
+ * where id in :ids!
  * ```
  */
 export const selectBoardColumnsByIds = new PreparedQuery<ISelectBoardColumnsByIdsParams,ISelectBoardColumnsByIdsResult>(selectBoardColumnsByIdsIR);
@@ -231,18 +231,18 @@ export interface ISelectBoardColumnsConnectionQuery {
   result: ISelectBoardColumnsConnectionResult;
 }
 
-const selectBoardColumnsConnectionIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":177,"b":185}]}],"statement":"SELECT\n    board.id AS \"board_id!\",\n    count(board_column.id)::integer AS \"total_count!\"\nFROM board\nLEFT JOIN board_column ON board_column.board_id = board.id\nWHERE board.id = :boardId!\nGROUP BY board.id"};
+const selectBoardColumnsConnectionIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":177,"b":185}]}],"statement":"select\n    board.id as \"board_id!\",\n    count(board_column.id)::integer as \"total_count!\"\nfrom board\nleft join board_column on board_column.board_id = board.id\nwhere board.id = :boardId!\ngroup by board.id"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT
- *     board.id AS "board_id!",
- *     count(board_column.id)::integer AS "total_count!"
- * FROM board
- * LEFT JOIN board_column ON board_column.board_id = board.id
- * WHERE board.id = :boardId!
- * GROUP BY board.id
+ * select
+ *     board.id as "board_id!",
+ *     count(board_column.id)::integer as "total_count!"
+ * from board
+ * left join board_column on board_column.board_id = board.id
+ * where board.id = :boardId!
+ * group by board.id
  * ```
  */
 export const selectBoardColumnsConnection = new PreparedQuery<ISelectBoardColumnsConnectionParams,ISelectBoardColumnsConnectionResult>(selectBoardColumnsConnectionIR);
@@ -252,7 +252,7 @@ export const selectBoardColumnsConnection = new PreparedQuery<ISelectBoardColumn
 export interface IInsertBoardParams {
   board: {
     name: string | null | void,
-    userId: NumberOrString | null | void
+    appUserId: NumberOrString | null | void
   };
 }
 
@@ -271,14 +271,14 @@ export interface IInsertBoardQuery {
   result: IInsertBoardResult;
 }
 
-const insertBoardIR: any = {"usedParamSet":{"board":true},"params":[{"name":"board","required":true,"transform":{"type":"pick_tuple","keys":[{"name":"name","required":false},{"name":"userId","required":false}]},"locs":[{"a":44,"b":50}]}],"statement":"INSERT INTO board(name, app_user_id)\nVALUES :board!\nRETURNING *"};
+const insertBoardIR: any = {"usedParamSet":{"board":true},"params":[{"name":"board","required":true,"transform":{"type":"pick_tuple","keys":[{"name":"name","required":false},{"name":"appUserId","required":false}]},"locs":[{"a":44,"b":50}]}],"statement":"insert into board(name, app_user_id)\nvalues :board!\nreturning *"};
 
 /**
  * Query generated from SQL:
  * ```
- * INSERT INTO board(name, app_user_id)
- * VALUES :board!
- * RETURNING *
+ * insert into board(name, app_user_id)
+ * values :board!
+ * returning *
  * ```
  */
 export const insertBoard = new PreparedQuery<IInsertBoardParams,IInsertBoardResult>(insertBoardIR);
@@ -305,15 +305,15 @@ export interface IUpdateBoardQuery {
   result: IUpdateBoardResult;
 }
 
-const updateBoardIR: any = {"usedParamSet":{"name":true,"id":true},"params":[{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":37,"b":41}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":61,"b":64}]}],"statement":"UPDATE board SET\n    name = COALESCE(:name, name)\nWHERE id = :id!\nRETURNING *"};
+const updateBoardIR: any = {"usedParamSet":{"name":true,"id":true},"params":[{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":37,"b":41}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":61,"b":64}]}],"statement":"update board set\n    name = coalesce(:name, name)\nwhere id = :id!\nreturning *"};
 
 /**
  * Query generated from SQL:
  * ```
- * UPDATE board SET
- *     name = COALESCE(:name, name)
- * WHERE id = :id!
- * RETURNING *
+ * update board set
+ *     name = coalesce(:name, name)
+ * where id = :id!
+ * returning *
  * ```
  */
 export const updateBoard = new PreparedQuery<IUpdateBoardParams,IUpdateBoardResult>(updateBoardIR);
@@ -334,14 +334,14 @@ export interface IDeleteBoardColumnsQuery {
   result: IDeleteBoardColumnsResult;
 }
 
-const deleteBoardColumnsIR: any = {"usedParamSet":{"columnIds":true,"boardId":true},"params":[{"name":"columnIds","required":false,"transform":{"type":"array_spread"},"locs":[{"a":37,"b":46}]},{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":63,"b":71}]}],"statement":"DELETE FROM board_column\nWHERE id IN :columnIds\nAND board_id = :boardId!"};
+const deleteBoardColumnsIR: any = {"usedParamSet":{"columnIds":true,"boardId":true},"params":[{"name":"columnIds","required":false,"transform":{"type":"array_spread"},"locs":[{"a":37,"b":46}]},{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":63,"b":71}]}],"statement":"delete from board_column\nwhere id in :columnIds\nand board_id = :boardId!"};
 
 /**
  * Query generated from SQL:
  * ```
- * DELETE FROM board_column
- * WHERE id IN :columnIds
- * AND board_id = :boardId!
+ * delete from board_column
+ * where id in :columnIds
+ * and board_id = :boardId!
  * ```
  */
 export const deleteBoardColumns = new PreparedQuery<IDeleteBoardColumnsParams,IDeleteBoardColumnsResult>(deleteBoardColumnsIR);
@@ -374,33 +374,33 @@ export interface IInsertBoardColumnsQuery {
   result: IInsertBoardColumnsResult;
 }
 
-const insertBoardColumnsIR: any = {"usedParamSet":{"columns":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"idAlias","required":false},{"name":"name","required":true},{"name":"position","required":true},{"name":"boardId","required":true}]},"locs":[{"a":195,"b":203}]}],"statement":"WITH\nnew_column_data AS (\n    SELECT\n        id_alias,\n        name,\n        position::smallint,\n        board_id::bigint,\n        nextval('board_column_id_seq'::regclass) AS id\n    FROM (VALUES :columns!) AS c (id_alias, name, position, board_id)\n),\nnew_column AS (\n    INSERT INTO board_column(id, name, position, board_id)\n    SELECT id, name, position, board_id\n    FROM new_column_data\n    RETURNING *\n)\nSELECT\n    new_column.*,\n    new_column_data.id_alias\nFROM new_column\nINNER JOIN new_column_data ON new_column_data.id = new_column.id\nORDER BY new_column.position ASC"};
+const insertBoardColumnsIR: any = {"usedParamSet":{"columns":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"idAlias","required":false},{"name":"name","required":true},{"name":"position","required":true},{"name":"boardId","required":true}]},"locs":[{"a":195,"b":203}]}],"statement":"with\nnew_column_data as (\n    select\n        id_alias,\n        name,\n        position::smallint,\n        board_id::bigint,\n        nextval('board_column_id_seq'::regclass) as id\n    from (values :columns!) as c (id_alias, name, position, board_id)\n),\nnew_column as (\n    insert into board_column(id, name, position, board_id)\n    select id, name, position, board_id\n    from new_column_data\n    returning *\n)\nselect\n    new_column.*,\n    new_column_data.id_alias\nfrom new_column\ninner join new_column_data on new_column_data.id = new_column.id\norder by new_column.position asc"};
 
 /**
  * Query generated from SQL:
  * ```
- * WITH
- * new_column_data AS (
- *     SELECT
+ * with
+ * new_column_data as (
+ *     select
  *         id_alias,
  *         name,
  *         position::smallint,
  *         board_id::bigint,
- *         nextval('board_column_id_seq'::regclass) AS id
- *     FROM (VALUES :columns!) AS c (id_alias, name, position, board_id)
+ *         nextval('board_column_id_seq'::regclass) as id
+ *     from (values :columns!) as c (id_alias, name, position, board_id)
  * ),
- * new_column AS (
- *     INSERT INTO board_column(id, name, position, board_id)
- *     SELECT id, name, position, board_id
- *     FROM new_column_data
- *     RETURNING *
+ * new_column as (
+ *     insert into board_column(id, name, position, board_id)
+ *     select id, name, position, board_id
+ *     from new_column_data
+ *     returning *
  * )
- * SELECT
+ * select
  *     new_column.*,
  *     new_column_data.id_alias
- * FROM new_column
- * INNER JOIN new_column_data ON new_column_data.id = new_column.id
- * ORDER BY new_column.position ASC
+ * from new_column
+ * inner join new_column_data on new_column_data.id = new_column.id
+ * order by new_column.position asc
  * ```
  */
 export const insertBoardColumns = new PreparedQuery<IInsertBoardColumnsParams,IInsertBoardColumnsResult>(insertBoardColumnsIR);
@@ -432,32 +432,32 @@ export interface IUpdateBoardColumnsQuery {
   result: IUpdateBoardColumnsResult;
 }
 
-const updateBoardColumnsIR: any = {"usedParamSet":{"columns":true,"boardId":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"id","required":true},{"name":"name","required":false},{"name":"position","required":false}]},"locs":[{"a":178,"b":186}]},{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":303,"b":311}]}],"statement":"UPDATE board_column\nSET\n    name = COALESCE(column_update.name, board_column.name),\n    position = COALESCE(column_update.position::smallint, board_column.position)\nFROM (VALUES :columns!) AS column_update(id, name, position)\nWHERE board_column.id = column_update.id::bigint\nAND board_column.board_id = :boardId!\nRETURNING board_column.*"};
+const updateBoardColumnsIR: any = {"usedParamSet":{"columns":true,"boardId":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"id","required":true},{"name":"name","required":false},{"name":"position","required":false}]},"locs":[{"a":178,"b":186}]},{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":303,"b":311}]}],"statement":"update board_column\nset\n    name = coalesce(column_update.name, board_column.name),\n    position = coalesce(column_update.position::smallint, board_column.position)\nfrom (values :columns!) as column_update(id, name, position)\nwhere board_column.id = column_update.id::bigint\nand board_column.board_id = :boardId!\nreturning board_column.*"};
 
 /**
  * Query generated from SQL:
  * ```
- * UPDATE board_column
- * SET
- *     name = COALESCE(column_update.name, board_column.name),
- *     position = COALESCE(column_update.position::smallint, board_column.position)
- * FROM (VALUES :columns!) AS column_update(id, name, position)
- * WHERE board_column.id = column_update.id::bigint
- * AND board_column.board_id = :boardId!
- * RETURNING board_column.*
+ * update board_column
+ * set
+ *     name = coalesce(column_update.name, board_column.name),
+ *     position = coalesce(column_update.position::smallint, board_column.position)
+ * from (values :columns!) as column_update(id, name, position)
+ * where board_column.id = column_update.id::bigint
+ * and board_column.board_id = :boardId!
+ * returning board_column.*
  * ```
  */
 export const updateBoardColumns = new PreparedQuery<IUpdateBoardColumnsParams,IUpdateBoardColumnsResult>(updateBoardColumnsIR);
 
 
-/** 'DeleteBoardForUser' parameters type */
-export interface IDeleteBoardForUserParams {
+/** 'DeleteBoardAsUser' parameters type */
+export interface IDeleteBoardAsUserParams {
   id: NumberOrString;
   userId: NumberOrString;
 }
 
-/** 'DeleteBoardForUser' return type */
-export interface IDeleteBoardForUserResult {
+/** 'DeleteBoardAsUser' return type */
+export interface IDeleteBoardAsUserResult {
   appUserId: string;
   createdAt: Date;
   id: string;
@@ -465,23 +465,23 @@ export interface IDeleteBoardForUserResult {
   updatedAt: Date;
 }
 
-/** 'DeleteBoardForUser' query type */
-export interface IDeleteBoardForUserQuery {
-  params: IDeleteBoardForUserParams;
-  result: IDeleteBoardForUserResult;
+/** 'DeleteBoardAsUser' query type */
+export interface IDeleteBoardAsUserQuery {
+  params: IDeleteBoardAsUserParams;
+  result: IDeleteBoardAsUserResult;
 }
 
-const deleteBoardForUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":29,"b":32}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":52,"b":59}]}],"statement":"DELETE FROM board\nWHERE id = :id!\nAND app_user_id = :userId!\nRETURNING *"};
+const deleteBoardAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":29,"b":32}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":52,"b":59}]}],"statement":"delete from board\nwhere id = :id!\nand app_user_id = :userId!\nreturning *"};
 
 /**
  * Query generated from SQL:
  * ```
- * DELETE FROM board
- * WHERE id = :id!
- * AND app_user_id = :userId!
- * RETURNING *
+ * delete from board
+ * where id = :id!
+ * and app_user_id = :userId!
+ * returning *
  * ```
  */
-export const deleteBoardForUser = new PreparedQuery<IDeleteBoardForUserParams,IDeleteBoardForUserResult>(deleteBoardForUserIR);
+export const deleteBoardAsUser = new PreparedQuery<IDeleteBoardAsUserParams,IDeleteBoardAsUserResult>(deleteBoardAsUserIR);
 
 

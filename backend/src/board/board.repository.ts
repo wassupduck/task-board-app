@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseClient, DatabaseError } from '../database/index.js';
 import { Board } from './entities/board.entity.js';
 import {
+  deleteBoardAsUser,
   deleteBoardColumns,
-  deleteBoardForUser,
   IInsertBoardColumnsResult,
   insertBoard,
   insertBoardColumns,
-  selectAllBoardsForUser,
-  selectBoardByIdForUser,
-  selectBoardColumnByIdForUser,
+  selectBoardByIdAsUser,
+  selectBoardColumnByIdAsUser,
   selectBoardColumnsByBoardId,
   selectBoardColumnsByIds,
   selectBoardColumnsConnection,
-  selectForUpdateBoardByIdForUser,
+  selectBoardsByUserId,
+  selectForUpdateBoardByIdAsUser,
   updateBoard,
   updateBoardColumns,
 } from './board.queries.js';
@@ -26,33 +26,35 @@ import {
 } from './board.errors.js';
 import { NotFoundError } from '../common/errors/not-found-error.js';
 
+export type AliasToIdMapping = { [key: string]: string | undefined };
+
 @Injectable()
 export class BoardRepository {
   constructor(private readonly db: DatabaseClient) {}
 
-  async getBoardsForUser(userId: string): Promise<Board[]> {
-    return await this.db.queryAll(selectAllBoardsForUser, { userId });
+  async getBoardsByUserId(userId: string): Promise<Board[]> {
+    return await this.db.queryAll(selectBoardsByUserId, { userId });
   }
 
-  async getBoardByIdForUser(id: string, userId: string): Promise<Board | null> {
-    return await this.db.queryOneOrNone(selectBoardByIdForUser, { id, userId });
+  async getBoardByIdAsUser(id: string, userId: string): Promise<Board | null> {
+    return await this.db.queryOneOrNone(selectBoardByIdAsUser, { id, userId });
   }
 
-  async getForUpdateBoardByIdForUser(
+  async getForUpdateBoardByIdAsUser(
     id: string,
     userId: string,
   ): Promise<Board | null> {
-    return await this.db.queryOneOrNone(selectForUpdateBoardByIdForUser, {
+    return await this.db.queryOneOrNone(selectForUpdateBoardByIdAsUser, {
       id,
       userId,
     });
   }
 
-  async getBoardColumnByIdForUser(
+  async getBoardColumnByIdAsUser(
     id: string,
     userId: string,
   ): Promise<BoardColumn | null> {
-    return await this.db.queryOneOrNone(selectBoardColumnByIdForUser, {
+    return await this.db.queryOneOrNone(selectBoardColumnByIdAsUser, {
       id,
       userId,
     });
@@ -72,14 +74,9 @@ export class BoardRepository {
     return await this.db.queryOne(selectBoardColumnsConnection, { boardId });
   }
 
-  async createBoard(
-    board: Pick<Board, 'name'>,
-    userId: string,
-  ): Promise<Board> {
+  async createBoard(board: Pick<Board, 'name' | 'appUserId'>): Promise<Board> {
     try {
-      return await this.db.queryOne(insertBoard, {
-        board: { ...board, userId },
-      });
+      return await this.db.queryOne(insertBoard, { board });
     } catch (error) {
       if (
         error instanceof DatabaseError &&
@@ -121,13 +118,13 @@ export class BoardRepository {
   async createBoardColumns(
     boardId: string,
     columns: (Pick<BoardColumn, 'name' | 'position'> & { idAlias?: string })[],
-  ): Promise<[BoardColumn[], { [key: string]: string | undefined }]> {
+  ): Promise<[BoardColumn[], AliasToIdMapping]> {
     let newColumns: IInsertBoardColumnsResult[];
     try {
       newColumns = await this.db.queryAll(insertBoardColumns, {
         columns: columns.map((column) => ({
           ...column,
-          idAlias: column.idAlias ?? null,
+          idAlias: column.idAlias,
           position: column.position.toString(),
           boardId,
         })),
@@ -152,17 +149,14 @@ export class BoardRepository {
       throw error;
     }
 
-    const idAliasMapping = newColumns.reduce(
-      (acc, column) => {
-        if (column.idAlias !== null) {
-          acc[column.idAlias] = column.id;
-        }
-        return acc;
-      },
-      {} as { [key: string]: string | undefined },
-    );
+    const aliasToIdMapping = newColumns.reduce((acc, column) => {
+      if (column.idAlias !== null) {
+        acc[column.idAlias] = column.id;
+      }
+      return acc;
+    }, {} as AliasToIdMapping);
 
-    return [newColumns, idAliasMapping];
+    return [newColumns, aliasToIdMapping];
   }
 
   async deleteBoardColumns(
@@ -182,14 +176,14 @@ export class BoardRepository {
       boardId,
       columns: columns.map((column) => ({
         ...column,
-        name: column.name ?? null,
-        position: column.position?.toString() ?? null,
+        name: column.name,
+        position: column.position?.toString(),
       })),
     });
   }
 
-  async deleteBoardForUser(id: string, userId: string) {
-    const deletedBoard = await this.db.queryOneOrNone(deleteBoardForUser, {
+  async deleteBoardAsUser(id: string, userId: string) {
+    const deletedBoard = await this.db.queryOneOrNone(deleteBoardAsUser, {
       id,
       userId,
     });

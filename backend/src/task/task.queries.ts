@@ -3,14 +3,14 @@ import { PreparedQuery } from '@pgtyped/runtime';
 
 export type NumberOrString = number | string;
 
-/** 'SelectTaskByIdForUser' parameters type */
-export interface ISelectTaskByIdForUserParams {
+/** 'SelectTaskByIdAsUser' parameters type */
+export interface ISelectTaskByIdAsUserParams {
   id: NumberOrString;
   userId: NumberOrString;
 }
 
-/** 'SelectTaskByIdForUser' return type */
-export interface ISelectTaskByIdForUserResult {
+/** 'SelectTaskByIdAsUser' return type */
+export interface ISelectTaskByIdAsUserResult {
   boardColumnId: string;
   createdAt: Date;
   description: string;
@@ -19,26 +19,26 @@ export interface ISelectTaskByIdForUserResult {
   updatedAt: Date;
 }
 
-/** 'SelectTaskByIdForUser' query type */
-export interface ISelectTaskByIdForUserQuery {
-  params: ISelectTaskByIdForUserParams;
-  result: ISelectTaskByIdForUserResult;
+/** 'SelectTaskByIdAsUser' query type */
+export interface ISelectTaskByIdAsUserQuery {
+  params: ISelectTaskByIdAsUserParams;
+  result: ISelectTaskByIdAsUserResult;
 }
 
-const selectTaskByIdForUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":159,"b":162}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":188,"b":195}]}],"statement":"SELECT task.*\nFROM task\nINNER JOIN board_column ON board_column.id = task.board_column_id\nINNER JOIN board ON board.id = board_column.board_id\nWHERE task.id = :id!\nAND board.app_user_id = :userId!"};
+const selectTaskByIdAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":159,"b":162}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":188,"b":195}]}],"statement":"select task.*\nfrom task\ninner join board_column on board_column.id = task.board_column_id\ninner join board on board.id = board_column.board_id\nwhere task.id = :id!\nand board.app_user_id = :userId!"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT task.*
- * FROM task
- * INNER JOIN board_column ON board_column.id = task.board_column_id
- * INNER JOIN board ON board.id = board_column.board_id
- * WHERE task.id = :id!
- * AND board.app_user_id = :userId!
+ * select task.*
+ * from task
+ * inner join board_column on board_column.id = task.board_column_id
+ * inner join board on board.id = board_column.board_id
+ * where task.id = :id!
+ * and board.app_user_id = :userId!
  * ```
  */
-export const selectTaskByIdForUser = new PreparedQuery<ISelectTaskByIdForUserParams,ISelectTaskByIdForUserResult>(selectTaskByIdForUserIR);
+export const selectTaskByIdAsUser = new PreparedQuery<ISelectTaskByIdAsUserParams,ISelectTaskByIdAsUserResult>(selectTaskByIdAsUserIR);
 
 
 /** 'SelectTasksByBoardId' parameters type */
@@ -62,15 +62,15 @@ export interface ISelectTasksByBoardIdQuery {
   result: ISelectTasksByBoardIdResult;
 }
 
-const selectTasksByBoardIdIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":120,"b":128}]}],"statement":"SELECT task.*\nFROM task\nINNER JOIN board_column ON board_column.id = task.board_column_id\nWHERE board_column.board_id = :boardId!"};
+const selectTasksByBoardIdIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":120,"b":128}]}],"statement":"select task.*\nfrom task\ninner join board_column on board_column.id = task.board_column_id\nwhere board_column.board_id = :boardId!"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT task.*
- * FROM task
- * INNER JOIN board_column ON board_column.id = task.board_column_id
- * WHERE board_column.board_id = :boardId!
+ * select task.*
+ * from task
+ * inner join board_column on board_column.id = task.board_column_id
+ * where board_column.board_id = :boardId!
  * ```
  */
 export const selectTasksByBoardId = new PreparedQuery<ISelectTasksByBoardIdParams,ISelectTasksByBoardIdResult>(selectTasksByBoardIdIR);
@@ -97,14 +97,14 @@ export interface ISelectTasksByColumnIdsQuery {
   result: ISelectTasksByColumnIdsResult;
 }
 
-const selectTasksByColumnIdsIR: any = {"usedParamSet":{"columnIds":true},"params":[{"name":"columnIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":49,"b":59}]}],"statement":"SELECT *\nFROM task\nWHERE task.board_column_id IN :columnIds!"};
+const selectTasksByColumnIdsIR: any = {"usedParamSet":{"columnIds":true},"params":[{"name":"columnIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":49,"b":59}]}],"statement":"select *\nfrom task\nwhere task.board_column_id in :columnIds!"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT *
- * FROM task
- * WHERE task.board_column_id IN :columnIds!
+ * select *
+ * from task
+ * where task.board_column_id in :columnIds!
  * ```
  */
 export const selectTasksByColumnIds = new PreparedQuery<ISelectTasksByColumnIdsParams,ISelectTasksByColumnIdsResult>(selectTasksByColumnIdsIR);
@@ -128,19 +128,19 @@ export interface ISelectSubtasksConnectionsByTaskIdsQuery {
   result: ISelectSubtasksConnectionsByTaskIdsResult;
 }
 
-const selectSubtasksConnectionsByTaskIdsIR: any = {"usedParamSet":{"taskIds":true},"params":[{"name":"taskIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":251,"b":259}]}],"statement":"SELECT\n    task.id AS task_id,\n    count(subtask.id)::integer AS \"total_count!\",\n    (count(subtask.id) FILTER (WHERE subtask.completed IS true))::integer AS \"completed_count!\"\nFROM task\nLEFT JOIN subtask ON subtask.task_id = task.id\nWHERE task.id IN :taskIds!\nGROUP BY task.id"};
+const selectSubtasksConnectionsByTaskIdsIR: any = {"usedParamSet":{"taskIds":true},"params":[{"name":"taskIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":251,"b":259}]}],"statement":"select\n    task.id as task_id,\n    count(subtask.id)::integer as \"total_count!\",\n    (count(subtask.id) filter (where subtask.completed is true))::integer as \"completed_count!\"\nfrom task\nleft join subtask on subtask.task_id = task.id\nwhere task.id in :taskIds!\ngroup by task.id"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT
- *     task.id AS task_id,
- *     count(subtask.id)::integer AS "total_count!",
- *     (count(subtask.id) FILTER (WHERE subtask.completed IS true))::integer AS "completed_count!"
- * FROM task
- * LEFT JOIN subtask ON subtask.task_id = task.id
- * WHERE task.id IN :taskIds!
- * GROUP BY task.id
+ * select
+ *     task.id as task_id,
+ *     count(subtask.id)::integer as "total_count!",
+ *     (count(subtask.id) filter (where subtask.completed is true))::integer as "completed_count!"
+ * from task
+ * left join subtask on subtask.task_id = task.id
+ * where task.id in :taskIds!
+ * group by task.id
  * ```
  */
 export const selectSubtasksConnectionsByTaskIds = new PreparedQuery<ISelectSubtasksConnectionsByTaskIdsParams,ISelectSubtasksConnectionsByTaskIdsResult>(selectSubtasksConnectionsByTaskIdsIR);
@@ -167,29 +167,29 @@ export interface ISelectSubtasksByTaskIdsQuery {
   result: ISelectSubtasksByTaskIdsResult;
 }
 
-const selectSubtasksByTaskIdsIR: any = {"usedParamSet":{"taskIds":true},"params":[{"name":"taskIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":39,"b":47}]}],"statement":"SELECT *\nFROM subtask\nWHERE task_id IN :taskIds!\nORDER BY task_id, created_at, id"};
+const selectSubtasksByTaskIdsIR: any = {"usedParamSet":{"taskIds":true},"params":[{"name":"taskIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":39,"b":47}]}],"statement":"select *\nfrom subtask\nwhere task_id in :taskIds!\norder by task_id, created_at, id"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT *
- * FROM subtask
- * WHERE task_id IN :taskIds!
- * ORDER BY task_id, created_at, id
+ * select *
+ * from subtask
+ * where task_id in :taskIds!
+ * order by task_id, created_at, id
  * ```
  */
 export const selectSubtasksByTaskIds = new PreparedQuery<ISelectSubtasksByTaskIdsParams,ISelectSubtasksByTaskIdsResult>(selectSubtasksByTaskIdsIR);
 
 
-/** 'UpdateSubtaskCompletedByIdForUser' parameters type */
-export interface IUpdateSubtaskCompletedByIdForUserParams {
+/** 'UpdateSubtaskCompletedByIdAsUser' parameters type */
+export interface IUpdateSubtaskCompletedByIdAsUserParams {
   completed: boolean;
   id: NumberOrString;
   userId: NumberOrString;
 }
 
-/** 'UpdateSubtaskCompletedByIdForUser' return type */
-export interface IUpdateSubtaskCompletedByIdForUserResult {
+/** 'UpdateSubtaskCompletedByIdAsUser' return type */
+export interface IUpdateSubtaskCompletedByIdAsUserResult {
   completed: boolean;
   createdAt: Date;
   id: string;
@@ -198,32 +198,32 @@ export interface IUpdateSubtaskCompletedByIdForUserResult {
   updatedAt: Date;
 }
 
-/** 'UpdateSubtaskCompletedByIdForUser' query type */
-export interface IUpdateSubtaskCompletedByIdForUserQuery {
-  params: IUpdateSubtaskCompletedByIdForUserParams;
-  result: IUpdateSubtaskCompletedByIdForUserResult;
+/** 'UpdateSubtaskCompletedByIdAsUser' query type */
+export interface IUpdateSubtaskCompletedByIdAsUserQuery {
+  params: IUpdateSubtaskCompletedByIdAsUserParams;
+  result: IUpdateSubtaskCompletedByIdAsUserResult;
 }
 
-const updateSubtaskCompletedByIdForUserIR: any = {"usedParamSet":{"completed":true,"id":true,"userId":true},"params":[{"name":"completed","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":41}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":294,"b":297}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":327,"b":334}]}],"statement":"UPDATE subtask\nSET completed = :completed!\nWHERE id = (\n    SELECT subtask.id\n    FROM subtask\n    INNER JOIN task ON task.id = subtask.task_id\n    INNER JOIN board_column ON board_column.id = task.board_column_id\n    INNER JOIN board ON board.id = board_column.board_id\n    WHERE subtask.id = :id!\n    AND board.app_user_id = :userId!\n)\nRETURNING *"};
+const updateSubtaskCompletedByIdAsUserIR: any = {"usedParamSet":{"completed":true,"id":true,"userId":true},"params":[{"name":"completed","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":41}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":294,"b":297}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":327,"b":334}]}],"statement":"update subtask\nset completed = :completed!\nwhere id = (\n    select subtask.id\n    from subtask\n    inner join task on task.id = subtask.task_id\n    inner join board_column on board_column.id = task.board_column_id\n    inner join board on board.id = board_column.board_id\n    where subtask.id = :id!\n    and board.app_user_id = :userId!\n)\nreturning *"};
 
 /**
  * Query generated from SQL:
  * ```
- * UPDATE subtask
- * SET completed = :completed!
- * WHERE id = (
- *     SELECT subtask.id
- *     FROM subtask
- *     INNER JOIN task ON task.id = subtask.task_id
- *     INNER JOIN board_column ON board_column.id = task.board_column_id
- *     INNER JOIN board ON board.id = board_column.board_id
- *     WHERE subtask.id = :id!
- *     AND board.app_user_id = :userId!
+ * update subtask
+ * set completed = :completed!
+ * where id = (
+ *     select subtask.id
+ *     from subtask
+ *     inner join task on task.id = subtask.task_id
+ *     inner join board_column on board_column.id = task.board_column_id
+ *     inner join board on board.id = board_column.board_id
+ *     where subtask.id = :id!
+ *     and board.app_user_id = :userId!
  * )
- * RETURNING *
+ * returning *
  * ```
  */
-export const updateSubtaskCompletedByIdForUser = new PreparedQuery<IUpdateSubtaskCompletedByIdForUserParams,IUpdateSubtaskCompletedByIdForUserResult>(updateSubtaskCompletedByIdForUserIR);
+export const updateSubtaskCompletedByIdAsUser = new PreparedQuery<IUpdateSubtaskCompletedByIdAsUserParams,IUpdateSubtaskCompletedByIdAsUserResult>(updateSubtaskCompletedByIdAsUserIR);
 
 
 /** 'InsertTask' parameters type */
@@ -251,14 +251,14 @@ export interface IInsertTaskQuery {
   result: IInsertTaskResult;
 }
 
-const insertTaskIR: any = {"usedParamSet":{"task":true},"params":[{"name":"task","required":false,"transform":{"type":"pick_tuple","keys":[{"name":"title","required":true},{"name":"description","required":true},{"name":"boardColumnId","required":true}]},"locs":[{"a":61,"b":65}]}],"statement":"INSERT INTO task(title, description, board_column_id)\nVALUES :task\nRETURNING *"};
+const insertTaskIR: any = {"usedParamSet":{"task":true},"params":[{"name":"task","required":false,"transform":{"type":"pick_tuple","keys":[{"name":"title","required":true},{"name":"description","required":true},{"name":"boardColumnId","required":true}]},"locs":[{"a":61,"b":65}]}],"statement":"insert into task(title, description, board_column_id)\nvalues :task\nreturning *"};
 
 /**
  * Query generated from SQL:
  * ```
- * INSERT INTO task(title, description, board_column_id)
- * VALUES :task
- * RETURNING *
+ * insert into task(title, description, board_column_id)
+ * values :task
+ * returning *
  * ```
  */
 export const insertTask = new PreparedQuery<IInsertTaskParams,IInsertTaskResult>(insertTaskIR);
@@ -288,30 +288,30 @@ export interface IUpdateTaskQuery {
   result: IUpdateTaskResult;
 }
 
-const updateTaskIR: any = {"usedParamSet":{"title":true,"description":true,"boardColumnId":true,"id":true},"params":[{"name":"title","required":false,"transform":{"type":"scalar"},"locs":[{"a":37,"b":42}]},{"name":"description","required":false,"transform":{"type":"scalar"},"locs":[{"a":80,"b":91}]},{"name":"boardColumnId","required":false,"transform":{"type":"scalar"},"locs":[{"a":139,"b":152}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":183,"b":186}]}],"statement":"UPDATE task SET\n    title = COALESCE(:title, title),\n    description = COALESCE(:description, description),\n    board_column_id = COALESCE(:boardColumnId, board_column_id)\nWHERE id = :id!\nRETURNING *"};
+const updateTaskIR: any = {"usedParamSet":{"title":true,"description":true,"boardColumnId":true,"id":true},"params":[{"name":"title","required":false,"transform":{"type":"scalar"},"locs":[{"a":37,"b":42}]},{"name":"description","required":false,"transform":{"type":"scalar"},"locs":[{"a":80,"b":91}]},{"name":"boardColumnId","required":false,"transform":{"type":"scalar"},"locs":[{"a":139,"b":152}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":183,"b":186}]}],"statement":"update task set\n    title = coalesce(:title, title),\n    description = coalesce(:description, description),\n    board_column_id = coalesce(:boardColumnId, board_column_id)\nwhere id = :id!\nreturning *"};
 
 /**
  * Query generated from SQL:
  * ```
- * UPDATE task SET
- *     title = COALESCE(:title, title),
- *     description = COALESCE(:description, description),
- *     board_column_id = COALESCE(:boardColumnId, board_column_id)
- * WHERE id = :id!
- * RETURNING *
+ * update task set
+ *     title = coalesce(:title, title),
+ *     description = coalesce(:description, description),
+ *     board_column_id = coalesce(:boardColumnId, board_column_id)
+ * where id = :id!
+ * returning *
  * ```
  */
 export const updateTask = new PreparedQuery<IUpdateTaskParams,IUpdateTaskResult>(updateTaskIR);
 
 
-/** 'DeleteTaskForUser' parameters type */
-export interface IDeleteTaskForUserParams {
+/** 'DeleteTaskAsUser' parameters type */
+export interface IDeleteTaskAsUserParams {
   id: NumberOrString;
   userId: NumberOrString;
 }
 
-/** 'DeleteTaskForUser' return type */
-export interface IDeleteTaskForUserResult {
+/** 'DeleteTaskAsUser' return type */
+export interface IDeleteTaskAsUserResult {
   boardColumnId: string;
   createdAt: Date;
   description: string;
@@ -320,29 +320,29 @@ export interface IDeleteTaskForUserResult {
   updatedAt: Date;
 }
 
-/** 'DeleteTaskForUser' query type */
-export interface IDeleteTaskForUserQuery {
-  params: IDeleteTaskForUserParams;
-  result: IDeleteTaskForUserResult;
+/** 'DeleteTaskAsUser' query type */
+export interface IDeleteTaskAsUserQuery {
+  params: IDeleteTaskAsUserParams;
+  result: IDeleteTaskAsUserResult;
 }
 
-const deleteTaskForUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":210,"b":213}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":243,"b":250}]}],"statement":"DELETE FROM task\nWHERE id = (\n    SELECT task.id\n    FROM task\n    INNER JOIN board_column ON board_column.id = task.board_column_id\n    INNER JOIN board ON board.id = board_column.board_id\n    WHERE task.id = :id!\n    AND board.app_user_id = :userId!\n)\nRETURNING *"};
+const deleteTaskAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":210,"b":213}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":243,"b":250}]}],"statement":"delete from task\nwhere id = (\n    select task.id\n    from task\n    inner join board_column on board_column.id = task.board_column_id\n    inner join board on board.id = board_column.board_id\n    where task.id = :id!\n    and board.app_user_id = :userId!\n)\nreturning *"};
 
 /**
  * Query generated from SQL:
  * ```
- * DELETE FROM task
- * WHERE id = (
- *     SELECT task.id
- *     FROM task
- *     INNER JOIN board_column ON board_column.id = task.board_column_id
- *     INNER JOIN board ON board.id = board_column.board_id
- *     WHERE task.id = :id!
- *     AND board.app_user_id = :userId!
+ * delete from task
+ * where id = (
+ *     select task.id
+ *     from task
+ *     inner join board_column on board_column.id = task.board_column_id
+ *     inner join board on board.id = board_column.board_id
+ *     where task.id = :id!
+ *     and board.app_user_id = :userId!
  * )
- * RETURNING *
+ * returning *
  * ```
  */
-export const deleteTaskForUser = new PreparedQuery<IDeleteTaskForUserParams,IDeleteTaskForUserResult>(deleteTaskForUserIR);
+export const deleteTaskAsUser = new PreparedQuery<IDeleteTaskAsUserParams,IDeleteTaskAsUserResult>(deleteTaskAsUserIR);
 
 

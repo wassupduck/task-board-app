@@ -30,7 +30,7 @@ class UpdateBoardColumnsPatchAdditionInput {
 }
 
 @InputType()
-class UpdateBoardColumnsPatchInput {
+export class UpdateBoardColumnsPatchInput {
   @Field(() => [UpdateBoardColumnsPatchAdditionInput], { nullable: true })
   additions?: UpdateBoardColumnsPatchAdditionInput[] | null;
   @Field(() => [UpdateBoardColumnInput], { nullable: true })

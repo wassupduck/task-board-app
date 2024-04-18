@@ -1,117 +1,116 @@
-/* @name selectAllBoardsForUser */
-SELECT *
-FROM board
-WHERE app_user_id = :userId!
-ORDER BY name ASC;
+/* @name selectBoardsByUserId */
+select *
+from board
+where app_user_id = :userId!
+order by name asc;
 
-/* @name selectForUpdateBoardByIdForUser */
-SELECT *
-FROM board
-WHERE id = :id!
-AND app_user_id = :userId!
-FOR UPDATE;
+/* @name selectForUpdateBoardByIdAsUser */
+select *
+from board
+where id = :id!
+and app_user_id = :userId!
+for update;
 
-/* @name selectBoardByIdForUser */
-SELECT *
-FROM board
-WHERE id = :id!
-AND app_user_id = :userId!;
+/* @name selectBoardByIdAsUser */
+select *
+from board
+where id = :id!
+and app_user_id = :userId!;
 
-/* @name selectBoardColumnByIdForUser */
-SELECT board_column.*
-FROM board_column
-INNER JOIN board ON board.id = board_column.board_id
-WHERE board_column.id = :id!
-AND board.app_user_id = :userId!;
+/* @name selectBoardColumnByIdAsUser */
+select board_column.*
+from board_column
+inner join board on board.id = board_column.board_id
+where board_column.id = :id!
+and board.app_user_id = :userId!;
 
 /* @name selectBoardColumnsByBoardId */
-SELECT *
-FROM board_column
-WHERE board_id = :boardId!
-ORDER BY position ASC;
+select *
+from board_column
+where board_id = :boardId!
+order by position asc;
 
 /*
     @name selectBoardColumnsByIds
     @param ids -> (...)
 */
-SELECT *
-FROM board_column
-WHERE id in :ids!;
+select *
+from board_column
+where id in :ids!;
 
 /* @name selectBoardColumnsConnection */
-SELECT
-    board.id AS "board_id!",
-    count(board_column.id)::integer AS "total_count!"
-FROM board
-LEFT JOIN board_column ON board_column.board_id = board.id
-WHERE board.id = :boardId!
-GROUP BY board.id;
+select
+    board.id as "board_id!",
+    count(board_column.id)::integer as "total_count!"
+from board
+left join board_column on board_column.board_id = board.id
+where board.id = :boardId!
+group by board.id;
 
 /*
-    @name insertBoard 
-    @param board -> (name, userId)
+    @name insertBoard
+    @param board -> (name, appUserId)
 */
-INSERT INTO board(name, app_user_id)
-VALUES :board!
-RETURNING *;
+insert into board(name, app_user_id)
+values :board!
+returning *;
 
 /* @name updateBoard */
-UPDATE board SET
-    name = COALESCE(:name, name)
-WHERE id = :id!
-RETURNING *;
+update board set
+    name = coalesce(:name, name)
+where id = :id!
+returning *;
 
 /* 
     @name deleteBoardColumns
     @param columnIds -> (...)
 */
-DELETE FROM board_column
-WHERE id IN :columnIds
-AND board_id = :boardId!;
+delete from board_column
+where id in :columnIds
+and board_id = :boardId!;
 
 /*
     @name insertBoardColumns
     @param columns -> ((idAlias, name!, position!, boardId!)...)
 */
-WITH
-new_column_data AS (
-    SELECT
+with
+new_column_data as (
+    select
         id_alias,
         name,
         position::smallint,
         board_id::bigint,
-        nextval('board_column_id_seq'::regclass) AS id
-    FROM (VALUES :columns!) AS c (id_alias, name, position, board_id)
+        nextval('board_column_id_seq'::regclass) as id
+    from (values :columns!) as c (id_alias, name, position, board_id)
 ),
-new_column AS (
-    INSERT INTO board_column(id, name, position, board_id)
-    SELECT id, name, position, board_id
-    FROM new_column_data
-    RETURNING *
+new_column as (
+    insert into board_column(id, name, position, board_id)
+    select id, name, position, board_id
+    from new_column_data
+    returning *
 )
-SELECT
+select
     new_column.*,
     new_column_data.id_alias
-FROM new_column
-INNER JOIN new_column_data ON new_column_data.id = new_column.id
-ORDER BY new_column.position ASC;
-
+from new_column
+inner join new_column_data on new_column_data.id = new_column.id
+order by new_column.position asc;
 
 /* 
     @name updateBoardColumns
     @param columns -> ((id!, name, position)...)
 */
-UPDATE board_column
-SET
-    name = COALESCE(column_update.name, board_column.name),
-    position = COALESCE(column_update.position::smallint, board_column.position)
-FROM (VALUES :columns!) AS column_update(id, name, position)
-WHERE board_column.id = column_update.id::bigint
-AND board_column.board_id = :boardId!
-RETURNING board_column.*;
+update board_column
+set
+    name = coalesce(column_update.name, board_column.name),
+    position = coalesce(column_update.position::smallint, board_column.position)
+from (values :columns!) as column_update(id, name, position)
+where board_column.id = column_update.id::bigint
+and board_column.board_id = :boardId!
+returning board_column.*;
 
-/* @name deleteBoardForUser */
-DELETE FROM board
-WHERE id = :id!
-AND app_user_id = :userId!
-RETURNING *;
+/* @name deleteBoardAsUser */
+delete from board
+where id = :id!
+and app_user_id = :userId!
+returning *;

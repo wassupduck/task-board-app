@@ -37,7 +37,7 @@ export class TaskResolver {
   @Query(() => Task, { nullable: true })
   async task(@Args('id', { type: () => ID }) id: string): Promise<Task | null> {
     const userId = '1';
-    return this.taskService.getTaskByIdForUser(id, userId);
+    return this.taskService.getTaskByIdAsUser(id, userId);
   }
 
   @ResolveField(() => BoardColumn)
@@ -112,7 +112,7 @@ export class TaskResolver {
 
     let subtask: Subtask;
     try {
-      subtask = await this.taskService.updateSubtaskCompletedByIdForUser(
+      subtask = await this.taskService.updateSubtaskCompletedById(
         input.id,
         input.completed,
         userId,

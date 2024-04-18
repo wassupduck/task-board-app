@@ -1,85 +1,85 @@
-/* @name selectTaskByIdForUser */
-SELECT task.*
-FROM task
-INNER JOIN board_column ON board_column.id = task.board_column_id
-INNER JOIN board ON board.id = board_column.board_id
-WHERE task.id = :id!
-AND board.app_user_id = :userId!;
+/* @name selectTaskByIdAsUser */
+select task.*
+from task
+inner join board_column on board_column.id = task.board_column_id
+inner join board on board.id = board_column.board_id
+where task.id = :id!
+and board.app_user_id = :userId!;
 
 /* @name selectTasksByBoardId */
-SELECT task.*
-FROM task
-INNER JOIN board_column ON board_column.id = task.board_column_id
-WHERE board_column.board_id = :boardId!;
+select task.*
+from task
+inner join board_column on board_column.id = task.board_column_id
+where board_column.board_id = :boardId!;
 
-/* 
+/*
     @name selectTasksByColumnIds
     @param columnIds -> (...)
 */
-SELECT *
-FROM task
-WHERE task.board_column_id IN :columnIds!;
+select *
+from task
+where task.board_column_id in :columnIds!;
 
 /*
     @name selectSubtasksConnectionsByTaskIds
     @param taskIds -> (...)
 */
-SELECT
-    task.id AS task_id,
-    count(subtask.id)::integer AS "total_count!",
-    (count(subtask.id) FILTER (WHERE subtask.completed IS true))::integer AS "completed_count!"
-FROM task
-LEFT JOIN subtask ON subtask.task_id = task.id
-WHERE task.id IN :taskIds!
-GROUP BY task.id;
+select
+    task.id as task_id,
+    count(subtask.id)::integer as "total_count!",
+    (count(subtask.id) filter (where subtask.completed is true))::integer as "completed_count!"
+from task
+left join subtask on subtask.task_id = task.id
+where task.id in :taskIds!
+group by task.id;
 
 /*
     @name selectSubtasksByTaskIds
     @param taskIds -> (...)
 */
-SELECT *
-FROM subtask
-WHERE task_id IN :taskIds!
-ORDER BY task_id, created_at, id;
+select *
+from subtask
+where task_id in :taskIds!
+order by task_id, created_at, id;
 
-/* @name updateSubtaskCompletedByIdForUser */
-UPDATE subtask
-SET completed = :completed!
-WHERE id = (
-    SELECT subtask.id
-    FROM subtask
-    INNER JOIN task ON task.id = subtask.task_id
-    INNER JOIN board_column ON board_column.id = task.board_column_id
-    INNER JOIN board ON board.id = board_column.board_id
-    WHERE subtask.id = :id!
-    AND board.app_user_id = :userId!
+/* @name updateSubtaskCompletedByIdAsUser */
+update subtask
+set completed = :completed!
+where id = (
+    select subtask.id
+    from subtask
+    inner join task on task.id = subtask.task_id
+    inner join board_column on board_column.id = task.board_column_id
+    inner join board on board.id = board_column.board_id
+    where subtask.id = :id!
+    and board.app_user_id = :userId!
 )
-RETURNING *;
+returning *;
 
-/* 
+/*
     @name insertTask
     @param task -> (title!, description!, boardColumnId!)
 */
-INSERT INTO task(title, description, board_column_id)
-VALUES :task
-RETURNING *;
+insert into task(title, description, board_column_id)
+values :task
+returning *;
 
 /* @name updateTask */
-UPDATE task SET
-    title = COALESCE(:title, title),
-    description = COALESCE(:description, description),
-    board_column_id = COALESCE(:boardColumnId, board_column_id)
-WHERE id = :id!
-RETURNING *;
+update task set
+    title = coalesce(:title, title),
+    description = coalesce(:description, description),
+    board_column_id = coalesce(:boardColumnId, board_column_id)
+where id = :id!
+returning *;
 
-/* @name deleteTaskForUser */
-DELETE FROM task
-WHERE id = (
-    SELECT task.id
-    FROM task
-    INNER JOIN board_column ON board_column.id = task.board_column_id
-    INNER JOIN board ON board.id = board_column.board_id
-    WHERE task.id = :id!
-    AND board.app_user_id = :userId!
+/* @name deleteTaskAsUser */
+delete from task
+where id = (
+    select task.id
+    from task
+    inner join board_column on board_column.id = task.board_column_id
+    inner join board on board.id = board_column.board_id
+    where task.id = :id!
+    and board.app_user_id = :userId!
 )
-RETURNING *;
+returning *;

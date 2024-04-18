@@ -20,8 +20,8 @@ export class TaskService {
     private readonly boardService: BoardService,
   ) {}
 
-  async getTaskByIdForUser(id: string, userId: string): Promise<Task | null> {
-    return this.taskRepository.getTaskByIdForUser(id, userId);
+  async getTaskByIdAsUser(id: string, userId: string): Promise<Task | null> {
+    return this.taskRepository.getTaskByIdAsUser(id, userId);
   }
 
   async getTasksByBoardId(boardId: string): Promise<Task[]> {
@@ -42,12 +42,12 @@ export class TaskService {
     return this.taskRepository.getSubtasksByTaskIds(taskIds);
   }
 
-  async updateSubtaskCompletedByIdForUser(
+  async updateSubtaskCompletedById(
     id: string,
     completed: boolean,
     userId: string,
   ): Promise<Subtask> {
-    return this.taskRepository.updateSubtaskCompletedByIdForUser(
+    return this.taskRepository.updateSubtaskCompletedByIdAsUser(
       id,
       completed,
       userId,
@@ -66,7 +66,7 @@ export class TaskService {
     const newTask = validation.data;
 
     // Check user can create task for board column
-    const boardColumn = await this.boardService.getBoardColumnByIdForUser(
+    const boardColumn = await this.boardService.getBoardColumnByIdAsUser(
       newTask.boardColumnId,
       userId,
     );
@@ -80,11 +80,11 @@ export class TaskService {
 
   async updateTask(
     id: string,
-    patch: UpdateTaskPatchInput,
+    input: UpdateTaskPatchInput,
     userId: string,
   ): Promise<Task> {
     // Parse and validate patch
-    const validation = updateTaskPatchInputSchema.safeParse(patch);
+    const validation = updateTaskPatchInputSchema.safeParse(input);
     if (!validation.success) {
       // TODO: Better validation errors
       const issue = validation.error.issues[0];
@@ -92,33 +92,33 @@ export class TaskService {
     }
 
     // Check user can edit task
-    const task = await this.getTaskByIdForUser(id, userId);
+    const task = await this.getTaskByIdAsUser(id, userId);
     if (!task) {
       throw new NotFoundError(`Task not found ${id}`);
     }
 
-    const fieldsToUpdate = validation.data;
-    if (emptyPatch(fieldsToUpdate)) {
+    const patch = validation.data;
+    if (emptyPatch(patch)) {
       // No change
       return task;
     }
 
-    if (fieldsToUpdate.boardColumnId !== undefined) {
+    if (patch.boardColumnId !== undefined) {
       // Check user can move task to board column
-      const boardColumn = await this.boardService.getBoardColumnByIdForUser(
-        fieldsToUpdate.boardColumnId,
+      const boardColumn = await this.boardService.getBoardColumnByIdAsUser(
+        patch.boardColumnId,
         userId,
       );
       if (!boardColumn) {
-        throw new BoardColumnNotFoundError(fieldsToUpdate.boardColumnId);
+        throw new BoardColumnNotFoundError(patch.boardColumnId);
       }
     }
 
     // Update task
-    return await this.taskRepository.updateTask(id, fieldsToUpdate);
+    return await this.taskRepository.updateTask(id, patch);
   }
 
   async deleteTask(id: string, userId: string): Promise<void> {
-    await this.taskRepository.deleteTaskForUser(id, userId);
+    await this.taskRepository.deleteTaskAsUser(id, userId);
   }
 }
