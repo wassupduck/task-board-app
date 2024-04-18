@@ -3,6 +3,7 @@ import { DatabaseClient, DatabaseError } from '../database/index.js';
 import { Board } from './entities/board.entity.js';
 import {
   deleteBoardColumns,
+  deleteBoardForUser,
   IInsertBoardColumnsResult,
   insertBoard,
   insertBoardColumns,
@@ -185,5 +186,15 @@ export class BoardRepository {
         position: column.position?.toString() ?? null,
       })),
     });
+  }
+
+  async deleteBoardForUser(id: string, userId: string) {
+    const deletedBoard = await this.db.queryOneOrNone(deleteBoardForUser, {
+      id,
+      userId,
+    });
+    if (!deletedBoard) {
+      throw new NotFoundError(`Board not found: ${id}`);
+    }
   }
 }

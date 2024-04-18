@@ -227,4 +227,8 @@ export class BoardService {
       return board;
     });
   }
+
+  async deleteBoard(id: string, userId: string): Promise<void> {
+    await this.boardRepository.deleteBoardForUser(id, userId);
+  }
 }

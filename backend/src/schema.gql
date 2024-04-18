@@ -62,6 +62,16 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteBoardInput {
+  id: ID!
+}
+
+union DeleteBoardResponse = DeleteBoardSuccess | NotFoundError
+
+type DeleteBoardSuccess {
+  deletedId: ID!
+}
+
 input DeleteTaskInput {
   id: ID!
 }
@@ -83,6 +93,7 @@ type InvalidInputError implements ErrorResponse {
 type Mutation {
   createBoard(input: CreateBoardInput!): CreateBoardResponse!
   createTask(input: CreateTaskInput!): CreateTaskResponse!
+  deleteBoard(input: DeleteBoardInput!): DeleteBoardResponse!
   deleteTask(input: DeleteTaskInput!): DeleteTaskResponse!
   updateBoard(input: UpdateBoardInput!): UpdateBoardResponse!
   updateBoardColumns(input: UpdateBoardColumnsInput!): UpdateBoardColumnsResponse!

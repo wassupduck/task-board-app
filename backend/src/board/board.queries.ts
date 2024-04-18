@@ -450,3 +450,38 @@ const updateBoardColumnsIR: any = {"usedParamSet":{"columns":true,"boardId":true
 export const updateBoardColumns = new PreparedQuery<IUpdateBoardColumnsParams,IUpdateBoardColumnsResult>(updateBoardColumnsIR);
 
 
+/** 'DeleteBoardForUser' parameters type */
+export interface IDeleteBoardForUserParams {
+  id: NumberOrString;
+  userId: NumberOrString;
+}
+
+/** 'DeleteBoardForUser' return type */
+export interface IDeleteBoardForUserResult {
+  appUserId: string;
+  createdAt: Date;
+  id: string;
+  name: string;
+  updatedAt: Date;
+}
+
+/** 'DeleteBoardForUser' query type */
+export interface IDeleteBoardForUserQuery {
+  params: IDeleteBoardForUserParams;
+  result: IDeleteBoardForUserResult;
+}
+
+const deleteBoardForUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":29,"b":32}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":52,"b":59}]}],"statement":"DELETE FROM board\nWHERE id = :id!\nAND app_user_id = :userId!\nRETURNING *"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * DELETE FROM board
+ * WHERE id = :id!
+ * AND app_user_id = :userId!
+ * RETURNING *
+ * ```
+ */
+export const deleteBoardForUser = new PreparedQuery<IDeleteBoardForUserParams,IDeleteBoardForUserResult>(deleteBoardForUserIR);
+
+

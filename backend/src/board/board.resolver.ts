@@ -27,6 +27,9 @@ import { UpdateBoardColumnsInput } from './dto/update-board-columns.input.js';
 import { UpdateBoardColumnsSuccess } from './dto/update-board-columns-success.dto.js';
 import { responseFromCommonError } from '../common/errors/response-from-common-error.js';
 import { BoardColumnNameConflictErrorResponse } from './dto/board-column-name-conflict-error.dto.js';
+import { DeleteBoardResponse } from './dto/delete-board-response.dto.js';
+import { DeleteBoardInput } from './dto/delete-board.input.js';
+import { DeleteBoardSuccess } from './dto/delete-board-success.dto.js';
 
 @Resolver(Board)
 export class BoardResolver {
@@ -124,5 +127,22 @@ export class BoardResolver {
     }
 
     return new UpdateBoardColumnsSuccess(board);
+  }
+
+  @Mutation(() => DeleteBoardResponse)
+  async deleteBoard(
+    @Args('input') input: DeleteBoardInput,
+  ): Promise<typeof DeleteBoardResponse> {
+    const userId = '1'; // TODO
+
+    try {
+      await this.boardService.deleteBoard(input.id, userId);
+    } catch (error) {
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
+    }
+
+    return new DeleteBoardSuccess(input.id);
   }
 }

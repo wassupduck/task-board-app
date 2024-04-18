@@ -109,3 +109,9 @@ FROM (VALUES :columns!) AS column_update(id, name, position)
 WHERE board_column.id = column_update.id::bigint
 AND board_column.board_id = :boardId!
 RETURNING board_column.*;
+
+/* @name deleteBoardForUser */
+DELETE FROM board
+WHERE id = :id!
+AND app_user_id = :userId!
+RETURNING *;
