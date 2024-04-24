@@ -1,13 +1,26 @@
+import clsx from "clsx";
 import styles from "./Button.module.css";
+import React from "react";
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   children: React.ReactNode;
-  disabled?: boolean;
+  block?: boolean;
+  variant?: "primary" | "secondary";
+  size?: "large";
 }
 
-export default function Button({ children, disabled = false }: ButtonProps) {
+export default function Button(props: ButtonProps) {
+  const { block, size, variant, children, ...rest } = props;
   return (
-    <button className={styles.button} disabled={disabled}>
+    <button
+      className={clsx(
+        styles.button,
+        block && styles.block,
+        styles[variant || "primary"],
+        size && styles[size]
+      )}
+      {...rest}
+    >
       {children}
     </button>
   );

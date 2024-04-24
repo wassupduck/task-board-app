@@ -1,14 +1,31 @@
 .button {
-    padding: 12px 24px;
-    background-color: var(--color-primary);
+    padding: 8px 24px;
     font-size: var(--font-size-body-medium);
     font-weight: var(--font-weight-bold);
-    color: var(--color-white);
     border-radius: 999rem;
     text-align: center;
 }
 
 .button:disabled {
-    background-color: var(--color-primary-250);
+    opacity: 25%;
     cursor: unset;
+}
+
+.button.primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.button.secondary {
+    background-color: var(--color-primary-100);
+    color: var(--color-primary);
+}
+
+.button.block {
+    display: block;
+    width: 100%;
+}
+
+.button.large {
+    padding-block: 12px;
 }

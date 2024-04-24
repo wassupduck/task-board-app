@@ -3,6 +3,8 @@ import clsx from "clsx";
 import BoardIcon from "../../assets/icon-board.svg?react";
 import styles from "./BoardList.module.css";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
+import { useState } from "react";
+import BoardCreateModal from "../BoardCreateModal";
 
 const BoardList_BoardFragment = graphql(`
   fragment BoardList_BoardFragment on Board {
@@ -19,6 +21,9 @@ export interface BoardListProps {
 
 export default function BoardList(props: BoardListProps) {
   const boards = getFragmentData(BoardList_BoardFragment, props.boards);
+
+  // TODO: Move to better place - just for testing
+  const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
 
   return (
     <nav>
@@ -39,12 +44,19 @@ export default function BoardList(props: BoardListProps) {
           </li>
         ))}
         <li>
-          <a className={clsx(styles.boardItem, styles.createBoardItem)}>
+          <button
+            className={clsx(styles.boardItem, styles.createBoardItem)}
+            onClick={() => setIsCreateBoardModalOpen(true)}
+          >
             <BoardIcon />
             <span>Create New Board</span>
-          </a>
+          </button>
         </li>
       </ul>
+      {/* TODO: Move to better place - just for testing! */}
+      {isCreateBoardModalOpen && (
+        <BoardCreateModal onClose={() => setIsCreateBoardModalOpen(false)} />
+      )}
     </nav>
   );
 }

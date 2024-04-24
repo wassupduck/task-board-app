@@ -1,0 +1,17 @@
+.input {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    border: 1px solid var(--color-lines-light);
+    border-radius: 4px;
+    background-color: var(--color-white);
+    color: var(--color-black);
+}
+
+.input::placeholder {
+    opacity: 25%;
+}
+
+.input[aria-invalid="true"] {
+    border-color: var(--color-danger);
+}

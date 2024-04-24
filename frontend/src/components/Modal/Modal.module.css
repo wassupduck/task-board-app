@@ -23,18 +23,6 @@
 }
 
 .title {
-    font-size: var(--font-size-heading-small);
+    font-size: var(--font-size-heading-medium);
     font-weight: var(--font-weight-bold);
-}
-
-.description {
-    font-weight: var(--font-weight-medium);
-    color: var(--color-grey-medium);
-}
-
-.section-heading {
-    font-size: var(--font-size-heading-xsmall);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-grey-medium);
-    margin-bottom: 8px;
 }

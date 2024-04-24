@@ -37,27 +37,3 @@ Modal.Title = (props: ModalTitleProps) => {
     </Dialog.Title>
   );
 };
-
-interface ModalDescriptionProps {
-  children: React.ReactNode;
-}
-
-Modal.Description = (props: ModalDescriptionProps) => {
-  return <p className={styles.description}>{props.children}</p>;
-};
-
-interface ModalSectionProps {
-  children: React.ReactNode;
-}
-
-Modal.Section = (props: ModalSectionProps) => {
-  return <section>{props.children}</section>;
-};
-
-interface ModalSectionHeadingProps {
-  children: React.ReactNode;
-}
-
-Modal.SectionHeading = (props: ModalSectionHeadingProps) => {
-  return <h4 className={styles.sectionHeading}>{props.children}</h4>;
-};

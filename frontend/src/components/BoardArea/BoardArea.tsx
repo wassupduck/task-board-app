@@ -63,7 +63,7 @@ function EmptyBoard() {
       <p className={styles.emptyBoardMessage}>
         This board is empty. Create a new column to get started.
       </p>
-      <Button>Add New Column</Button>
+      <Button size="large">Add New Column</Button>
     </div>
   );
 }

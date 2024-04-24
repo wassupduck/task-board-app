@@ -18,6 +18,7 @@ const documents = {
     "\n  fragment Board_BoardFragment on Board {\n    columns {\n      nodes {\n        id\n        ...Column_BoardColumnFragment\n      }\n    }\n  }\n": types.Board_BoardFragmentFragmentDoc,
     "\n  fragment Column_BoardColumnFragment on BoardColumn {\n    name\n    tasks {\n      id\n      ...TaskCard_TaskFragment\n    }\n  }\n": types.Column_BoardColumnFragmentFragmentDoc,
     "\n  fragment BoardArea_BoardFragment on Board {\n    id\n    columns {\n      totalCount\n    }\n    ...Board_BoardFragment\n    ...TaskViewModal_BoardFragment\n  }\n": types.BoardArea_BoardFragmentFragmentDoc,
+    "\n  mutation CreateBoardMutation($board: NewBoardInput!) {\n    createBoard(input: { board: $board }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.CreateBoardMutationDocument,
     "\n  fragment BoardList_BoardFragment on Board {\n    id\n    name\n  }\n": types.BoardList_BoardFragmentFragmentDoc,
     "\n  fragment Header_BoardFragment on Board {\n    name\n    columns {\n      totalCount\n    }\n  }\n": types.Header_BoardFragmentFragmentDoc,
     "\n  fragment TaskCard_TaskFragment on Task {\n    title\n    subtasks {\n      totalCount\n      completedCount\n    }\n  }\n": types.TaskCard_TaskFragmentFragmentDoc,
@@ -64,6 +65,10 @@ export function graphql(source: "\n  fragment Column_BoardColumnFragment on Boar
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment BoardArea_BoardFragment on Board {\n    id\n    columns {\n      totalCount\n    }\n    ...Board_BoardFragment\n    ...TaskViewModal_BoardFragment\n  }\n"): (typeof documents)["\n  fragment BoardArea_BoardFragment on Board {\n    id\n    columns {\n      totalCount\n    }\n    ...Board_BoardFragment\n    ...TaskViewModal_BoardFragment\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateBoardMutation($board: NewBoardInput!) {\n    createBoard(input: { board: $board }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation CreateBoardMutation($board: NewBoardInput!) {\n    createBoard(input: { board: $board }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

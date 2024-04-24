@@ -30,7 +30,10 @@ export default function Header(props: HeaderProps) {
         <h2 className={styles.heading}>{currentBoard?.name}</h2>
         {currentBoard && (
           <div className={styles.buttonGroup}>
-            <Button disabled={currentBoard.columns.totalCount === 0}>
+            <Button
+              disabled={currentBoard.columns.totalCount === 0}
+              size="large"
+            >
               Add New Task
             </Button>
             <button className={styles.boardActionsButton}>

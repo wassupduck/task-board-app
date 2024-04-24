@@ -168,35 +168,42 @@ export default function TaskViewModal(props: TaskViewModalProps) {
           </button>
         </header>
         {task.description.length > 0 && (
-          <Modal.Description>{task.description}</Modal.Description>
+          <p className={styles.description}>{task.description}</p>
         )}
         {task.subtasks.totalCount > 0 && (
-          <Modal.Section>
-            <Modal.SectionHeading>
-              Subtasks ({task.subtasks.completedCount} of{" "}
-              {task.subtasks.totalCount})
-            </Modal.SectionHeading>
+          <fieldset>
+            <legend>
+              <h4 className={styles.sectionHeading}>
+                Subtasks ({task.subtasks.completedCount} of{" "}
+                {task.subtasks.totalCount})
+              </h4>
+            </legend>
             <SubtasksList
               subtasks={task.subtasks.nodes}
               onSubtaskCompletedChange={(subtaskId, completed) =>
-                updateSubtaskCompletedMutation.mutate({ subtaskId, completed })
+                updateSubtaskCompletedMutation.mutate({
+                  subtaskId,
+                  completed,
+                })
               }
             />
-          </Modal.Section>
+          </fieldset>
         )}
-        <Modal.Section>
-          <Modal.SectionHeading>Current Status</Modal.SectionHeading>
-          <TaskColumnSelect
-            selectedColumnId={task.column.id}
-            boardColumns={board.columns.nodes}
-            onColumnChange={(boardColumnId) =>
-              updateTaskColumnMutation.mutate({
-                id: props.taskId,
-                boardColumnId,
-              })
-            }
-          />
-        </Modal.Section>
+        <div>
+          <label>
+            <h4 className={styles.sectionHeading}>Current Status</h4>
+            <TaskColumnSelect
+              selectedColumnId={task.column.id}
+              boardColumns={board.columns.nodes}
+              onColumnChange={(boardColumnId) =>
+                updateTaskColumnMutation.mutate({
+                  id: props.taskId,
+                  boardColumnId,
+                })
+              }
+            />
+          </label>
+        </div>
       </>
     );
   }
@@ -257,10 +264,12 @@ function SubtaskListItem(props: SubtaskListItemProps) {
       className={styles.subtaskListItem}
       onClick={() => props.onCompletedChange(!subtask.completed)}
     >
-      <Checkbox checked={subtask.completed} />
-      <p className={clsx({ [styles.completed]: subtask.completed })}>
-        {subtask.title}
-      </p>
+      <label className={styles.subtaskListItemLabel}>
+        <Checkbox checked={subtask.completed} />
+        <p className={clsx({ [styles.completed]: subtask.completed })}>
+          {subtask.title}
+        </p>
+      </label>
     </li>
   );
 }

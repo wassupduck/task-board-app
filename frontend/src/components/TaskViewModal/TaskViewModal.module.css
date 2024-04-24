@@ -11,6 +11,11 @@
     place-content: center;
 }
 
+.description {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-grey-medium);
+}
+
 .subtask-list {
     display: flex;
     flex-direction: column;
@@ -18,9 +23,6 @@
 }
 
 .subtask-list-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
     padding: 12px;
     background-color: var(--color-grey-light);
     border-radius: 4px;
@@ -29,11 +31,25 @@
     cursor: pointer;
 }
 
+.subtask-list-item-label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: inherit;
+}
+
 .subtask-list-item:hover {
     background-color: var(--color-primary-250);
 }
 
-.subtask-list-item p.completed {
+.subtask-list-item-label p.completed {
     text-decoration: line-through;
     color: var(--color-grey-medium);
+}
+
+.section-heading {
+    font-size: var(--font-size-heading-xsmall);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-grey-medium);
+    margin-bottom: 8px;
 }

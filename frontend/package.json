@@ -12,6 +12,7 @@
     "graphql-codegen:watch": "yarn graphql-codegen --watch"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-select": "^2.0.0",
@@ -20,7 +21,9 @@
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.3",
+    "zod": "^3.23.3"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "5.0.2",
