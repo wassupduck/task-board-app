@@ -7,118 +7,17 @@ import Button from "../Button";
 import Modal from "../Modal";
 import VisuallyHidden from "../VisuallyHidden";
 import styles from "./BoardCreateModal.module.css";
-import { graphql } from "../../gql";
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import { CreateBoardMutationMutation, NewBoardInput } from "../../gql/graphql";
-import request from "graphql-request";
+import { NewBoardInput } from "../../gql/graphql";
 import clsx from "clsx";
-import {
-  SubmitHandler,
-  useFieldArray,
-  useForm,
-  UseFormReturn,
-} from "react-hook-form";
-import * as z from "zod";
+import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createBoardFormSchema } from "./schema";
+import { useFetcher } from "react-router-dom";
+import { SyntheticEvent, useState } from "react";
+import { preventLeadingSpaces } from "../../utils";
+import { BoardsRouteActionData } from "../../routes/boards";
 
-const createBoardMutationDocument = graphql(`
-  mutation CreateBoardMutation($board: NewBoardInput!) {
-    createBoard(input: { board: $board }) {
-      __typename
-      ... on ErrorResponse {
-        message
-      }
-    }
-  }
-`);
-
-function useCreateBoardMutation(props: {
-  onSuccess?: (data: CreateBoardMutationMutation["createBoard"]) => void;
-}): UseMutationResult<
-  CreateBoardMutationMutation["createBoard"],
-  Error,
-  NewBoardInput
-> {
-  return useMutation({
-    mutationFn: async (board: NewBoardInput) => {
-      const resp = await request(
-        import.meta.env.VITE_BACKEND_GRAPHQL_URL,
-        createBoardMutationDocument,
-        { board }
-      );
-      return resp.createBoard;
-    },
-    onSuccess: (data) => {
-      props.onSuccess?.(data);
-    },
-  });
-}
-
-const createBoardFormSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, { message: "Name is required" })
-    .max(20, { message: "Name must be less than 20 characters" }),
-  columns: z
-    .array(
-      z.object({
-        name: z
-          .string()
-          .trim()
-          .max(20, { message: "Name must be less than 20 characters" }),
-      })
-    )
-    .superRefine((columns, ctx) => {
-      // Validate no duplicate column names
-      // Exclude empty columns
-      const seen = new Set<string>();
-      for (const [idx, column] of columns.entries()) {
-        if (column.name.length === 0) {
-          continue;
-        }
-        if (seen.has(column.name)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Duplicate column",
-            path: [idx, "name"],
-          });
-        } else {
-          seen.add(column.name);
-        }
-      }
-    })
-    .superRefine((columns, ctx) => {
-      // Validate no interspersed empty columns
-      const lastNonEmptyColumnIdx = columns.findLastIndex(
-        ({ name }) => name.length > 0
-      );
-
-      const invalidEmptyColumnIdxs = columns
-        .slice(0, lastNonEmptyColumnIdx + 1)
-        .map(({ name }, idx) => (name.length === 0 ? idx : null))
-        .filter((i) => i !== null);
-
-      for (const idx of invalidEmptyColumnIdxs) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.too_small,
-          minimum: 1,
-          type: "string",
-          inclusive: true,
-          message: "Name is required",
-          path: [idx, "name"],
-        });
-      }
-    })
-    .transform((columns) => columns.filter(({ name }) => name.length > 0)),
-});
-
-function preventLeadingSpaces(event: React.KeyboardEvent<HTMLInputElement>) {
-  const target = event.target as HTMLInputElement;
-  if (event.key === " " && target.selectionStart === 0) {
-    event.preventDefault();
-  }
-}
+type FetcherData = Exclude<BoardsRouteActionData, Response>;
 
 interface BoardCreateModalProps {
   onClose: () => void;
@@ -132,32 +31,39 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
     },
   });
   const { formState } = form;
+  const fetcher = useFetcher<FetcherData>();
 
-  const createBoardMutation = useCreateBoardMutation({
-    onSuccess: (data) => {
-      if (data.__typename === "CreateBoardSuccess") {
-        // TODO: Navigate to new board
-        props.onClose();
-        return;
-      }
-      if (data.__typename === "BoardNameConflictError") {
+  const [prevFetcherData, setPrevFetcherData] = useState(fetcher.data);
+  if (!Object.is(fetcher.data, prevFetcherData)) {
+    setPrevFetcherData(fetcher.data);
+    if (fetcher.data) {
+      if (fetcher.data.__typename === "BoardNameConflictError") {
         const boardName = form.getValues("name");
         form.setError("name", {
           type: "conflict",
           message: `Board with name "${boardName}" already exists`,
         });
       }
-    },
-  });
+    }
+  }
 
-  const handleSubmit: SubmitHandler<NewBoardInput> = (board) => {
-    createBoardMutation.mutate(board);
+  const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
+    if (form.formState.isSubmitted && !form.formState.isValid) {
+      return e.preventDefault();
+    }
+    return form.handleSubmit((board) => {
+      fetcher.submit(board, {
+        method: "post",
+        action: "/boards",
+        encType: "application/json",
+      });
+    })(e);
   };
 
   return (
     <Modal onClose={props.onClose}>
       <Modal.Title>Add New Board</Modal.Title>
-      <form className={styles.form} onSubmit={form.handleSubmit(handleSubmit)}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <label>
           <h4 className={styles.label}>Name</h4>
           {formState.errors.name && (

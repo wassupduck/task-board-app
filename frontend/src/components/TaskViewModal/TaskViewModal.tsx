@@ -3,54 +3,26 @@ import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react"
 import styles from "./TaskViewModal.module.css";
 import VisuallyHidden from "../VisuallyHidden";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import request from "graphql-request";
 import clsx from "clsx";
 import Checkbox from "../Checkbox";
 import Select from "../Select";
 import Modal from "../Modal";
+import { useFetcher } from "react-router-dom";
 
-const taskQueryKey = (taskId: string) => ["tasks", taskId] as const;
-
-const taskQueryDocument = graphql(`
-  query TaskQuery($id: ID!) {
-    task(id: $id) {
-      title
-      description
-      column {
-        id
-        name
-      }
-      subtasks {
-        totalCount
-        completedCount
-        nodes {
-          ...SubtaskList_SubtaskFragment
-        }
-      }
+const TaskViewModal_TaskFragment = graphql(`
+  fragment TaskViewModal_TaskFragment on Task {
+    id
+    title
+    description
+    column {
+      id
+      name
     }
-  }
-`);
-
-const updateSubtaskCompletedMutationDocument = graphql(`
-  mutation UpdateSubtaskCompletedMutation(
-    $input: UpdateSubtaskCompletedInput!
-  ) {
-    updateSubtaskCompleted(input: $input) {
-      __typename
-      ... on ErrorResponse {
-        message
-      }
-    }
-  }
-`);
-
-const updateTaskColumnMutationDocument = graphql(`
-  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {
-    updateTask(input: { id: $id, patch: { boardColumnId: $boardColumnId } }) {
-      __typename
-      ... on ErrorResponse {
-        message
+    subtasks {
+      totalCount
+      completedCount
+      nodes {
+        ...SubtaskList_SubtaskFragment
       }
     }
   }
@@ -68,147 +40,67 @@ const TaskViewModal_BoardFragment = graphql(`
 
 interface TaskViewModalProps {
   board: FragmentType<typeof TaskViewModal_BoardFragment>;
-  taskId: string;
+  task: FragmentType<typeof TaskViewModal_TaskFragment>;
   onClose: () => void;
-  onTaskUpdate: () => void;
 }
 
 export default function TaskViewModal(props: TaskViewModalProps) {
+  const fetcher = useFetcher();
+
   const board = getFragmentData(TaskViewModal_BoardFragment, props.board);
+  const task = getFragmentData(TaskViewModal_TaskFragment, props.task);
 
-  const taskQuery = useQuery({
-    queryKey: taskQueryKey(props.taskId),
-    queryFn: async () =>
-      request(import.meta.env.VITE_BACKEND_GRAPHQL_URL, taskQueryDocument, {
-        id: props.taskId,
-      }),
-  });
-
-  const queryClient = useQueryClient();
-
-  const updateSubtaskCompletedMutation = useMutation({
-    mutationFn: async ({
-      subtaskId,
-      completed,
-    }: {
-      subtaskId: string;
-      completed: boolean;
-    }) => {
-      const resp = await request(
-        import.meta.env.VITE_BACKEND_GRAPHQL_URL,
-        updateSubtaskCompletedMutationDocument,
-        {
-          input: {
-            id: subtaskId,
-            completed,
-          },
-        }
-      );
-      if (
-        resp.updateSubtaskCompleted.__typename !==
-        "UpdateSubtaskCompletedSuccess"
-      ) {
-        // TODO: Error handling
-        throw new Error(resp.updateSubtaskCompleted.message);
-      }
-      return resp;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: taskQueryKey(props.taskId),
-      });
-      props.onTaskUpdate();
-    },
-  });
-
-  const updateTaskColumnMutation = useMutation({
-    mutationFn: async ({
-      id,
-      boardColumnId,
-    }: {
-      id: string;
-      boardColumnId: string;
-    }) => {
-      const resp = await request(
-        import.meta.env.VITE_BACKEND_GRAPHQL_URL,
-        updateTaskColumnMutationDocument,
-        { id, boardColumnId }
-      );
-      if (resp.updateTask.__typename !== "UpdateTaskSuccess") {
-        // TODO: Error handling
-        throw new Error(resp.updateTask.message);
-      }
-      return resp;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: taskQueryKey(props.taskId),
-      });
-      props.onTaskUpdate();
-    },
-  });
-
-  let content;
-  if (taskQuery.isPending) {
-    content = null;
-  } else if (taskQuery.isError) {
-    // TODO: Better error handling
-    content = <span>Error: {taskQuery.error.message}</span>;
-  } else if (!taskQuery.data || !taskQuery.data.task) {
-    content = <span>Error: Something went wrong</span>;
-  } else {
-    const task = taskQuery.data.task;
-    content = (
-      <>
-        <header className={styles.header}>
-          <Modal.Title>{task.title}</Modal.Title>
-          <button className={styles.taskActionsButton}>
-            <VerticalEllipsisIcon />
-            <VisuallyHidden>Task actions</VisuallyHidden>
-          </button>
-        </header>
-        {task.description.length > 0 && (
-          <p className={styles.description}>{task.description}</p>
-        )}
-        {task.subtasks.totalCount > 0 && (
-          <fieldset>
-            <legend>
-              <h4 className={styles.sectionHeading}>
-                Subtasks ({task.subtasks.completedCount} of{" "}
-                {task.subtasks.totalCount})
-              </h4>
-            </legend>
-            <SubtasksList
-              subtasks={task.subtasks.nodes}
-              onSubtaskCompletedChange={(subtaskId, completed) =>
-                updateSubtaskCompletedMutation.mutate({
-                  subtaskId,
-                  completed,
-                })
-              }
-            />
-          </fieldset>
-        )}
-        <div>
-          <label>
-            <h4 className={styles.sectionHeading}>Current Status</h4>
-            <TaskColumnSelect
-              selectedColumnId={task.column.id}
-              boardColumns={board.columns.nodes}
-              onColumnChange={(boardColumnId) =>
-                updateTaskColumnMutation.mutate({
-                  id: props.taskId,
-                  boardColumnId,
-                })
-              }
-            />
-          </label>
-        </div>
-      </>
-    );
-  }
-
-  return <Modal onClose={props.onClose}>{content}</Modal>;
+  return (
+    <Modal onClose={props.onClose}>
+      <header className={styles.header}>
+        <Modal.Title>{task.title}</Modal.Title>
+        <button className={styles.taskActionsButton}>
+          <VerticalEllipsisIcon />
+          <VisuallyHidden>Task actions</VisuallyHidden>
+        </button>
+      </header>
+      {task.description.length > 0 && (
+        <p className={styles.description}>{task.description}</p>
+      )}
+      {task.subtasks.totalCount > 0 && (
+        <fieldset>
+          <legend>
+            <h4 className={styles.sectionHeading}>
+              Subtasks ({task.subtasks.completedCount} of{" "}
+              {task.subtasks.totalCount})
+            </h4>
+          </legend>
+          <SubtasksList
+            subtasks={task.subtasks.nodes}
+            onSubtaskCompletedChange={(subtaskId, completed) =>
+              fetcher.submit(
+                {
+                  intent: "update-subtask-completed",
+                  patch: { subtaskId, completed },
+                },
+                { method: "patch", encType: "application/json" }
+              )
+            }
+          />
+        </fieldset>
+      )}
+      <div>
+        <label>
+          <h4 className={styles.sectionHeading}>Current Status</h4>
+          <TaskColumnSelect
+            selectedColumnId={task.column.id}
+            boardColumns={board.columns.nodes}
+            onColumnChange={(boardColumnId) =>
+              fetcher.submit(
+                { intent: "update-task", patch: { boardColumnId } },
+                { method: "patch", encType: "application/json" }
+              )
+            }
+          />
+        </label>
+      </div>
+    </Modal>
+  );
 }
 
 const SubtaskList_SubtaskFragment = graphql(`

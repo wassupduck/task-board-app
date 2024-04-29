@@ -3,45 +3,17 @@ import LogoDark from "../../assets/logo-dark.svg?react";
 import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react";
 import Button from "../Button";
 import styles from "./Header.module.css";
-import { FragmentType, getFragmentData, graphql } from "../../gql";
+import { getFragmentData, graphql } from "../../gql";
+import { useParams } from "react-router-dom";
+import invariant from "tiny-invariant";
+import { useBoardRouteLoaderData } from "../../routes/board";
 
-const Header_BoardFragment = graphql(`
-  fragment Header_BoardFragment on Board {
-    name
-    columns {
-      totalCount
-    }
-  }
-`);
-
-export interface HeaderProps {
-  currentBoard?: FragmentType<typeof Header_BoardFragment>;
-}
-
-export default function Header(props: HeaderProps) {
-  const currentBoard = getFragmentData(
-    Header_BoardFragment,
-    props.currentBoard
-  );
+export default function Header() {
+  const onBoardRoute = "boardId" in useParams();
   return (
     <header className={styles.wrapper}>
       <HeaderLogo />
-      <div className={styles.headerMain}>
-        <h2 className={styles.heading}>{currentBoard?.name}</h2>
-        {currentBoard && (
-          <div className={styles.buttonGroup}>
-            <Button
-              disabled={currentBoard.columns.totalCount === 0}
-              size="large"
-            >
-              Add New Task
-            </Button>
-            <button className={styles.boardActionsButton}>
-              <VerticalEllipsisIcon />
-            </button>
-          </div>
-        )}
-      </div>
+      <div className={styles.headerMain}>{onBoardRoute && <BoardHeader />}</div>
     </header>
   );
 }
@@ -51,5 +23,34 @@ function HeaderLogo() {
     <a className={styles.headerLogo}>
       <LogoDark />
     </a>
+  );
+}
+
+const BoardHeader_BoardFragment = graphql(`
+  fragment BoardHeader_BoardFragment on Board {
+    name
+    columns {
+      totalCount
+    }
+  }
+`);
+
+function BoardHeader() {
+  const data = useBoardRouteLoaderData();
+  invariant(data.board, "Board not found");
+  const board = getFragmentData(BoardHeader_BoardFragment, data.board);
+
+  return (
+    <>
+      <h2 className={styles.heading}>{board.name}</h2>
+      <div className={styles.buttonGroup}>
+        <Button disabled={board.columns.totalCount === 0} size="large">
+          Add New Task
+        </Button>
+        <button className={styles.boardActionsButton}>
+          <VerticalEllipsisIcon />
+        </button>
+      </div>
+    </>
   );
 }

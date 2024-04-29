@@ -13,22 +13,23 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n  query AllBoardsQuery {\n    boards {\n      id\n      ...BoardList_BoardFragment\n    }\n  }\n": types.AllBoardsQueryDocument,
-    "\n  query BoardQuery($id: ID!) {\n    board(id: $id) {\n      id\n      ...Header_BoardFragment\n      ...BoardArea_BoardFragment\n    }\n  }\n": types.BoardQueryDocument,
     "\n  fragment Board_BoardFragment on Board {\n    columns {\n      nodes {\n        id\n        ...Column_BoardColumnFragment\n      }\n    }\n  }\n": types.Board_BoardFragmentFragmentDoc,
     "\n  fragment Column_BoardColumnFragment on BoardColumn {\n    name\n    tasks {\n      id\n      ...TaskCard_TaskFragment\n    }\n  }\n": types.Column_BoardColumnFragmentFragmentDoc,
-    "\n  fragment BoardArea_BoardFragment on Board {\n    id\n    columns {\n      totalCount\n    }\n    ...Board_BoardFragment\n    ...TaskViewModal_BoardFragment\n  }\n": types.BoardArea_BoardFragmentFragmentDoc,
-    "\n  mutation CreateBoardMutation($board: NewBoardInput!) {\n    createBoard(input: { board: $board }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.CreateBoardMutationDocument,
-    "\n  fragment BoardList_BoardFragment on Board {\n    id\n    name\n  }\n": types.BoardList_BoardFragmentFragmentDoc,
-    "\n  fragment Header_BoardFragment on Board {\n    name\n    columns {\n      totalCount\n    }\n  }\n": types.Header_BoardFragmentFragmentDoc,
+    "\n  fragment BoardNav_QueryFragment on Query {\n    boards {\n      id\n      name\n    }\n  }\n": types.BoardNav_QueryFragmentFragmentDoc,
+    "\n  fragment BoardHeader_BoardFragment on Board {\n    name\n    columns {\n      totalCount\n    }\n  }\n": types.BoardHeader_BoardFragmentFragmentDoc,
+    "\n  fragment Sidebar_QueryFragment on Query {\n    ...BoardNav_QueryFragment\n  }\n": types.Sidebar_QueryFragmentFragmentDoc,
     "\n  fragment TaskCard_TaskFragment on Task {\n    title\n    subtasks {\n      totalCount\n      completedCount\n    }\n  }\n": types.TaskCard_TaskFragmentFragmentDoc,
-    "\n  query TaskQuery($id: ID!) {\n    task(id: $id) {\n      title\n      description\n      column {\n        id\n        name\n      }\n      subtasks {\n        totalCount\n        completedCount\n        nodes {\n          ...SubtaskList_SubtaskFragment\n        }\n      }\n    }\n  }\n": types.TaskQueryDocument,
-    "\n  mutation UpdateSubtaskCompletedMutation(\n    $input: UpdateSubtaskCompletedInput!\n  ) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateSubtaskCompletedMutationDocument,
-    "\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(input: { id: $id, patch: { boardColumnId: $boardColumnId } }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateTaskColumnMutationDocument,
+    "\n  fragment TaskViewModal_TaskFragment on Task {\n    id\n    title\n    description\n    column {\n      id\n      name\n    }\n    subtasks {\n      totalCount\n      completedCount\n      nodes {\n        ...SubtaskList_SubtaskFragment\n      }\n    }\n  }\n": types.TaskViewModal_TaskFragmentFragmentDoc,
     "\n  fragment TaskViewModal_BoardFragment on Board {\n    columns {\n      nodes {\n        ...TaskColumnSelect_BoardColumnFragment\n      }\n    }\n  }\n": types.TaskViewModal_BoardFragmentFragmentDoc,
     "\n  fragment SubtaskList_SubtaskFragment on Subtask {\n    id\n    ...SubtaskListItem_SubtaskFragment\n  }\n": types.SubtaskList_SubtaskFragmentFragmentDoc,
     "\n  fragment SubtaskListItem_SubtaskFragment on Subtask {\n    id\n    title\n    completed\n  }\n": types.SubtaskListItem_SubtaskFragmentFragmentDoc,
     "\n  fragment TaskColumnSelect_BoardColumnFragment on BoardColumn {\n    id\n    name\n  }\n": types.TaskColumnSelect_BoardColumnFragmentFragmentDoc,
+    "\n  query BoardRoute_Query($id: ID!) {\n    board(id: $id) {\n      id\n      columns {\n        totalCount\n      }\n      ...Board_BoardFragment\n      ...BoardHeader_BoardFragment\n      ...TaskViewModal_BoardFragment\n    }\n  }\n": types.BoardRoute_QueryDocument,
+    "\n  mutation CreateBoard($input: CreateBoardInput!) {\n    createBoard(input: $input) {\n      __typename\n      ... on CreateBoardSuccess {\n        board {\n          id\n        }\n      }\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.CreateBoardDocument,
+    "\n  query RootRoute_Query {\n    boards {\n      id\n    }\n    ...Sidebar_QueryFragment\n  }\n": types.RootRoute_QueryDocument,
+    "\n  query TaskRoute_Query($id: ID!) {\n    task(id: $id) {\n      ...TaskViewModal_TaskFragment\n    }\n  }\n": types.TaskRoute_QueryDocument,
+    "\n  mutation UpdateTask($input: UpdateTaskInput!) {\n    updateTask(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateTaskDocument,
+    "\n  mutation UpdateSubtaskCompleted($input: UpdateSubtaskCompletedInput!) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateSubtaskCompletedDocument,
 };
 
 /**
@@ -48,14 +49,6 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query AllBoardsQuery {\n    boards {\n      id\n      ...BoardList_BoardFragment\n    }\n  }\n"): (typeof documents)["\n  query AllBoardsQuery {\n    boards {\n      id\n      ...BoardList_BoardFragment\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query BoardQuery($id: ID!) {\n    board(id: $id) {\n      id\n      ...Header_BoardFragment\n      ...BoardArea_BoardFragment\n    }\n  }\n"): (typeof documents)["\n  query BoardQuery($id: ID!) {\n    board(id: $id) {\n      id\n      ...Header_BoardFragment\n      ...BoardArea_BoardFragment\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
 export function graphql(source: "\n  fragment Board_BoardFragment on Board {\n    columns {\n      nodes {\n        id\n        ...Column_BoardColumnFragment\n      }\n    }\n  }\n"): (typeof documents)["\n  fragment Board_BoardFragment on Board {\n    columns {\n      nodes {\n        id\n        ...Column_BoardColumnFragment\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -64,19 +57,15 @@ export function graphql(source: "\n  fragment Column_BoardColumnFragment on Boar
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment BoardArea_BoardFragment on Board {\n    id\n    columns {\n      totalCount\n    }\n    ...Board_BoardFragment\n    ...TaskViewModal_BoardFragment\n  }\n"): (typeof documents)["\n  fragment BoardArea_BoardFragment on Board {\n    id\n    columns {\n      totalCount\n    }\n    ...Board_BoardFragment\n    ...TaskViewModal_BoardFragment\n  }\n"];
+export function graphql(source: "\n  fragment BoardNav_QueryFragment on Query {\n    boards {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  fragment BoardNav_QueryFragment on Query {\n    boards {\n      id\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation CreateBoardMutation($board: NewBoardInput!) {\n    createBoard(input: { board: $board }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation CreateBoardMutation($board: NewBoardInput!) {\n    createBoard(input: { board: $board }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  fragment BoardHeader_BoardFragment on Board {\n    name\n    columns {\n      totalCount\n    }\n  }\n"): (typeof documents)["\n  fragment BoardHeader_BoardFragment on Board {\n    name\n    columns {\n      totalCount\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment BoardList_BoardFragment on Board {\n    id\n    name\n  }\n"): (typeof documents)["\n  fragment BoardList_BoardFragment on Board {\n    id\n    name\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  fragment Header_BoardFragment on Board {\n    name\n    columns {\n      totalCount\n    }\n  }\n"): (typeof documents)["\n  fragment Header_BoardFragment on Board {\n    name\n    columns {\n      totalCount\n    }\n  }\n"];
+export function graphql(source: "\n  fragment Sidebar_QueryFragment on Query {\n    ...BoardNav_QueryFragment\n  }\n"): (typeof documents)["\n  fragment Sidebar_QueryFragment on Query {\n    ...BoardNav_QueryFragment\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -84,15 +73,7 @@ export function graphql(source: "\n  fragment TaskCard_TaskFragment on Task {\n 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query TaskQuery($id: ID!) {\n    task(id: $id) {\n      title\n      description\n      column {\n        id\n        name\n      }\n      subtasks {\n        totalCount\n        completedCount\n        nodes {\n          ...SubtaskList_SubtaskFragment\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query TaskQuery($id: ID!) {\n    task(id: $id) {\n      title\n      description\n      column {\n        id\n        name\n      }\n      subtasks {\n        totalCount\n        completedCount\n        nodes {\n          ...SubtaskList_SubtaskFragment\n        }\n      }\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  mutation UpdateSubtaskCompletedMutation(\n    $input: UpdateSubtaskCompletedInput!\n  ) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateSubtaskCompletedMutation(\n    $input: UpdateSubtaskCompletedInput!\n  ) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(input: { id: $id, patch: { boardColumnId: $boardColumnId } }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateTaskColumnMutation($id: ID!, $boardColumnId: ID!) {\n    updateTask(input: { id: $id, patch: { boardColumnId: $boardColumnId } }) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  fragment TaskViewModal_TaskFragment on Task {\n    id\n    title\n    description\n    column {\n      id\n      name\n    }\n    subtasks {\n      totalCount\n      completedCount\n      nodes {\n        ...SubtaskList_SubtaskFragment\n      }\n    }\n  }\n"): (typeof documents)["\n  fragment TaskViewModal_TaskFragment on Task {\n    id\n    title\n    description\n    column {\n      id\n      name\n    }\n    subtasks {\n      totalCount\n      completedCount\n      nodes {\n        ...SubtaskList_SubtaskFragment\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -109,6 +90,30 @@ export function graphql(source: "\n  fragment SubtaskListItem_SubtaskFragment on
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment TaskColumnSelect_BoardColumnFragment on BoardColumn {\n    id\n    name\n  }\n"): (typeof documents)["\n  fragment TaskColumnSelect_BoardColumnFragment on BoardColumn {\n    id\n    name\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query BoardRoute_Query($id: ID!) {\n    board(id: $id) {\n      id\n      columns {\n        totalCount\n      }\n      ...Board_BoardFragment\n      ...BoardHeader_BoardFragment\n      ...TaskViewModal_BoardFragment\n    }\n  }\n"): (typeof documents)["\n  query BoardRoute_Query($id: ID!) {\n    board(id: $id) {\n      id\n      columns {\n        totalCount\n      }\n      ...Board_BoardFragment\n      ...BoardHeader_BoardFragment\n      ...TaskViewModal_BoardFragment\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateBoard($input: CreateBoardInput!) {\n    createBoard(input: $input) {\n      __typename\n      ... on CreateBoardSuccess {\n        board {\n          id\n        }\n      }\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation CreateBoard($input: CreateBoardInput!) {\n    createBoard(input: $input) {\n      __typename\n      ... on CreateBoardSuccess {\n        board {\n          id\n        }\n      }\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query RootRoute_Query {\n    boards {\n      id\n    }\n    ...Sidebar_QueryFragment\n  }\n"): (typeof documents)["\n  query RootRoute_Query {\n    boards {\n      id\n    }\n    ...Sidebar_QueryFragment\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query TaskRoute_Query($id: ID!) {\n    task(id: $id) {\n      ...TaskViewModal_TaskFragment\n    }\n  }\n"): (typeof documents)["\n  query TaskRoute_Query($id: ID!) {\n    task(id: $id) {\n      ...TaskViewModal_TaskFragment\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateTask($input: UpdateTaskInput!) {\n    updateTask(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateTask($input: UpdateTaskInput!) {\n    updateTask(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateSubtaskCompleted($input: UpdateSubtaskCompletedInput!) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateSubtaskCompleted($input: UpdateSubtaskCompletedInput!) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
