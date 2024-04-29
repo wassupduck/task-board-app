@@ -13,6 +13,7 @@ const Sidebar_QueryFragment = graphql(`
 
 interface SidebarProps {
   query: FragmentType<typeof Sidebar_QueryFragment>;
+  onHideSidebar: () => void;
 }
 
 export default function Sidebar(props: SidebarProps) {
@@ -24,7 +25,10 @@ export default function Sidebar(props: SidebarProps) {
         <div className={styles.themeSelectorWrapper}>
           <ThemeSelector />
         </div>
-        <button className={styles.hideSidebarButton}>
+        <button
+          className={styles.hideSidebarButton}
+          onClick={props.onHideSidebar}
+        >
           <HideSidebarIcon />
           Hide Sidebar
         </button>

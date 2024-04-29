@@ -4,25 +4,31 @@ import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react"
 import Button from "../Button";
 import styles from "./Header.module.css";
 import { getFragmentData, graphql } from "../../gql";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import invariant from "tiny-invariant";
 import { useBoardRouteLoaderData } from "../../routes/board";
+import clsx from "clsx";
 
-export default function Header() {
+interface HeaderProps {
+  sidebarHidden: boolean;
+}
+
+export default function Header(props: HeaderProps) {
   const onBoardRoute = "boardId" in useParams();
   return (
     <header className={styles.wrapper}>
-      <HeaderLogo />
+      <div
+        className={clsx(
+          styles.headerLeft,
+          props.sidebarHidden && styles.sidebarHidden
+        )}
+      >
+        <Link to="/" className={styles.siteLogo}>
+          <LogoDark />
+        </Link>
+      </div>
       <div className={styles.headerMain}>{onBoardRoute && <BoardHeader />}</div>
     </header>
-  );
-}
-
-function HeaderLogo() {
-  return (
-    <a className={styles.headerLogo}>
-      <LogoDark />
-    </a>
   );
 }
 
@@ -42,7 +48,7 @@ function BoardHeader() {
 
   return (
     <>
-      <h2 className={styles.heading}>{board.name}</h2>
+      <h2 className={styles.boardHeading}>{board.name}</h2>
       <div className={styles.buttonGroup}>
         <Button disabled={board.columns.totalCount === 0} size="large">
           Add New Task

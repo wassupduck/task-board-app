@@ -1,3 +1,5 @@
+/// <reference types="vite-plugin-svgr/client" />
+import ShowSidebarIcon from "../../assets/icon-show-sidebar.svg?react";
 import styles from "./Root.module.css";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -10,9 +12,13 @@ import {
 } from "react-router-dom";
 import BoardCreateModal from "../../components/BoardCreateModal";
 import { LoaderData } from "./loader";
+import clsx from "clsx";
+import VisuallyHidden from "../../components/VisuallyHidden";
+import useStickyState from "../../hooks/useStickyState";
 
 export function Root() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showSidebar, setShowSidebar] = useStickyState(true, "show-sidebar");
 
   const data = useLoaderData() as LoaderData;
   const { boards } = data;
@@ -24,9 +30,13 @@ export function Root() {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <Header />
-      <Sidebar query={data} />
+    <div className={clsx(styles.wrapper, !showSidebar && styles.sidebarHidden)}>
+      <Header sidebarHidden={!showSidebar} />
+      {showSidebar ? (
+        <Sidebar query={data} onHideSidebar={() => setShowSidebar(false)} />
+      ) : (
+        <ShowSidebarButton onClick={() => setShowSidebar(true)} />
+      )}
       <main className={styles.main}>
         <Outlet />
       </main>
@@ -45,5 +55,14 @@ export function Root() {
         />
       )}
     </div>
+  );
+}
+
+function ShowSidebarButton(props: { onClick: () => void }) {
+  return (
+    <button className={styles.showSidebarButton} onClick={props.onClick}>
+      <ShowSidebarIcon />
+      <VisuallyHidden>Show sidebar</VisuallyHidden>
+    </button>
   );
 }
