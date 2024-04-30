@@ -19,18 +19,17 @@ import { BoardsRouteActionData } from "../../routes/boards";
 
 type FetcherData = Exclude<BoardsRouteActionData, Response>;
 
-interface BoardCreateModalProps {
-  onClose: () => void;
-}
+type NewBoardForm = Omit<UseFormReturn<NewBoardInput>, "handleSubmit"> & {
+  handleSubmit: React.FormEventHandler<HTMLFormElement>;
+};
 
-export default function BoardCreateModal(props: BoardCreateModalProps) {
+function useNewBoardForm(): NewBoardForm {
   const form = useForm<NewBoardInput>({
     resolver: zodResolver(createBoardFormSchema),
     defaultValues: {
       columns: [{ name: "" }, { name: "" }],
     },
   });
-  const { formState } = form;
   const fetcher = useFetcher<FetcherData>();
 
   const [prevFetcherData, setPrevFetcherData] = useState(fetcher.data);
@@ -60,10 +59,21 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
     })(e);
   };
 
+  return { ...form, handleSubmit };
+}
+
+interface BoardCreateModalProps {
+  onClose: () => void;
+}
+
+export default function BoardCreateModal(props: BoardCreateModalProps) {
+  const form = useNewBoardForm();
+  const { formState } = form;
+
   return (
     <Modal onClose={props.onClose}>
       <Modal.Title>Add New Board</Modal.Title>
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={form.handleSubmit}>
         <label>
           <h4 className={styles.label}>Name</h4>
           {formState.errors.name && (
@@ -94,7 +104,7 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
 }
 
 interface BoardColumnsListProps {
-  form: UseFormReturn<NewBoardInput>;
+  form: NewBoardForm;
 }
 
 function BoardColumnsList(props: BoardColumnsListProps) {
