@@ -11,6 +11,7 @@
 
     @media tabletAndSmaller {
         --sidebar-width: 260px;
+
         grid-template-rows: 80px minmax(0, 1fr);
     }
 

@@ -11,6 +11,7 @@ const boardRouteQueryDocument = graphql(`
       ...Board_BoardFragment
       ...BoardHeader_BoardFragment
       ...TaskViewModal_BoardFragment
+      ...EditBoardRoute_BoardFragment
     }
   }
 `);

@@ -30,12 +30,15 @@ export function Board() {
 }
 
 function EmptyBoard() {
+  const navigate = useNavigate();
   return (
     <div className={styles.emptyBoardWrapper}>
       <p className={styles.emptyBoardMessage}>
         This board is empty. Create a new column to get started.
       </p>
-      <Button size="large">Add New Column</Button>
+      <Button size="large" onClick={() => navigate("./edit")}>
+        Add New Column
+      </Button>
     </div>
   );
 }

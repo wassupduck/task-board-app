@@ -7,7 +7,7 @@ interface TextInputProps extends React.ComponentPropsWithoutRef<"input"> {
 
 const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
   (props: TextInputProps, ref) => {
-    return <input ref={ref} className={styles.input} {...props} />;
+    return <input type="text" ref={ref} className={styles.input} {...props} />;
   }
 );
 

@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-export const createBoardFormSchema = z.object({
+export const boardFormSchema = z.object({
   name: z
     .string()
     .trim()
@@ -9,6 +9,7 @@ export const createBoardFormSchema = z.object({
   columns: z
     .array(
       z.object({
+        id: z.string().optional(),
         name: z
           .string()
           .trim()
