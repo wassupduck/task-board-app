@@ -112,12 +112,32 @@ export type InvalidInputError = ErrorResponse & {
   message: Scalars['String']['output'];
 };
 
+export type LoginInput = {
+  password: Scalars['String']['input'];
+  username: Scalars['String']['input'];
+};
+
+export type LoginResponse = LoginSuccess | UnauthorizedError;
+
+export type LoginSuccess = {
+  __typename?: 'LoginSuccess';
+  user: User;
+};
+
+export type LogoutResponse = {
+  __typename?: 'LogoutResponse';
+  success: Scalars['Boolean']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createBoard: CreateBoardResponse;
   createTask: CreateTaskResponse;
   deleteBoard: DeleteBoardResponse;
   deleteTask: DeleteTaskResponse;
+  login: LoginResponse;
+  logout: LogoutResponse;
+  signup: SignupResponse;
   updateBoard: UpdateBoardResponse;
   updateBoardColumns: UpdateBoardColumnsResponse;
   updateSubtaskCompleted: UpdateSubtaskCompletedResponse;
@@ -142,6 +162,16 @@ export type MutationDeleteBoardArgs = {
 
 export type MutationDeleteTaskArgs = {
   input: DeleteTaskInput;
+};
+
+
+export type MutationLoginArgs = {
+  input: LoginInput;
+};
+
+
+export type MutationSignupArgs = {
+  input: SignupInput;
 };
 
 
@@ -179,6 +209,11 @@ export type NewTaskInput = {
   title: Scalars['String']['input'];
 };
 
+export type NewUserInput = {
+  password: Scalars['String']['input'];
+  username: Scalars['String']['input'];
+};
+
 export type NotFoundError = ErrorResponse & {
   __typename?: 'NotFoundError';
   message: Scalars['String']['output'];
@@ -190,6 +225,7 @@ export type Query = {
   boards: Array<Board>;
   hello: Scalars['String']['output'];
   task?: Maybe<Task>;
+  viewer?: Maybe<User>;
 };
 
 
@@ -200,6 +236,17 @@ export type QueryBoardArgs = {
 
 export type QueryTaskArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type SignupInput = {
+  user: NewUserInput;
+};
+
+export type SignupResponse = InvalidInputError | SignupSuccess | UserUsernameConflictError;
+
+export type SignupSuccess = {
+  __typename?: 'SignupSuccess';
+  user: User;
 };
 
 export type Subtask = {
@@ -227,6 +274,11 @@ export type TaskSubtasksConnection = {
   completedCount: Scalars['Int']['output'];
   nodes: Array<Subtask>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type UnauthorizedError = ErrorResponse & {
+  __typename?: 'UnauthorizedError';
+  message: Scalars['String']['output'];
 };
 
 export type UpdateBoardColumnInput = {
@@ -307,6 +359,19 @@ export type UpdateTaskResponse = BoardColumnNotFoundError | NotFoundError | Upda
 export type UpdateTaskSuccess = {
   __typename?: 'UpdateTaskSuccess';
   task: Task;
+};
+
+export type User = {
+  __typename?: 'User';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  username: Scalars['String']['output'];
+};
+
+export type UserUsernameConflictError = ErrorResponse & {
+  __typename?: 'UserUsernameConflictError';
+  message: Scalars['String']['output'];
 };
 
 export type Board_BoardFragmentFragment = { __typename?: 'Board', columns: { __typename?: 'BoardColumnsConnection', nodes: Array<(
