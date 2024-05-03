@@ -10,23 +10,35 @@ const dbCACertFile = path.resolve(
   '../database/rds-ca-cert.eu-west-2-bundle.pem',
 );
 
+const frontendUrl = prodEnvVar('FRONTEND_URL', 'http://localhost:5173');
+
 const config = {
+  frontendUrl,
   db: {
-    connectionString: process.env.TASK_BOARD_APP_DATABASE_CONNECTION_STRING,
-    user: prodEnvVar('TASK_BOARD_APP_DATABASE_USER', 'postgres'),
-    database: prodEnvVar('TASK_BOARD_APP_DATABASE_NAME', 'task_board_app'),
-    password: process.env.TASK_BOARD_APP_DATABASE_PASSWORD ?? 'postgres',
-    port: Number(process.env.TASK_BOARD_APP_DATABASE_PORT ?? '5432'),
-    host: prodEnvVar('TASK_BOARD_APP_DATABASE_HOST', 'localhost'),
+    connectionString: envVar('DATABASE_CONNECTION_STRING'),
+    user: prodEnvVar('DATABASE_USER', 'postgres'),
+    database: prodEnvVar('DATABASE_NAME', 'task_board_app'),
+    password: envVar('DATABASE_PASSWORD') ?? 'postgres',
+    port: Number(envVar('DATABASE_PORT') ?? '5432'),
+    host: prodEnvVar('DATABASE_HOST', 'localhost'),
     ssl:
       process.env.NODE_ENV !== 'production'
         ? false
         : { ca: readFileSync(dbCACertFile).toString() },
   },
+  jwtOptions: {
+    secret: prodEnvVar('JWT_SECRET', 'jwt-secret'),
+    expiresIn: Number(envVar('JWT_EXPIRES_IN') ?? '600'),
+  },
+  corsOptions: {
+    origin: process.env.NODE_ENV !== 'production' ? '*' : frontendUrl,
+    credentials: true,
+    methods: ['POST'],
+  },
 };
 
 function prodEnvVar(name: string, devDefault: string): string {
-  const value = process.env[name];
+  const value = envVar(name);
 
   if (value === undefined) {
     if (process.env.NODE_ENV === 'production') {
@@ -36,6 +48,10 @@ function prodEnvVar(name: string, devDefault: string): string {
   }
 
   return value;
+}
+
+function envVar(name: string): string | undefined {
+  return process.env[`TASK_BOARD_APP_${name}`];
 }
 
 export default config;

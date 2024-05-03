@@ -1,4 +1,5 @@
-insert into app_user default values;
+insert into app_user(username, password_hash) values
+    ('Cartman', 'todo');
 
 insert into board(name, app_user_id) values
     ('Platform Launch', 1),

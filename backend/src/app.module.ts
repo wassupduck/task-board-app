@@ -10,6 +10,10 @@ import { AppRepository } from './app.respository.js';
 import { BoardModule } from './board/index.js';
 import { TaskModule } from './task/index.js';
 import { LoaderModule, LOADERS_FACTORY, Loaders } from './loader/index.js';
+import config from './config.js';
+import { useCSRFPrevention } from '@graphql-yoga/plugin-csrf-prevention';
+import { AuthModule } from './auth/auth.module.js';
+import { UserModule } from './user/index.js';
 
 @Module({
   imports: [
@@ -24,6 +28,8 @@ import { LoaderModule, LOADERS_FACTORY, Loaders } from './loader/index.js';
               : true,
           sortSchema: true,
           context: () => ({ loaders: createLoaders() }),
+          cors: config.corsOptions,
+          plugins: [useCSRFPrevention()],
         };
       },
       inject: [LOADERS_FACTORY],
@@ -32,6 +38,8 @@ import { LoaderModule, LOADERS_FACTORY, Loaders } from './loader/index.js';
     DatabaseModule,
     BoardModule,
     TaskModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppRepository, AppService, AppResolver],

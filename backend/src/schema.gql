@@ -90,11 +90,29 @@ type InvalidInputError implements ErrorResponse {
   message: String!
 }
 
+input LoginInput {
+  password: String!
+  username: String!
+}
+
+union LoginResponse = LoginSuccess | UnauthorizedError
+
+type LoginSuccess {
+  user: User!
+}
+
+type LogoutResponse {
+  success: Boolean!
+}
+
 type Mutation {
   createBoard(input: CreateBoardInput!): CreateBoardResponse!
   createTask(input: CreateTaskInput!): CreateTaskResponse!
   deleteBoard(input: DeleteBoardInput!): DeleteBoardResponse!
   deleteTask(input: DeleteTaskInput!): DeleteTaskResponse!
+  login(input: LoginInput!): LoginResponse!
+  logout: LogoutResponse!
+  signup(input: SignupInput!): SignupResponse!
   updateBoard(input: UpdateBoardInput!): UpdateBoardResponse!
   updateBoardColumns(input: UpdateBoardColumnsInput!): UpdateBoardColumnsResponse!
   updateSubtaskCompleted(input: UpdateSubtaskCompletedInput!): UpdateSubtaskCompletedResponse!
@@ -116,6 +134,11 @@ input NewTaskInput {
   title: String!
 }
 
+input NewUserInput {
+  password: String!
+  username: String!
+}
+
 type NotFoundError implements ErrorResponse {
   message: String!
 }
@@ -125,6 +148,17 @@ type Query {
   boards: [Board!]!
   hello: String!
   task(id: ID!): Task
+  viewer: User
+}
+
+input SignupInput {
+  user: NewUserInput!
+}
+
+union SignupResponse = InvalidInputError | SignupSuccess | UserUsernameConflictError
+
+type SignupSuccess {
+  user: User!
 }
 
 type Subtask {
@@ -149,6 +183,10 @@ type TaskSubtasksConnection {
   completedCount: Int!
   nodes: [Subtask!]!
   totalCount: Int!
+}
+
+type UnauthorizedError implements ErrorResponse {
+  message: String!
 }
 
 input UpdateBoardColumnInput {
@@ -228,4 +266,15 @@ union UpdateTaskResponse = BoardColumnNotFoundError | NotFoundError | UpdateTask
 
 type UpdateTaskSuccess {
   task: Task!
+}
+
+type User {
+  createdAt: DateTime!
+  id: ID!
+  updatedAt: DateTime!
+  username: String!
+}
+
+type UserUsernameConflictError implements ErrorResponse {
+  message: String!
 }

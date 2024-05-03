@@ -30,6 +30,7 @@ import { BoardColumnNameConflictErrorResponse } from './dto/board-column-name-co
 import { DeleteBoardResponse } from './dto/delete-board-response.dto.js';
 import { DeleteBoardInput } from './dto/delete-board.input.js';
 import { DeleteBoardSuccess } from './dto/delete-board-success.dto.js';
+import { CurrentUser } from '../auth/index.js';
 
 @Resolver(Board)
 export class BoardResolver {
@@ -39,16 +40,15 @@ export class BoardResolver {
   ) {}
 
   @Query(() => [Board])
-  async boards(): Promise<Board[]> {
-    const userId = '1'; // TODO
+  async boards(@CurrentUser('id') userId: string): Promise<Board[]> {
     return this.boardService.getUserBoards(userId);
   }
 
   @Query(() => Board, { nullable: true })
   async board(
     @Args('id', { type: () => ID }) id: string,
+    @CurrentUser('id') userId: string,
   ): Promise<Board | null> {
-    const userId = '1'; // TODO
     return this.boardService.getBoardByIdAsUser(id, userId);
   }
 
@@ -65,9 +65,8 @@ export class BoardResolver {
   @Mutation(() => CreateBoardResponse)
   async createBoard(
     @Args('input') input: CreateBoardInput,
+    @CurrentUser('id') userId: string,
   ): Promise<typeof CreateBoardResponse> {
-    const userId = '1'; // TODO
-
     let board: Board;
     try {
       board = await this.boardService.createBoard(input.board, userId);
@@ -86,9 +85,8 @@ export class BoardResolver {
   @Mutation(() => UpdateBoardResponse)
   async updateBoard(
     @Args('input') input: UpdateBoardInput,
+    @CurrentUser('id') userId: string,
   ): Promise<typeof UpdateBoardResponse> {
-    const userId = '1'; // TODO
-
     let board: Board;
     try {
       board = await this.boardService.updateBoard(
@@ -111,9 +109,8 @@ export class BoardResolver {
   @Mutation(() => UpdateBoardColumnsResponse)
   async updateBoardColumns(
     @Args('input') input: UpdateBoardColumnsInput,
+    @CurrentUser('id') userId: string,
   ): Promise<typeof UpdateBoardColumnsResponse> {
-    const userId = '1'; // TODO
-
     let board: Board;
     try {
       board = await this.boardService.updateBoardColumns(
@@ -136,9 +133,8 @@ export class BoardResolver {
   @Mutation(() => DeleteBoardResponse)
   async deleteBoard(
     @Args('input') input: DeleteBoardInput,
+    @CurrentUser('id') userId: string,
   ): Promise<typeof DeleteBoardResponse> {
-    const userId = '1'; // TODO
-
     try {
       await this.boardService.deleteBoard(input.id, userId);
     } catch (error) {
