@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./TextInput.module.css";
 
 interface TextInputProps extends React.ComponentPropsWithoutRef<"input"> {
-  type?: "text";
+  type?: "text" | "password";
 }
 
 const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(

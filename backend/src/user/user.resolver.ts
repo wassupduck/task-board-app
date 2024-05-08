@@ -11,6 +11,7 @@ import { GraphQLContext } from '../common/graphql-context.js';
 import { AuthService } from '../auth/auth.service.js';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import { Public } from '../auth/decorators/public.decorator.js';
+import { UnauthenticatedError } from '../auth/auth.errors.js';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -19,9 +20,13 @@ export class UserResolver {
     private readonly authService: AuthService,
   ) {}
 
-  @Query(() => User, { nullable: true })
-  async viewer(@CurrentUser('id') userId: string): Promise<User | null> {
-    return await this.userService.getUserById(userId);
+  @Query(() => User)
+  async viewer(@CurrentUser('id') userId: string): Promise<User> {
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new UnauthenticatedError('User is not authenticated');
+    }
+    return user;
   }
 
   @Public()

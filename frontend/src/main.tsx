@@ -6,7 +6,14 @@ import { RouterProvider } from "react-router-dom";
 import "./global.module.css";
 import { createRouter } from "./router";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 2,
+      throwOnError: true,
+    },
+  },
+});
 const router = createRouter(queryClient);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

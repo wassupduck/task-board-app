@@ -1,3 +1,3 @@
-export { Task } from "./Task";
-export { loader as taskRouteLoader } from "./loader";
-export { action as taskRouteAction } from "./action";
+export { Task as Component } from "./Task";
+export { loader } from "./loader";
+export { action } from "./action";

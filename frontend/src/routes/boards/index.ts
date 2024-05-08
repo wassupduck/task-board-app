@@ -1,2 +1,2 @@
-export { action as boardsRouteAction } from "./action";
+export { action } from "./action";
 export type { ActionData as BoardsRouteActionData } from "./action";

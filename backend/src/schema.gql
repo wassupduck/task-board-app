@@ -90,9 +90,13 @@ type InvalidInputError implements ErrorResponse {
   message: String!
 }
 
-input LoginInput {
+input LoginCredentialsInput {
   password: String!
   username: String!
+}
+
+input LoginInput {
+  credentials: LoginCredentialsInput!
 }
 
 union LoginResponse = LoginSuccess | UnauthorizedError
@@ -148,7 +152,7 @@ type Query {
   boards: [Board!]!
   hello: String!
   task(id: ID!): Task
-  viewer: User
+  viewer: User!
 }
 
 input SignupInput {

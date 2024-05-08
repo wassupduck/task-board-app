@@ -17,10 +17,7 @@ export class AuthResolver {
     @Args('input') input: LoginInput,
     @Context() ctx: GraphQLContext,
   ): Promise<typeof LoginResponse> {
-    const user = await this.authService.authenticateUser(
-      input.username,
-      input.password,
-    );
+    const user = await this.authService.authenticateUser(input.credentials);
     if (!user) {
       return new UnauthorizedErrorResponse('Unauthorized');
     }

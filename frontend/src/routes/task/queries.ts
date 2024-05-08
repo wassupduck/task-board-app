@@ -1,6 +1,6 @@
-import request from "graphql-request";
 import { graphql } from "../../gql";
 import { UpdateTaskPatchInput } from "../../gql/graphql";
+import { graphQLClient } from "../../graphql-client";
 
 const taskRouteQueryDocument = graphql(`
   query TaskRoute_Query($id: ID!) {
@@ -12,14 +12,14 @@ const taskRouteQueryDocument = graphql(`
 
 export const taskRouteQueryKey = (taskId: string) => ["tasks", taskId] as const;
 
-const taskRouteQueryFn = (id: string) => () => {
-  return request(
-    import.meta.env.VITE_BACKEND_GRAPHQL_URL,
-    taskRouteQueryDocument,
-    {
-      id,
-    }
-  );
+const taskRouteQueryFn = (id: string) => async () => {
+  const resp = await graphQLClient.request(taskRouteQueryDocument, {
+    id,
+  });
+  if (!resp.task) {
+    throw new Response("Not found", { status: 404 });
+  }
+  return { task: resp.task };
 };
 
 export const taskRouteQuery = (id: string) => ({
@@ -39,11 +39,9 @@ const updateTaskMutationDocument = graphql(`
 `);
 
 export async function updateTask(id: string, patch: UpdateTaskPatchInput) {
-  const resp = await request(
-    import.meta.env.VITE_BACKEND_GRAPHQL_URL,
-    updateTaskMutationDocument,
-    { input: { id, patch } }
-  );
+  const resp = await graphQLClient.request(updateTaskMutationDocument, {
+    input: { id, patch },
+  });
   return resp.updateTask;
 }
 
@@ -59,8 +57,7 @@ const updateSubtaskCompletedMutationDocument = graphql(`
 `);
 
 export async function updateSubtaskCompleted(id: string, completed: boolean) {
-  const resp = await request(
-    import.meta.env.VITE_BACKEND_GRAPHQL_URL,
+  const resp = await graphQLClient.request(
     updateSubtaskCompletedMutationDocument,
     { input: { id, completed } }
   );

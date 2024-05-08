@@ -9,11 +9,5 @@ export const loader =
   (queryClient: QueryClient) =>
   async ({ params }: LoaderFunctionArgs) => {
     invariant(params.taskId, "Missing taskId param");
-    const resp = await queryClient.ensureQueryData(
-      taskRouteQuery(params.taskId)
-    );
-    if (resp.task === null) {
-      throw new Response("Not found", { status: 404 });
-    }
-    return resp;
+    return await queryClient.ensureQueryData(taskRouteQuery(params.taskId));
   };

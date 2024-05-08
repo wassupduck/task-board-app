@@ -28,10 +28,10 @@ const config = {
   },
   jwtOptions: {
     secret: prodEnvVar('JWT_SECRET', 'jwt-secret'),
-    expiresIn: Number(envVar('JWT_EXPIRES_IN') ?? '600'),
+    expiresIn: envVar('JWT_EXPIRES_IN') ?? '7d',
   },
   corsOptions: {
-    origin: process.env.NODE_ENV !== 'production' ? '*' : frontendUrl,
+    origin: frontendUrl,
     credentials: true,
     methods: ['POST'],
   },

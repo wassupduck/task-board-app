@@ -38,7 +38,7 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
   const handleSubmit = (board: BoardFormFieldValues) => {
     fetcher.submit(board, {
       method: "post",
-      action: "/boards",
+      action: "boards",
       encType: "application/json",
     });
   };

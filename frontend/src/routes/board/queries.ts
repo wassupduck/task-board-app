@@ -1,5 +1,5 @@
-import request from "graphql-request";
 import { graphql } from "../../gql";
+import { graphQLClient } from "../../graphql-client";
 
 const boardRouteQueryDocument = graphql(`
   query BoardRoute_Query($id: ID!) {
@@ -19,10 +19,15 @@ const boardRouteQueryDocument = graphql(`
 export const boardRouteQueryKey = (boardId: string) =>
   ["boards", boardId] as const;
 
-const boardRouteQueryFn = (id: string) => () =>
-  request(import.meta.env.VITE_BACKEND_GRAPHQL_URL, boardRouteQueryDocument, {
+const boardRouteQueryFn = (id: string) => async () => {
+  const resp = await graphQLClient.request(boardRouteQueryDocument, {
     id,
   });
+  if (!resp.board) {
+    throw new Response("Not found", { status: 404 });
+  }
+  return { board: resp.board };
+};
 
 export const boardRouteQuery = (id: string) => ({
   queryKey: boardRouteQueryKey(id),

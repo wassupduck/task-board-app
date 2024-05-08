@@ -1,2 +1,2 @@
-export { Board } from "./Board";
-export { loader as boardRouteLoader, useBoardRouteLoaderData } from "./loader";
+export { Board as Component } from "./Board";
+export { loader, useBoardRouteLoaderData } from "./loader";

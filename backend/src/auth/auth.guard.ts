@@ -6,19 +6,8 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { YogaDriverServerContext } from '@graphql-yoga/nestjs';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from './decorators/public.decorator.js';
-import { GraphQLError } from 'graphql';
 import { AUTH_TOKEN_COOKIE } from './auth.constants.js';
-
-class UnauthenticatedError extends GraphQLError {
-  constructor(message: string) {
-    super(message, {
-      extensions: {
-        code: 'UNAUTHENTICATED',
-        http: { status: 401 },
-      },
-    });
-  }
-}
+import { UnauthenticatedError } from './auth.errors.js';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

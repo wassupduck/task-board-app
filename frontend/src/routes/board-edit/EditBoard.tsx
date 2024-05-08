@@ -107,7 +107,6 @@ export function EditBoard() {
 
     fetcher.submit(update, {
       method: "post",
-      action: `/boards/${board.id}/edit`,
       encType: "application/json",
     });
   };

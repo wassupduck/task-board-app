@@ -1,0 +1,17 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.label {
+    font-size: var(--font-size-heading-xsmall);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-grey-medium);
+    margin-bottom: 8px;
+}
+
+.invalid-feedback {
+    font-size: var(--font-size-body-small);
+    color: var(--color-danger);
+}

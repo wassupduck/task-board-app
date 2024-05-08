@@ -3,31 +3,24 @@ import ShowSidebarIcon from "../../assets/icon-show-sidebar.svg?react";
 import styles from "./Root.module.css";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-import {
-  Navigate,
-  Outlet,
-  useLoaderData,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Outlet, useLoaderData, useSearchParams } from "react-router-dom";
 import BoardCreateModal from "../../components/BoardCreateModal";
 import { LoaderData } from "./loader";
 import clsx from "clsx";
 import VisuallyHidden from "../../components/VisuallyHidden";
 import useStickyState from "../../hooks/useStickyState";
+import { useQuery } from "@tanstack/react-query";
+import { rootRouteQuery } from "./queries";
 
 export function Root() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showSidebar, setShowSidebar] = useStickyState(true, "show-sidebar");
 
-  const data = useLoaderData() as LoaderData;
-  const { boards } = data;
-
-  const params = useParams();
-  const boardId = params.boardId;
-  if (boards.length > 0 && boardId === undefined) {
-    return <Navigate to={`/boards/${boards[0].id}`} />;
-  }
+  const initialData = useLoaderData() as LoaderData;
+  const { data } = useQuery({
+    ...rootRouteQuery,
+    initialData,
+  });
 
   return (
     <div className={clsx(styles.wrapper, !showSidebar && styles.sidebarHidden)}>

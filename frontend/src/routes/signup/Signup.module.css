@@ -1,0 +1,33 @@
+.wrapper {
+    height: 100%;
+    display: grid;
+    place-content: center;
+    background-color: var(--color-grey-light);
+}
+
+.form-wrapper {
+    width: 400px;
+    padding: 32px;
+    /* border: 1px solid var(--color-lines-light); */
+    border-radius: 6px;
+    background-color: var(--color-white);
+}
+
+.login-link {
+    display: block;
+    margin-top: 8px;
+    font-size: var(--font-size-body-small);
+    color: var(--color-primary-light);
+    text-align: center;
+    text-decoration: underline;
+
+    &:hover {
+        color: var(--color-primary);
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}

@@ -1,25 +1,33 @@
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import TaskViewModal from "../../components/TaskViewModal";
 import { useBoardRouteLoaderData } from "../board";
 import invariant from "tiny-invariant";
 import { LoaderData } from "./loader";
+import { useQuery } from "@tanstack/react-query";
+import { taskRouteQuery } from "./queries";
+import { boardRouteQuery } from "../board/queries";
 
 export function Task() {
   const navigate = useNavigate();
+  const params = useParams();
+  invariant(params.taskId, "Missing taskId param");
+  invariant(params.boardId, "Missing taskId param");
 
-  const data = useLoaderData() as LoaderData;
+  const initialData = useLoaderData() as LoaderData;
+  const { data } = useQuery({
+    ...taskRouteQuery(params.taskId),
+    initialData,
+  });
   const { task } = data;
-  invariant(task, "Task not found");
 
-  const boardRouteData = useBoardRouteLoaderData();
+  const initialBoardRouteData = useBoardRouteLoaderData();
+  const { data: boardRouteData } = useQuery({
+    ...boardRouteQuery(params.boardId),
+    initialData: initialBoardRouteData,
+  });
   const { board } = boardRouteData;
-  invariant(board, "Board not found");
 
   return (
-    <TaskViewModal
-      board={board}
-      task={task}
-      onClose={() => navigate(`/boards/${board.id}`)}
-    />
+    <TaskViewModal board={board} task={task} onClose={() => navigate(`..`)} />
   );
 }

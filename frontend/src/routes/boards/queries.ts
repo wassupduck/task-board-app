@@ -1,6 +1,6 @@
-import request from "graphql-request";
 import { graphql } from "../../gql";
 import { NewBoardInput } from "../../gql/graphql";
+import { graphQLClient } from "../../graphql-client";
 
 const createBoardMutationDocument = graphql(`
   mutation CreateBoard($input: CreateBoardInput!) {
@@ -19,10 +19,8 @@ const createBoardMutationDocument = graphql(`
 `);
 
 export async function createBoard(board: NewBoardInput) {
-  const resp = await request(
-    import.meta.env.VITE_BACKEND_GRAPHQL_URL,
-    createBoardMutationDocument,
-    { input: { board } }
-  );
+  const resp = await graphQLClient.request(createBoardMutationDocument, {
+    input: { board },
+  });
   return resp.createBoard;
 }

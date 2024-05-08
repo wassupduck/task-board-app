@@ -1,5 +1,5 @@
-import request from "graphql-request";
 import { graphql } from "../../gql";
+import { graphQLClient } from "../../graphql-client";
 
 const rootRouteQueryDocument = graphql(`
   query RootRoute_Query {
@@ -12,11 +12,8 @@ const rootRouteQueryDocument = graphql(`
 
 export const rootRouteQueryKey = ["root"] as const;
 
-const rootRouteQueryFn = () => {
-  return request(
-    import.meta.env.VITE_BACKEND_GRAPHQL_URL,
-    rootRouteQueryDocument
-  );
+const rootRouteQueryFn = async () => {
+  return await graphQLClient.request(rootRouteQueryDocument);
 };
 
 export const rootRouteQuery = {

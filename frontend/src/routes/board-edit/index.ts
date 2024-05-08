@@ -1,2 +1,2 @@
-export { EditBoard } from "./EditBoard";
-export { action as editBoardRouteAction } from "./action";
+export { EditBoard as Component } from "./EditBoard";
+export { action } from "./action";

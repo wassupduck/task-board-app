@@ -36,3 +36,10 @@
     color: var(--color-grey-medium);
     cursor: pointer;
 }
+
+.logout-button {
+    padding: 4px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-grey-medium);
+    cursor: pointer;
+}

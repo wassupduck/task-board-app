@@ -9,13 +9,9 @@ export const loader =
   (queryClient: QueryClient) =>
   async ({ params }: LoaderFunctionArgs) => {
     invariant(params.boardId, "Missing boardId param");
-    const resp = await queryClient.ensureQueryData(
-      boardRouteQuery(params.boardId)
-    );
-    if (resp.board === null) {
-      throw new Response("Not found", { status: 404 });
-    }
-    return resp;
+    return await queryClient.ensureQueryData({
+      ...boardRouteQuery(params.boardId),
+    });
   };
 
 export const useBoardRouteLoaderData = () =>

@@ -5,16 +5,18 @@ import Button from "../Button";
 import styles from "./Header.module.css";
 import { getFragmentData, graphql } from "../../gql";
 import { Link, useParams } from "react-router-dom";
-import invariant from "tiny-invariant";
 import { useBoardRouteLoaderData } from "../../routes/board";
 import clsx from "clsx";
+import { useQuery } from "@tanstack/react-query";
+import { boardRouteQuery } from "../../routes/board/queries";
 
 interface HeaderProps {
   sidebarHidden: boolean;
 }
 
 export default function Header(props: HeaderProps) {
-  const onBoardRoute = "boardId" in useParams();
+  const params = useParams();
+
   return (
     <header className={styles.wrapper}>
       <div
@@ -27,7 +29,9 @@ export default function Header(props: HeaderProps) {
           <LogoDark />
         </Link>
       </div>
-      <div className={styles.headerMain}>{onBoardRoute && <BoardHeader />}</div>
+      <div className={styles.headerMain}>
+        {params.boardId && <BoardHeader boardId={params.boardId} />}
+      </div>
     </header>
   );
 }
@@ -41,9 +45,19 @@ const BoardHeader_BoardFragment = graphql(`
   }
 `);
 
-function BoardHeader() {
-  const data = useBoardRouteLoaderData();
-  invariant(data.board, "Board not found");
+interface BoardHeaderProps {
+  boardId: string;
+}
+
+function BoardHeader(props: BoardHeaderProps) {
+  const initialData = useBoardRouteLoaderData();
+  const { data, isError } = useQuery({
+    ...boardRouteQuery(props.boardId),
+    initialData,
+    throwOnError: false,
+  });
+  if (isError) return null;
+
   const board = getFragmentData(BoardHeader_BoardFragment, data.board);
 
   return (

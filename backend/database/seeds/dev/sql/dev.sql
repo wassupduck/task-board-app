@@ -1,5 +1,6 @@
 insert into app_user(username, password_hash) values
-    ('Cartman', 'todo');
+--  ('jono', 'password')
+    ('jono', '$argon2id$v=19$m=65536,t=3,p=4$Lca2J7RHmpUi+g23HR3EXA$E5cyTWiFaPK/PmAKo7ZS5a87rxaPy+a6voMYd7n4VPo');
 
 insert into board(name, app_user_id) values
     ('Platform Launch', 1),

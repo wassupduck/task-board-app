@@ -9,14 +9,14 @@ export const action =
   (queryClient: QueryClient) =>
   async ({ request }: ActionFunctionArgs) => {
     const newBoard = await request.json();
+
     const resp = await createBoard(newBoard);
-    if (resp.__typename === "CreateBoardSuccess") {
-      await queryClient.invalidateQueries({
-        queryKey: rootRouteQueryKey,
-        refetchType: "all",
-      });
-      return redirect(`/boards/${resp.board.id}`);
-    } else {
+    if (resp.__typename !== "CreateBoardSuccess") {
       return resp;
     }
+
+    await queryClient.invalidateQueries({
+      queryKey: rootRouteQueryKey,
+    });
+    return redirect(`${resp.board.id}`);
   };

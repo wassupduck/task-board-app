@@ -44,12 +44,10 @@ export const action =
 
     await queryClient.invalidateQueries({
       queryKey: rootRouteQueryKey,
-      refetchType: "all",
     });
     await queryClient.invalidateQueries({
       queryKey: boardRouteQueryKey(boardId),
-      refetchType: "all",
     });
 
-    return redirect(`/boards/${boardId}`);
+    return redirect("..");
   };

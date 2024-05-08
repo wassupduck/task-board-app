@@ -36,11 +36,9 @@ export const action =
 
       await queryClient.invalidateQueries({
         queryKey: taskRouteQueryKey(taskId),
-        refetchType: "all",
       });
       await queryClient.invalidateQueries({
         queryKey: boardRouteQueryKey(boardId),
-        refetchType: "all",
       });
 
       return json(resp, { status: 200 });

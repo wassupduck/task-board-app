@@ -1,9 +1,9 @@
-import request from "graphql-request";
 import { graphql } from "../../gql";
 import {
   UpdateBoardColumnsPatchInput,
   UpdateBoardPatchInput,
 } from "../../gql/graphql";
+import { graphQLClient } from "../../graphql-client";
 
 const updateBoardMutationDocument = graphql(`
   mutation UpdateBoard($input: UpdateBoardInput!) {
@@ -17,11 +17,9 @@ const updateBoardMutationDocument = graphql(`
 `);
 
 export async function updateBoard(id: string, patch: UpdateBoardPatchInput) {
-  const resp = await request(
-    import.meta.env.VITE_BACKEND_GRAPHQL_URL,
-    updateBoardMutationDocument,
-    { input: { id, patch } }
-  );
+  const resp = await graphQLClient.request(updateBoardMutationDocument, {
+    input: { id, patch },
+  });
   return resp.updateBoard;
 }
 
@@ -40,10 +38,8 @@ export async function updateBoardColumns(
   boardId: string,
   patch: UpdateBoardColumnsPatchInput
 ) {
-  const resp = await request(
-    import.meta.env.VITE_BACKEND_GRAPHQL_URL,
-    updateBoardColumnsMutationDocument,
-    { input: { boardId, patch } }
-  );
+  const resp = await graphQLClient.request(updateBoardColumnsMutationDocument, {
+    input: { boardId, patch },
+  });
   return resp.updateBoardColumns;
 }
