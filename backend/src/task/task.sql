@@ -21,42 +21,6 @@ from task
 where task.board_column_id in :columnIds!;
 
 /*
-    @name selectSubtasksConnectionsByTaskIds
-    @param taskIds -> (...)
-*/
-select
-    task.id as task_id,
-    count(subtask.id)::integer as "total_count!",
-    (count(subtask.id) filter (where subtask.completed is true))::integer as "completed_count!"
-from task
-left join subtask on subtask.task_id = task.id
-where task.id in :taskIds!
-group by task.id;
-
-/*
-    @name selectSubtasksByTaskIds
-    @param taskIds -> (...)
-*/
-select *
-from subtask
-where task_id in :taskIds!
-order by task_id, created_at, id;
-
-/* @name updateSubtaskCompletedByIdAsUser */
-update subtask
-set completed = :completed!
-where id = (
-    select subtask.id
-    from subtask
-    inner join task on task.id = subtask.task_id
-    inner join board_column on board_column.id = task.board_column_id
-    inner join board on board.id = board_column.board_id
-    where subtask.id = :id!
-    and board.app_user_id = :userId!
-)
-returning *;
-
-/*
     @name insertTask
     @param task -> (title!, description!, boardColumnId!)
 */
@@ -80,6 +44,50 @@ where id = (
     inner join board_column on board_column.id = task.board_column_id
     inner join board on board.id = board_column.board_id
     where task.id = :id!
+    and board.app_user_id = :userId!
+)
+returning *;
+
+/*
+    @name selectSubtasksConnectionsByTaskIds
+    @param taskIds -> (...)
+*/
+select
+    task.id as task_id,
+    count(subtask.id)::integer as "total_count!",
+    (count(subtask.id) filter (where subtask.completed is true))::integer as "completed_count!"
+from task
+left join subtask on subtask.task_id = task.id
+where task.id in :taskIds!
+group by task.id;
+
+/*
+    @name selectSubtasksByTaskIds
+    @param taskIds -> (...)
+*/
+select *
+from subtask
+where task_id in :taskIds!
+order by task_id, created_at, id;
+
+/* 
+    @name insertSubtasks
+    @param subtasks -> ((title!, taskId!)...)
+*/
+insert into subtask(title, task_id)
+values :subtasks!
+returning *;
+
+/* @name updateSubtaskCompletedByIdAsUser */
+update subtask
+set completed = :completed!
+where id = (
+    select subtask.id
+    from subtask
+    inner join task on task.id = subtask.task_id
+    inner join board_column on board_column.id = task.board_column_id
+    inner join board on board.id = board_column.board_id
+    where subtask.id = :id!
     and board.app_user_id = :userId!
 )
 returning *;

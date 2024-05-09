@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { TaskRepository } from './task.repository.js';
 import { Task } from './entities/task.entity.js';
 import { TaskSubtasksConnection } from './entities/task-subtasks-connection.entity.js';
@@ -12,12 +12,14 @@ import { newTaskInputSchema } from './schemas/new-task-input.schema.js';
 import { BoardService } from '../board/index.js';
 import { NewTaskInput } from './dto/new-task.input.js';
 import { BoardColumnNotFoundError } from './task.errors.js';
+import { DatabaseClient, DatabaseTransactor } from '../database/index.js';
 
 @Injectable()
 export class TaskService {
   constructor(
     private readonly taskRepository: TaskRepository,
     private readonly boardService: BoardService,
+    @Inject(DatabaseClient) private readonly db: DatabaseTransactor,
   ) {}
 
   async getTaskByIdAsUser(id: string, userId: string): Promise<Task | null> {
@@ -32,29 +34,10 @@ export class TaskService {
     return this.taskRepository.getTasksInColumns(columnIds);
   }
 
-  async getSubtasksConnectionsByTaskIds(
-    taskIds: string[],
-  ): Promise<TaskSubtasksConnection[]> {
-    return this.taskRepository.getSubtasksConnectionsByTaskIds(taskIds);
-  }
-
-  async getSubtasksByTaskIds(taskIds: string[]): Promise<Subtask[]> {
-    return this.taskRepository.getSubtasksByTaskIds(taskIds);
-  }
-
-  async updateSubtaskCompletedById(
-    id: string,
-    completed: boolean,
+  async createTask(
+    input: NewTaskInput,
     userId: string,
-  ): Promise<Subtask> {
-    return this.taskRepository.updateSubtaskCompletedByIdAsUser(
-      id,
-      completed,
-      userId,
-    );
-  }
-
-  async createTask(input: NewTaskInput, userId: string): Promise<Task> {
+  ): Promise<[Task, Subtask[]]> {
     // Parse and validate input
     const validation = newTaskInputSchema.safeParse(input);
     if (!validation.success) {
@@ -74,8 +57,21 @@ export class TaskService {
       throw new BoardColumnNotFoundError(newTask.boardColumnId);
     }
 
-    // Create task
-    return this.taskRepository.createTask(newTask);
+    return await this.db.inTransaction(async () => {
+      // Create task
+      const task = await this.taskRepository.createTask(newTask);
+
+      // Create subtasks
+      let subtasks: Subtask[] = [];
+      if (newTask.subtasks && newTask.subtasks.length > 0) {
+        subtasks = await this.taskRepository.createTaskSubtasks(
+          task.id,
+          newTask.subtasks,
+        );
+      }
+
+      return [task, subtasks];
+    });
   }
 
   async updateTask(
@@ -120,5 +116,28 @@ export class TaskService {
 
   async deleteTask(id: string, userId: string): Promise<void> {
     await this.taskRepository.deleteTaskAsUser(id, userId);
+  }
+
+  async getSubtasksConnectionsByTaskIds(
+    taskIds: string[],
+  ): Promise<TaskSubtasksConnection[]> {
+    return this.taskRepository.getSubtasksConnectionsByTaskIds(taskIds);
+  }
+
+  async getSubtasksByTaskIds(taskIds: string[]): Promise<Subtask[]> {
+    console.log('here');
+    return this.taskRepository.getSubtasksByTaskIds(taskIds);
+  }
+
+  async updateSubtaskCompletedById(
+    id: string,
+    completed: boolean,
+    userId: string,
+  ): Promise<Subtask> {
+    return this.taskRepository.updateSubtaskCompletedByIdAsUser(
+      id,
+      completed,
+      userId,
+    );
   }
 }

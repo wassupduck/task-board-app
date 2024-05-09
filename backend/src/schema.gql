@@ -51,7 +51,7 @@ input CreateTaskInput {
   task: NewTaskInput!
 }
 
-union CreateTaskResponse = BoardColumnNotFoundError | CreateTaskSuccess
+union CreateTaskResponse = BoardColumnNotFoundError | CreateTaskSuccess | InvalidInputError
 
 type CreateTaskSuccess {
   task: Task!
@@ -132,9 +132,14 @@ input NewBoardInput {
   name: String!
 }
 
+input NewSubtaskInput {
+  title: String!
+}
+
 input NewTaskInput {
   boardColumnId: ID!
   description: String
+  subtasks: [NewSubtaskInput!]
   title: String!
 }
 

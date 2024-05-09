@@ -110,122 +110,6 @@ const selectTasksByColumnIdsIR: any = {"usedParamSet":{"columnIds":true},"params
 export const selectTasksByColumnIds = new PreparedQuery<ISelectTasksByColumnIdsParams,ISelectTasksByColumnIdsResult>(selectTasksByColumnIdsIR);
 
 
-/** 'SelectSubtasksConnectionsByTaskIds' parameters type */
-export interface ISelectSubtasksConnectionsByTaskIdsParams {
-  taskIds: readonly (NumberOrString)[];
-}
-
-/** 'SelectSubtasksConnectionsByTaskIds' return type */
-export interface ISelectSubtasksConnectionsByTaskIdsResult {
-  completedCount: number;
-  taskId: string;
-  totalCount: number;
-}
-
-/** 'SelectSubtasksConnectionsByTaskIds' query type */
-export interface ISelectSubtasksConnectionsByTaskIdsQuery {
-  params: ISelectSubtasksConnectionsByTaskIdsParams;
-  result: ISelectSubtasksConnectionsByTaskIdsResult;
-}
-
-const selectSubtasksConnectionsByTaskIdsIR: any = {"usedParamSet":{"taskIds":true},"params":[{"name":"taskIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":251,"b":259}]}],"statement":"select\n    task.id as task_id,\n    count(subtask.id)::integer as \"total_count!\",\n    (count(subtask.id) filter (where subtask.completed is true))::integer as \"completed_count!\"\nfrom task\nleft join subtask on subtask.task_id = task.id\nwhere task.id in :taskIds!\ngroup by task.id"};
-
-/**
- * Query generated from SQL:
- * ```
- * select
- *     task.id as task_id,
- *     count(subtask.id)::integer as "total_count!",
- *     (count(subtask.id) filter (where subtask.completed is true))::integer as "completed_count!"
- * from task
- * left join subtask on subtask.task_id = task.id
- * where task.id in :taskIds!
- * group by task.id
- * ```
- */
-export const selectSubtasksConnectionsByTaskIds = new PreparedQuery<ISelectSubtasksConnectionsByTaskIdsParams,ISelectSubtasksConnectionsByTaskIdsResult>(selectSubtasksConnectionsByTaskIdsIR);
-
-
-/** 'SelectSubtasksByTaskIds' parameters type */
-export interface ISelectSubtasksByTaskIdsParams {
-  taskIds: readonly (NumberOrString)[];
-}
-
-/** 'SelectSubtasksByTaskIds' return type */
-export interface ISelectSubtasksByTaskIdsResult {
-  completed: boolean;
-  createdAt: Date;
-  id: string;
-  taskId: string;
-  title: string;
-  updatedAt: Date;
-}
-
-/** 'SelectSubtasksByTaskIds' query type */
-export interface ISelectSubtasksByTaskIdsQuery {
-  params: ISelectSubtasksByTaskIdsParams;
-  result: ISelectSubtasksByTaskIdsResult;
-}
-
-const selectSubtasksByTaskIdsIR: any = {"usedParamSet":{"taskIds":true},"params":[{"name":"taskIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":39,"b":47}]}],"statement":"select *\nfrom subtask\nwhere task_id in :taskIds!\norder by task_id, created_at, id"};
-
-/**
- * Query generated from SQL:
- * ```
- * select *
- * from subtask
- * where task_id in :taskIds!
- * order by task_id, created_at, id
- * ```
- */
-export const selectSubtasksByTaskIds = new PreparedQuery<ISelectSubtasksByTaskIdsParams,ISelectSubtasksByTaskIdsResult>(selectSubtasksByTaskIdsIR);
-
-
-/** 'UpdateSubtaskCompletedByIdAsUser' parameters type */
-export interface IUpdateSubtaskCompletedByIdAsUserParams {
-  completed: boolean;
-  id: NumberOrString;
-  userId: NumberOrString;
-}
-
-/** 'UpdateSubtaskCompletedByIdAsUser' return type */
-export interface IUpdateSubtaskCompletedByIdAsUserResult {
-  completed: boolean;
-  createdAt: Date;
-  id: string;
-  taskId: string;
-  title: string;
-  updatedAt: Date;
-}
-
-/** 'UpdateSubtaskCompletedByIdAsUser' query type */
-export interface IUpdateSubtaskCompletedByIdAsUserQuery {
-  params: IUpdateSubtaskCompletedByIdAsUserParams;
-  result: IUpdateSubtaskCompletedByIdAsUserResult;
-}
-
-const updateSubtaskCompletedByIdAsUserIR: any = {"usedParamSet":{"completed":true,"id":true,"userId":true},"params":[{"name":"completed","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":41}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":294,"b":297}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":327,"b":334}]}],"statement":"update subtask\nset completed = :completed!\nwhere id = (\n    select subtask.id\n    from subtask\n    inner join task on task.id = subtask.task_id\n    inner join board_column on board_column.id = task.board_column_id\n    inner join board on board.id = board_column.board_id\n    where subtask.id = :id!\n    and board.app_user_id = :userId!\n)\nreturning *"};
-
-/**
- * Query generated from SQL:
- * ```
- * update subtask
- * set completed = :completed!
- * where id = (
- *     select subtask.id
- *     from subtask
- *     inner join task on task.id = subtask.task_id
- *     inner join board_column on board_column.id = task.board_column_id
- *     inner join board on board.id = board_column.board_id
- *     where subtask.id = :id!
- *     and board.app_user_id = :userId!
- * )
- * returning *
- * ```
- */
-export const updateSubtaskCompletedByIdAsUser = new PreparedQuery<IUpdateSubtaskCompletedByIdAsUserParams,IUpdateSubtaskCompletedByIdAsUserResult>(updateSubtaskCompletedByIdAsUserIR);
-
-
 /** 'InsertTask' parameters type */
 export interface IInsertTaskParams {
   task: {
@@ -344,5 +228,158 @@ const deleteTaskAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"param
  * ```
  */
 export const deleteTaskAsUser = new PreparedQuery<IDeleteTaskAsUserParams,IDeleteTaskAsUserResult>(deleteTaskAsUserIR);
+
+
+/** 'SelectSubtasksConnectionsByTaskIds' parameters type */
+export interface ISelectSubtasksConnectionsByTaskIdsParams {
+  taskIds: readonly (NumberOrString)[];
+}
+
+/** 'SelectSubtasksConnectionsByTaskIds' return type */
+export interface ISelectSubtasksConnectionsByTaskIdsResult {
+  completedCount: number;
+  taskId: string;
+  totalCount: number;
+}
+
+/** 'SelectSubtasksConnectionsByTaskIds' query type */
+export interface ISelectSubtasksConnectionsByTaskIdsQuery {
+  params: ISelectSubtasksConnectionsByTaskIdsParams;
+  result: ISelectSubtasksConnectionsByTaskIdsResult;
+}
+
+const selectSubtasksConnectionsByTaskIdsIR: any = {"usedParamSet":{"taskIds":true},"params":[{"name":"taskIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":251,"b":259}]}],"statement":"select\n    task.id as task_id,\n    count(subtask.id)::integer as \"total_count!\",\n    (count(subtask.id) filter (where subtask.completed is true))::integer as \"completed_count!\"\nfrom task\nleft join subtask on subtask.task_id = task.id\nwhere task.id in :taskIds!\ngroup by task.id"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * select
+ *     task.id as task_id,
+ *     count(subtask.id)::integer as "total_count!",
+ *     (count(subtask.id) filter (where subtask.completed is true))::integer as "completed_count!"
+ * from task
+ * left join subtask on subtask.task_id = task.id
+ * where task.id in :taskIds!
+ * group by task.id
+ * ```
+ */
+export const selectSubtasksConnectionsByTaskIds = new PreparedQuery<ISelectSubtasksConnectionsByTaskIdsParams,ISelectSubtasksConnectionsByTaskIdsResult>(selectSubtasksConnectionsByTaskIdsIR);
+
+
+/** 'SelectSubtasksByTaskIds' parameters type */
+export interface ISelectSubtasksByTaskIdsParams {
+  taskIds: readonly (NumberOrString)[];
+}
+
+/** 'SelectSubtasksByTaskIds' return type */
+export interface ISelectSubtasksByTaskIdsResult {
+  completed: boolean;
+  createdAt: Date;
+  id: string;
+  taskId: string;
+  title: string;
+  updatedAt: Date;
+}
+
+/** 'SelectSubtasksByTaskIds' query type */
+export interface ISelectSubtasksByTaskIdsQuery {
+  params: ISelectSubtasksByTaskIdsParams;
+  result: ISelectSubtasksByTaskIdsResult;
+}
+
+const selectSubtasksByTaskIdsIR: any = {"usedParamSet":{"taskIds":true},"params":[{"name":"taskIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":39,"b":47}]}],"statement":"select *\nfrom subtask\nwhere task_id in :taskIds!\norder by task_id, created_at, id"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * select *
+ * from subtask
+ * where task_id in :taskIds!
+ * order by task_id, created_at, id
+ * ```
+ */
+export const selectSubtasksByTaskIds = new PreparedQuery<ISelectSubtasksByTaskIdsParams,ISelectSubtasksByTaskIdsResult>(selectSubtasksByTaskIdsIR);
+
+
+/** 'InsertSubtasks' parameters type */
+export interface IInsertSubtasksParams {
+  subtasks: readonly ({
+    title: string,
+    taskId: NumberOrString
+  })[];
+}
+
+/** 'InsertSubtasks' return type */
+export interface IInsertSubtasksResult {
+  completed: boolean;
+  createdAt: Date;
+  id: string;
+  taskId: string;
+  title: string;
+  updatedAt: Date;
+}
+
+/** 'InsertSubtasks' query type */
+export interface IInsertSubtasksQuery {
+  params: IInsertSubtasksParams;
+  result: IInsertSubtasksResult;
+}
+
+const insertSubtasksIR: any = {"usedParamSet":{"subtasks":true},"params":[{"name":"subtasks","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"title","required":true},{"name":"taskId","required":true}]},"locs":[{"a":43,"b":52}]}],"statement":"insert into subtask(title, task_id)\nvalues :subtasks!\nreturning *"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * insert into subtask(title, task_id)
+ * values :subtasks!
+ * returning *
+ * ```
+ */
+export const insertSubtasks = new PreparedQuery<IInsertSubtasksParams,IInsertSubtasksResult>(insertSubtasksIR);
+
+
+/** 'UpdateSubtaskCompletedByIdAsUser' parameters type */
+export interface IUpdateSubtaskCompletedByIdAsUserParams {
+  completed: boolean;
+  id: NumberOrString;
+  userId: NumberOrString;
+}
+
+/** 'UpdateSubtaskCompletedByIdAsUser' return type */
+export interface IUpdateSubtaskCompletedByIdAsUserResult {
+  completed: boolean;
+  createdAt: Date;
+  id: string;
+  taskId: string;
+  title: string;
+  updatedAt: Date;
+}
+
+/** 'UpdateSubtaskCompletedByIdAsUser' query type */
+export interface IUpdateSubtaskCompletedByIdAsUserQuery {
+  params: IUpdateSubtaskCompletedByIdAsUserParams;
+  result: IUpdateSubtaskCompletedByIdAsUserResult;
+}
+
+const updateSubtaskCompletedByIdAsUserIR: any = {"usedParamSet":{"completed":true,"id":true,"userId":true},"params":[{"name":"completed","required":true,"transform":{"type":"scalar"},"locs":[{"a":31,"b":41}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":294,"b":297}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":327,"b":334}]}],"statement":"update subtask\nset completed = :completed!\nwhere id = (\n    select subtask.id\n    from subtask\n    inner join task on task.id = subtask.task_id\n    inner join board_column on board_column.id = task.board_column_id\n    inner join board on board.id = board_column.board_id\n    where subtask.id = :id!\n    and board.app_user_id = :userId!\n)\nreturning *"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * update subtask
+ * set completed = :completed!
+ * where id = (
+ *     select subtask.id
+ *     from subtask
+ *     inner join task on task.id = subtask.task_id
+ *     inner join board_column on board_column.id = task.board_column_id
+ *     inner join board on board.id = board_column.board_id
+ *     where subtask.id = :id!
+ *     and board.app_user_id = :userId!
+ * )
+ * returning *
+ * ```
+ */
+export const updateSubtaskCompletedByIdAsUser = new PreparedQuery<IUpdateSubtaskCompletedByIdAsUserParams,IUpdateSubtaskCompletedByIdAsUserResult>(updateSubtaskCompletedByIdAsUserIR);
 
 

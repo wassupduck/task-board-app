@@ -69,10 +69,11 @@ export class TaskResolver {
   async createTask(
     @Args('input') input: CreateTaskInput,
     @CurrentUser('id') userId: string,
+    @Context('loaders') { taskLoaders }: Loaders,
   ): Promise<typeof CreateTaskResponse> {
-    let task: Task;
+    let task: Task, subtasks: Subtask[];
     try {
-      task = await this.taskService.createTask(input.task, userId);
+      [task, subtasks] = await this.taskService.createTask(input.task, userId);
     } catch (error) {
       if (error instanceof BoardColumnNotFoundError) {
         return new BoardColumnNotFoundErrorResponse(error.message);
@@ -80,6 +81,10 @@ export class TaskResolver {
       const commonErrorResponse = responseFromCommonError(error);
       if (commonErrorResponse) return commonErrorResponse;
       throw error;
+    }
+
+    if (subtasks.length > 0) {
+      taskLoaders.subtasksByTaskIdLoader.prime(task.id, subtasks);
     }
 
     return new CreateTaskSuccess(task);
