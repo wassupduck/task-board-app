@@ -1,0 +1,75 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.subtask-list-container {
+    margin-right: -10px;
+}
+
+.subtask-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 2px;
+    margin-bottom: 12px;
+}
+
+.subtask-list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.delete-subtask-button {
+    display: grid;
+    place-content: center;
+    padding: 8px;
+    min-width: calc(15px + 16px);
+    color: var(--color-grey-medium);
+
+    &:disabled {
+        opacity: 0.25;
+        cursor: unset;
+    }
+
+    &:not(:disabled):hover {
+        color: var(--color-danger);
+    }
+}
+
+.label {
+    font-size: var(--font-size-heading-xsmall);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-grey-medium);
+    margin-bottom: 8px;
+}
+
+.invalid-feedback {
+    font-size: var(--font-size-body-small);
+    color: var(--color-danger);
+}
+
+.description {
+    display: block;
+    width: 100%;
+    resize: vertical;
+    min-height: 8rem;
+    max-height: 16rem;
+    padding: 8px 16px;
+    border: 1px solid var(--color-lines-light);
+    border-radius: 4px;
+    background-color: var(--color-white);
+    color: var(--color-black);
+
+    &::placeholder {
+        opacity: 0.25;
+    }
+
+    &[aria-invalid="true"] {
+        border-color: var(--color-danger);
+    }
+}

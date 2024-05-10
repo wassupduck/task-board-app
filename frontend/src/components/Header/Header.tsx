@@ -4,7 +4,7 @@ import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react"
 import Button from "../Button";
 import styles from "./Header.module.css";
 import { getFragmentData, graphql } from "../../gql";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useBoardRouteLoaderData } from "../../routes/board";
 import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
@@ -38,6 +38,7 @@ export default function Header(props: HeaderProps) {
 
 const BoardHeader_BoardFragment = graphql(`
   fragment BoardHeader_BoardFragment on Board {
+    id
     name
     columns {
       totalCount
@@ -50,6 +51,8 @@ interface BoardHeaderProps {
 }
 
 function BoardHeader(props: BoardHeaderProps) {
+  const navigate = useNavigate();
+
   const initialData = useBoardRouteLoaderData();
   const { data, isError } = useQuery({
     ...boardRouteQuery(props.boardId),
@@ -64,7 +67,13 @@ function BoardHeader(props: BoardHeaderProps) {
     <>
       <h2 className={styles.boardHeading}>{board.name}</h2>
       <div className={styles.buttonGroup}>
-        <Button disabled={board.columns.totalCount === 0} size="large">
+        <Button
+          disabled={board.columns.totalCount === 0}
+          size="large"
+          onClick={() =>
+            navigate(`boards/${board.id}/tasks/new`, { replace: true })
+          }
+        >
           Add New Task
         </Button>
         <button className={styles.boardActionsButton}>

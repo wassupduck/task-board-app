@@ -5,7 +5,7 @@ import VisuallyHidden from "../VisuallyHidden";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
 import clsx from "clsx";
 import Checkbox from "../Checkbox";
-import Select from "../Select";
+import { Select, SelectItem } from "../Select";
 import Modal from "../Modal";
 import { useFetcher } from "react-router-dom";
 
@@ -185,13 +185,12 @@ function TaskColumnSelect(props: TaskColumnSelectProps) {
     props.boardColumns
   );
   return (
-    <Select
-      value={props.selectedColumnId}
-      options={boardColumns.map((column) => ({
-        value: column.id,
-        text: column.name,
-      }))}
-      onValueChange={props.onColumnChange}
-    />
+    <Select value={props.selectedColumnId} onValueChange={props.onColumnChange}>
+      {boardColumns.map((column) => (
+        <SelectItem key={column.id} value={column.id}>
+          {column.name}
+        </SelectItem>
+      ))}
+    </Select>
   );
 }

@@ -9,6 +9,7 @@ import * as task from "./routes/task";
 import * as login from "./routes/login";
 import * as logout from "./routes/logout";
 import * as signup from "./routes/signup";
+import * as newTask from "./routes/tasks-new";
 
 export const createRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
@@ -40,6 +41,11 @@ export const createRouter = (queryClient: QueryClient) =>
               element: <task.Component />,
               loader: protectedLoader(task.loader(queryClient)),
               action: task.action(queryClient),
+            },
+            {
+              path: "tasks/new",
+              element: <newTask.Component />,
+              action: newTask.action(queryClient),
             },
           ],
         },

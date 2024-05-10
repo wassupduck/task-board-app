@@ -2,7 +2,9 @@ import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { signup } from "./queries";
 import { authProvider } from "../../auth/auth-provider";
 
-export type ActionData = Awaited<ReturnType<typeof action>>;
+export type ActionData =
+  | Exclude<Awaited<ReturnType<typeof action>>, Response>
+  | undefined;
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const newUser = await request.json();

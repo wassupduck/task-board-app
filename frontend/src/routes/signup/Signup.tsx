@@ -12,10 +12,7 @@ export function Signup() {
   const signupForm = useSignupForm();
   const submit = useSubmit();
 
-  const actionData = useActionData() as
-    | Exclude<ActionData, Response>
-    | undefined;
-
+  const actionData = useActionData() as ActionData;
   const [prevActionData, setPrevActionData] = useState(actionData);
   if (!Object.is(actionData, prevActionData)) {
     setPrevActionData(actionData);
@@ -25,6 +22,9 @@ export function Signup() {
           type: "conflict",
           message: "Username already taken",
         });
+      } else {
+        // TODO
+        throw actionData;
       }
     }
   }

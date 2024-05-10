@@ -1,45 +1,49 @@
 /// <reference types="vite-plugin-svgr/client" />
 import ChevronDownIcon from "../../assets/icon-chevron-down.svg?react";
-import * as RadixSelect from "@radix-ui/react-select";
+import * as SelectPrimitive from "@radix-ui/react-select";
 import styles from "./Select.module.css";
+import React, { ComponentPropsWithoutRef } from "react";
 
-interface SelectProps {
-  value: string;
-  options: {
-    value: string;
-    text: string;
-  }[];
-  onValueChange: (value: string) => void;
-}
+interface SelectProps
+  extends ComponentPropsWithoutRef<typeof SelectPrimitive.Root> {}
 
-export default function Select(props: SelectProps) {
-  return (
-    <RadixSelect.Root value={props.value} onValueChange={props.onValueChange}>
-      <RadixSelect.Trigger className={styles.trigger}>
-        <RadixSelect.Value />
-        <RadixSelect.Icon>
-          <ChevronDownIcon />
-        </RadixSelect.Icon>
-      </RadixSelect.Trigger>
-      <RadixSelect.Portal>
-        <RadixSelect.Content
-          className={styles.content}
-          position="popper"
-          sideOffset={8}
-        >
-          <RadixSelect.Viewport>
-            {props.options.map((option) => (
-              <RadixSelect.Item
-                key={option.value}
-                className={styles.item}
-                value={option.value}
-              >
-                <RadixSelect.ItemText>{option.text}</RadixSelect.ItemText>
-              </RadixSelect.Item>
-            ))}
-          </RadixSelect.Viewport>
-        </RadixSelect.Content>
-      </RadixSelect.Portal>
-    </RadixSelect.Root>
-  );
-}
+export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
+  ({ children, ...props }, forwardedRef) => {
+    return (
+      <SelectPrimitive.Root {...props}>
+        <SelectPrimitive.Trigger className={styles.trigger} ref={forwardedRef}>
+          <SelectPrimitive.Value />
+          <SelectPrimitive.Icon>
+            <ChevronDownIcon />
+          </SelectPrimitive.Icon>
+        </SelectPrimitive.Trigger>
+        <SelectPrimitive.Portal>
+          <SelectPrimitive.Content
+            className={styles.content}
+            position="popper"
+            sideOffset={8}
+          >
+            <SelectPrimitive.Viewport>{children}</SelectPrimitive.Viewport>
+          </SelectPrimitive.Content>
+        </SelectPrimitive.Portal>
+      </SelectPrimitive.Root>
+    );
+  }
+);
+
+interface SelectItemProps
+  extends ComponentPropsWithoutRef<typeof SelectPrimitive.Item> {}
+
+export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
+  ({ children, ...props }, forwardedRef) => {
+    return (
+      <SelectPrimitive.Item
+        {...props}
+        className={styles.item}
+        ref={forwardedRef}
+      >
+        <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+      </SelectPrimitive.Item>
+    );
+  }
+);

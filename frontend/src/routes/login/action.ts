@@ -5,7 +5,9 @@ type ActionRequestJson = {
   credentials: { username: string; password: string };
   redirectTo?: string;
 };
-export type ActionData = Awaited<ReturnType<typeof action>>;
+export type ActionData =
+  | Exclude<Awaited<ReturnType<typeof action>>, Response>
+  | undefined;
 
 export async function action({ request }: LoaderFunctionArgs) {
   const { credentials, redirectTo } =

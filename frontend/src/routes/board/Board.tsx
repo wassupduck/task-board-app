@@ -36,6 +36,7 @@ export function Board() {
 
 function EmptyBoard() {
   const navigate = useNavigate();
+
   return (
     <div className={styles.emptyBoardWrapper}>
       <p className={styles.emptyBoardMessage}>

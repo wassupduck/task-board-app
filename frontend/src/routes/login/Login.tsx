@@ -16,9 +16,7 @@ export function Login() {
   const loginForm = useLoginForm();
   const submit = useSubmit();
 
-  const actionData = useActionData() as
-    | Exclude<ActionData, Response>
-    | undefined;
+  const actionData = useActionData() as ActionData;
   const [prevActionData, setPrevActionData] = useState(actionData);
   if (!Object.is(actionData, prevActionData)) {
     setPrevActionData(actionData);
