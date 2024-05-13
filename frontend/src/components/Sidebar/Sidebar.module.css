@@ -17,10 +17,10 @@
 .bottom-button-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
 
 .theme-toggle-wrapper {
+    margin-bottom: 8px;
     margin-inline: -8px -4px;
 
     @media tabletAndSmaller {
