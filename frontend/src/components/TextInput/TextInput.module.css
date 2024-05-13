@@ -2,16 +2,16 @@
     display: block;
     width: 100%;
     padding: 8px 16px;
-    border: 1px solid var(--color-lines-light);
+    border: 1px solid var(--color-grey-medium-250);
     border-radius: 4px;
-    background-color: var(--color-white);
-    color: var(--color-black);
-}
+    background-color: var(--color-background-primary);
+    color: var(--color-text-secondary);
 
-.input::placeholder {
-    opacity: 0.25;
-}
+    &::placeholder {
+        opacity: 0.25;
+    }
 
-.input[aria-invalid="true"] {
-    border-color: var(--color-danger);
+    &[aria-invalid="true"] {
+        border-color: var(--color-danger);
+    }
 }

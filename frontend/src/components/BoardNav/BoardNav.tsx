@@ -42,11 +42,13 @@ export default function BoardNav(props: BoardNavProps) {
         ))}
         <li>
           <button
-            className={clsx(styles.boardItem, styles.createBoardItem)}
+            className={clsx(styles.createBoardButton)}
             onClick={() => navigate("?new_board=true")}
           >
-            <BoardIcon />
-            <span>Create New Board</span>
+            <div className={styles.boardItem}>
+              <BoardIcon />
+              <span>Create New Board</span>
+            </div>
           </button>
         </li>
       </ul>

@@ -125,7 +125,6 @@ export class TaskService {
   }
 
   async getSubtasksByTaskIds(taskIds: string[]): Promise<Subtask[]> {
-    console.log('here');
     return this.taskRepository.getSubtasksByTaskIds(taskIds);
   }
 

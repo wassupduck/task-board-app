@@ -1,5 +1,4 @@
 /// <reference types="vite-plugin-svgr/client" />
-import LogoDark from "../../assets/logo-dark.svg?react";
 import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react";
 import Button from "../Button";
 import styles from "./Header.module.css";
@@ -9,6 +8,7 @@ import { useBoardRouteLoaderData } from "../../routes/board";
 import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 import { boardRouteQuery } from "../../routes/board/queries";
+import { Logo } from "../Logo/Logo";
 
 interface HeaderProps {
   sidebarHidden: boolean;
@@ -26,7 +26,7 @@ export default function Header(props: HeaderProps) {
         )}
       >
         <Link to="/" className={styles.siteLogo}>
-          <LogoDark />
+          <Logo />
         </Link>
       </div>
       <div className={styles.headerMain}>

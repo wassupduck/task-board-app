@@ -1,5 +1,3 @@
-/// <reference types="vite-plugin-svgr/client" />
-import LogoDark from "../../assets/logo-dark.svg?react";
 import styles from "./Signup.module.css";
 import SignupForm from "../../components/SignupForm/SignupForm";
 import { useSignupForm } from "../../components/SignupForm/hook";
@@ -7,6 +5,7 @@ import { Link, useActionData, useSubmit } from "react-router-dom";
 import { SignupFormFieldValues } from "../../components/SignupForm/types";
 import { useState } from "react";
 import { ActionData } from "./action";
+import { Logo } from "../../components/Logo/Logo";
 
 export function Signup() {
   const signupForm = useSignupForm();
@@ -42,7 +41,7 @@ export function Signup() {
     <div className={styles.wrapper}>
       <div className={styles.formWrapper}>
         <header className={styles.header}>
-          <LogoDark />
+          <Logo />
         </header>
         <SignupForm form={signupForm} onSubmit={handleSubmit} />
         <Link to={"/login"} className={styles.loginLink}>

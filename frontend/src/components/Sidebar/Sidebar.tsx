@@ -3,7 +3,7 @@ import { useFetcher } from "react-router-dom";
 import HideSidebarIcon from "../../assets/icon-hide-sidebar.svg?react";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
 import BoardNav from "../BoardNav";
-import ThemeSelector from "../ThemeSelector";
+import ThemeToggle from "../ThemeToggle";
 import styles from "./Sidebar.module.css";
 
 const Sidebar_QueryFragment = graphql(`
@@ -31,18 +31,15 @@ export default function Sidebar(props: SidebarProps) {
   return (
     <aside className={styles.wrapper}>
       <BoardNav query={query} />
-      <div className={styles.buttonGroup}>
-        <div className={styles.themeSelectorWrapper}>
-          <ThemeSelector />
+      <div className={styles.bottomButtonGroup}>
+        <div className={styles.themeToggleWrapper}>
+          <ThemeToggle />
         </div>
-        <button
-          className={styles.hideSidebarButton}
-          onClick={props.onHideSidebar}
-        >
+        <button className={styles.sidebarButton} onClick={props.onHideSidebar}>
           <HideSidebarIcon />
           Hide Sidebar
         </button>
-        <button className={styles.logoutButton} onClick={handleLogout}>
+        <button className={styles.sidebarButton} onClick={handleLogout}>
           Logout
         </button>
       </div>

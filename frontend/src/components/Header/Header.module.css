@@ -3,6 +3,7 @@
 .wrapper {
     grid-area: header;
     display: flex;
+    background-color: var(--color-background-primary);
 }
 
 .header-left {
@@ -10,7 +11,7 @@
     padding-inline-start: 32px;
     display: flex;
     align-items: center;
-    border-right: 1px solid var(--color-lines-light);
+    border-right: 1px solid var(--color-lines);
 
     @media tabletAndSmaller {
         padding-inline-start: 24px;
@@ -19,7 +20,7 @@
     &.sidebar-hidden {
         min-width: 210px;
         padding-inline-start: 24px;
-        border-bottom: 1px solid var(--color-lines-light);
+        border-bottom: 1px solid var(--color-lines);
 
         @media tabletAndSmaller {
             min-width: 200px;
@@ -38,13 +39,12 @@
     align-items: center;
     justify-content: space-between;
     padding-inline: 24px;
-    border-bottom: 1px solid var(--color-lines-light);
+    border-bottom: 1px solid var(--color-lines);
 }
 
 .board-heading {
     font-size: var(--font-size-heading-large);
     font-weight: var(--font-weight-bold);
-    color: var(--color-black);
 
     @media tabletAndSmaller {
         font-size: var(--font-size-heading-medium);

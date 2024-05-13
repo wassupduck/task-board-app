@@ -8,13 +8,13 @@ import BoardCreateModal from "../../components/BoardCreateModal";
 import { LoaderData } from "./loader";
 import clsx from "clsx";
 import VisuallyHidden from "../../components/VisuallyHidden";
-import useStickyState from "../../hooks/useStickyState";
 import { useQuery } from "@tanstack/react-query";
 import { rootRouteQuery } from "./queries";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 export function Root() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [showSidebar, setShowSidebar] = useStickyState(true, "show-sidebar");
+  const [showSidebar, setShowSidebar] = useLocalStorage("show-sidebar", true);
 
   const initialData = useLoaderData() as LoaderData;
   const { data } = useQuery({

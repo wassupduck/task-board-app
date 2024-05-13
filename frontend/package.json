@@ -17,6 +17,7 @@
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-select": "^2.0.0",
     "@tanstack/react-query": "^5.28.8",
+    "@uidotdev/usehooks": "^2.4.1",
     "clsx": "^2.1.0",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",

@@ -1,12 +1,14 @@
-.checkbox-root {
-    background-color: var(--color-white);
+.checkbox {
     width: 16px;
     height: 16px;
-    border-radius: 2px;
     display: grid;
     place-content: center;
-}
+    background-color: var(--color-background-primary);
+    border: 1px solid var(--color-grey-medium-250);
+    border-radius: 2px;
 
-.checkbox-root[data-state="checked"] {
-    background-color: var(--color-primary);
+    &[data-state="checked"] {
+        border: 1px solid var(--color-primary);
+        background-color: var(--color-primary);
+    }
 }

@@ -39,48 +39,54 @@ export default function TaskForm(props: TaskFormProps) {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(props.onSubmit)}>
-      <label>
-        <h4 className={styles.label}>Title</h4>
+      <div>
+        <label htmlFor="title" className="form-label">
+          Title
+        </label>
         {errors.title && (
-          <p className={styles.invalidFeedback} role="alert">
+          <p className="invalid-feedback" role="alert">
             {errors.title.message}
           </p>
         )}
         <TextInput
+          id="title"
           placeholder="e.g. Take coffee break"
           {...register("title")}
           aria-invalid={errors.title ? "true" : "false"}
           onKeyDown={preventLeadingSpaces}
         />
-      </label>
-      <label>
-        <h4 className={styles.label}>Description</h4>
+      </div>
+      <div>
+        <label htmlFor="description" className="form-label">
+          Description
+        </label>
         {errors.description && (
-          <p className={styles.invalidFeedback} role="alert">
+          <p className="invalid-feedback" role="alert">
             {errors.description.message}
           </p>
         )}
         <textarea
+          id="description"
           placeholder="e.g. It's always good to take a break. This 15 minute break will recharge the batteries a little."
           {...register("description")}
           aria-invalid={errors.description ? "true" : "false"}
           onKeyDown={preventLeadingSpaces}
           className={styles.description}
         />
-      </label>
+      </div>
       <fieldset>
-        <legend>
-          <h4 className={styles.label}>Subtasks</h4>
-        </legend>
+        <legend className="form-label">Subtasks</legend>
         <SubtasksList form={form} />
       </fieldset>
-      <label>
-        <h4 className={styles.label}>Status</h4>
+      <div>
+        <label htmlFor="status" className="form-label">
+          Status
+        </label>
         <Controller
           name="boardColumnId"
           control={control}
           render={({ field }) => (
-            <Select {...field} onValueChange={field.onChange}>
+            <Select id="status" {...field} onValueChange={field.onChange}>
               {board.columns.nodes.map((column) => (
                 <SelectItem key={column.id} value={column.id}>
                   {column.name}
@@ -89,7 +95,7 @@ export default function TaskForm(props: TaskFormProps) {
             </Select>
           )}
         />
-      </label>
+      </div>
       <Button type="submit" block={true} /*disabled={!isValid}*/>
         {props.submitButtonText}
       </Button>
@@ -125,7 +131,7 @@ function SubtasksList(props: SubtasksListProps) {
                 <label style={{ flex: 1 }}>
                   <VisuallyHidden>Subtask 1</VisuallyHidden>
                   {errors.subtasks?.[idx]?.title && (
-                    <p className={styles.invalidFeedback} role="alert">
+                    <p className="invalid-feedback" role="alert">
                       {errors.subtasks[idx].title.message}
                     </p>
                   )}

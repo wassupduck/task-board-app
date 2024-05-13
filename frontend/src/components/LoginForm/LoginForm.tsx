@@ -19,36 +19,42 @@ export default function LoginForm(props: LoginFormProps) {
   return (
     <form className={styles.form} onSubmit={handleSubmit(props.onSubmit)}>
       {errors.root?.authorizedError && (
-        <p className={styles.invalidFeedback} role="alert">
+        <p className="invalid-feedback" role="alert">
           {errors.root.authorizedError.message}
         </p>
       )}
-      <label>
-        <h4 className={styles.label}>Username</h4>
+      <div>
+        <label htmlFor="username" className="form-label">
+          Username
+        </label>
         {errors.username && (
-          <p className={styles.invalidFeedback} role="alert">
+          <p className="invalid-feedback" role="alert">
             {errors.username.message}
           </p>
         )}
         <TextInput
+          id="username"
           {...register("username")}
           aria-invalid={errors.username ? "true" : "false"}
           onKeyDown={preventLeadingSpaces}
         />
-      </label>
-      <label>
-        <h4 className={styles.label}>Password</h4>
+      </div>
+      <div>
+        <label htmlFor="password" className="form-label">
+          Password
+        </label>
         {errors.password && (
-          <p className={styles.invalidFeedback} role="alert">
+          <p className="invalid-feedback" role="alert">
             {errors.password.message}
           </p>
         )}
         <TextInput
+          id="password"
           type="password"
           {...register("password")}
           aria-invalid={errors.password ? "true" : "false"}
         />
-      </label>
+      </div>
       <Button type="submit" block={true} disabled={!isValid}>
         Login
       </Button>

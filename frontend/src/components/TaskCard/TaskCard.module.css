@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    background-color: var(--color-white);
+    background-color: var(--color-background-primary);
     border-radius: 8px;
     cursor: pointer;
 
@@ -14,11 +14,13 @@
 .title {
     font-size: var(--font-size-heading-small);
     font-weight: var(--font-weight-bold);
-    color: var(--color-black);
+
+    .task-card:hover & {
+        color: var(--color-primary);
+    }
 }
 
 .subtask-summary {
     font-size: var(--font-size-body-small);
     font-weight: var(--font-weight-bold);
-    color: var(--color-grey-medium);
 }

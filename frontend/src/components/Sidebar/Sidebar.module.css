@@ -6,20 +6,21 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 16px 24px 32px 32px;
-    border-right: 1px solid var(--color-lines-light);
+    border-right: 1px solid var(--color-lines);
+    background-color: var(--color-background-primary);
 
     @media tabletAndSmaller {
         padding-inline: 24px 20px;
     }
 }
 
-.button-group {
+.bottom-button-group {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
-.theme-selector-wrapper {
+.theme-toggle-wrapper {
     margin-inline: -8px -4px;
 
     @media tabletAndSmaller {
@@ -27,19 +28,26 @@
     }
 }
 
-.hide-sidebar-button {
+.sidebar-button {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 4px;
+    padding: 0.75rem;
+    padding-left: 0;
     font-weight: var(--font-weight-bold);
-    color: var(--color-grey-medium);
+    color: var(--text-color-primary);
     cursor: pointer;
-}
 
-.logout-button {
-    padding: 4px;
-    font-weight: var(--font-weight-bold);
-    color: var(--color-grey-medium);
-    cursor: pointer;
+    &:not(.selected):hover {
+        margin-left: -32px;
+        padding-left: 32px;
+        background-color: var(--color-primary-100);
+        color: var(--color-primary);
+        border-top-right-radius: 999rem;
+        border-bottom-right-radius: 999rem;
+
+        body[data-theme="dark"] & {
+            background-color: var(--color-white);
+        }
+    }
 }

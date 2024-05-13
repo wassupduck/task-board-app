@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     gap: 24px;
-    background-color: var(--color-grey-light);
+    background-color: var(--color-background-secondary);
     border-radius: 8px;
 }
 
@@ -14,8 +14,12 @@
     width: 40px;
     height: 20px;
     padding: 3px;
-    background-color: var(--color-primary);
     border-radius: 999rem;
+    background-color: var(--color-primary);
+
+    &:hover {
+        background-color: var(--color-primary-light);
+    }
 }
 
 .theme-toggle input {

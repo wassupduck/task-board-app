@@ -41,18 +41,6 @@
     }
 }
 
-.label {
-    font-size: var(--font-size-heading-xsmall);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-grey-medium);
-    margin-bottom: 8px;
-}
-
-.invalid-feedback {
-    font-size: var(--font-size-body-small);
-    color: var(--color-danger);
-}
-
 .description {
     display: block;
     width: 100%;
@@ -60,10 +48,10 @@
     min-height: 8rem;
     max-height: 16rem;
     padding: 8px 16px;
-    border: 1px solid var(--color-lines-light);
+    border: 1px solid var(--color-grey-medium-250);
     border-radius: 4px;
-    background-color: var(--color-white);
-    color: var(--color-black);
+    background-color: var(--color-background-primary);
+    color: var(--color-text-secondary);
 
     &::placeholder {
         opacity: 0.25;

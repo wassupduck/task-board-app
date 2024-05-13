@@ -2,32 +2,41 @@
     height: 100%;
     display: grid;
     place-content: center;
-    background-color: var(--color-grey-light);
+    background-color: var(--color-background-secondary);
 }
 
 .form-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     width: 400px;
     padding: 32px;
-    /* border: 1px solid var(--color-lines-light); */
     border-radius: 6px;
-    background-color: var(--color-white);
+    background-color: var(--color-background-primary);
 }
 
 .login-link {
-    display: block;
+    align-self: center;
     margin-top: 8px;
     font-size: var(--font-size-body-small);
     color: var(--color-primary-light);
     text-align: center;
     text-decoration: underline;
 
+    body[data-theme="dark"] & {
+        color: var(--color-primary);
+    }
+
     &:hover {
         color: var(--color-primary);
+
+        body[data-theme="dark"] & {
+            color: var(--color-primary-light);
+        }
     }
 }
 
 .header {
-    display: flex;
-    justify-content: center;
+    align-self: center;
     margin-bottom: 24px;
 }

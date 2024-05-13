@@ -64,11 +64,9 @@ export default function TaskViewModal(props: TaskViewModalProps) {
       )}
       {task.subtasks.totalCount > 0 && (
         <fieldset>
-          <legend>
-            <h4 className={styles.sectionHeading}>
-              Subtasks ({task.subtasks.completedCount} of{" "}
-              {task.subtasks.totalCount})
-            </h4>
+          <legend className="form-label">
+            Subtasks ({task.subtasks.completedCount} of{" "}
+            {task.subtasks.totalCount})
           </legend>
           <SubtasksList
             subtasks={task.subtasks.nodes}
@@ -85,19 +83,19 @@ export default function TaskViewModal(props: TaskViewModalProps) {
         </fieldset>
       )}
       <div>
-        <label>
-          <h4 className={styles.sectionHeading}>Current Status</h4>
-          <TaskColumnSelect
-            selectedColumnId={task.column.id}
-            boardColumns={board.columns.nodes}
-            onColumnChange={(boardColumnId) =>
-              fetcher.submit(
-                { intent: "update-task", patch: { boardColumnId } },
-                { method: "patch", encType: "application/json" }
-              )
-            }
-          />
+        <label htmlFor="status" className="form-label">
+          Current Status
         </label>
+        <TaskColumnSelect
+          selectedColumnId={task.column.id}
+          boardColumns={board.columns.nodes}
+          onColumnChange={(boardColumnId) =>
+            fetcher.submit(
+              { intent: "update-task", patch: { boardColumnId } },
+              { method: "patch", encType: "application/json" }
+            )
+          }
+        />
       </div>
     </Modal>
   );
@@ -185,7 +183,11 @@ function TaskColumnSelect(props: TaskColumnSelectProps) {
     props.boardColumns
   );
   return (
-    <Select value={props.selectedColumnId} onValueChange={props.onColumnChange}>
+    <Select
+      id="status"
+      value={props.selectedColumnId}
+      onValueChange={props.onColumnChange}
+    >
       {boardColumns.map((column) => (
         <SelectItem key={column.id} value={column.id}>
           {column.name}

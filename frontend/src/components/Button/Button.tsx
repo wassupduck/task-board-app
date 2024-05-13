@@ -5,7 +5,7 @@ import React from "react";
 export interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   children: React.ReactNode;
   block?: boolean;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "destructive";
   size?: "large";
 }
 

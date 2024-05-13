@@ -5,13 +5,19 @@ import styles from "./Select.module.css";
 import React, { ComponentPropsWithoutRef } from "react";
 
 interface SelectProps
-  extends ComponentPropsWithoutRef<typeof SelectPrimitive.Root> {}
+  extends ComponentPropsWithoutRef<typeof SelectPrimitive.Root> {
+  id?: string;
+}
 
 export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
   ({ children, ...props }, forwardedRef) => {
     return (
       <SelectPrimitive.Root {...props}>
-        <SelectPrimitive.Trigger className={styles.trigger} ref={forwardedRef}>
+        <SelectPrimitive.Trigger
+          id={props.id}
+          className={styles.trigger}
+          ref={forwardedRef}
+        >
           <SelectPrimitive.Value />
           <SelectPrimitive.Icon>
             <ChevronDownIcon />

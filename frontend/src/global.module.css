@@ -223,24 +223,25 @@
 
     html {
         /* COLORS */
-
         --color-primary: hsl(242deg 48% 58%);
         --color-primary-light: hsl(243deg 100% 82%);
         --color-primary-100: hsl(242deg 48% 58% / 10%);
         --color-primary-250: hsl(242deg 48% 58% / 25%);
+
         --color-danger: hsl(0deg 78% 63%);
         --color-danger-light: hsl(0deg 100% 80%);
+
         --color-white: hsl(0deg 0% 100%);
         --color-grey-light: hsl(220deg 69% 97%);
         --color-grey-medium: hsl(216deg 15% 57%);
+        --color-grey-medium-250: hsl(216deg 15% 57% / 25%);
         --color-grey-dark: hsl(235deg 12% 19%);
         --color-grey-very-dark: hsl(235deg 16% 15%);
         --color-black: hsl(237deg 100% 4%);
 
-        /* TODO: better name? */
+        --color-lines-light: hsl(221deg 69% 94%);
         --color-lines-dark: hsl(236deg 11% 27%);
         --color-lines-dark-100: hsl(236deg 11% 27% / 10%);
-        --color-lines-light: hsl(221deg 69% 94%);
 
         /* FONT WEIGHTS */
         --font-weight-normal: 400;
@@ -258,8 +259,31 @@
         --font-size-heading-xsmall: 0.85rem;
         --font-size-body-medium: 1rem;
         --font-size-body-small: 0.85rem;
+
+        /* BORDER */
+        --border-radius-small: 4px;
+        --border-radius-medium: 6px;
+        --border-radius-large: 8px;
     }
 
+    /* THEMING */
+
+    body,
+    body[data-theme="light"] {
+        --color-text-primary: var(--color-grey-medium);
+        --color-text-secondary: var(--color-black);
+        --color-background-primary: var(--color-white);
+        --color-background-secondary: var(--color-grey-light);
+        --color-lines: var(--color-lines-light);
+    }
+
+    body[data-theme="dark"] {
+        --color-text-primary: var(--color-grey-medium);
+        --color-text-secondary: var(--color-white);
+        --color-background-primary: var(--color-grey-dark);
+        --color-background-secondary: var(--color-grey-very-dark);
+        --color-lines: var(--color-lines-dark);
+    }
 
     /* GLOBAL STYLES */
 
@@ -268,8 +292,22 @@
     }
 
     body {
+        color: var(--color-text-primary);
+        font-size: var(--font-size-body-medium);
         font-family: var(--font-family-sans-serif);
+        background-color: var(--color-background-secondary);
     }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--color-text-secondary);
+    }
+
+    /* TODO: Heading font sizes and weights */
 
     /*
       Remove default button styles. We'll provide our own at the

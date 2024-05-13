@@ -5,34 +5,34 @@
     justify-content: space-between;
     gap: 8px;
     padding: 8px 16px;
-    border: 1px solid var(--color-lines-light);
+    border: 1px solid var(--color-grey-medium-250);
     border-radius: 4px;
-    background-color: var(--color-white);
-}
+    color: var(--color-text-secondary);
+    background-color: var(--color-background-primary);
 
-.trigger[data-state="open"] {
-    border-color: var(--color-primary);
+    &[data-state="open"] {
+        border-color: var(--color-primary);
+    }
 }
 
 .content {
     width: var(--radix-select-trigger-width);
     padding: 16px 8px;
-    background-color: var(--color-white);
-    border: 1px solid var(--color-lines-light);
+    border: 1px solid var(--color-grey-medium-250);
     border-radius: 8px;
+    background-color: var(--color-background-primary);
 }
 
 .item {
-    color: var(--color-grey-medium);
     display: flex;
     align-items: center;
     height: 2rem;
     padding-inline: 8px;
     border-radius: 4px;
     user-select: none;
-}
 
-.item:hover {
-    background-color: var(--color-primary-250);
-    color: var(--color-black);
+    &:hover {
+        color: var(--color-text-secondary);
+        background-color: var(--color-primary-250);
+    }
 }
