@@ -61,3 +61,36 @@
     display: grid;
     place-content: center;
 }
+
+.board-actions-popover-content {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    width: 192px;
+    border-radius: 8px;
+    background-color: var(--color-background-primary);
+    box-shadow: var(--color-lines-dark-100) 0px 0px 6px 0px;
+
+    body[data-theme="dark"] & {
+        background-color: var(--color-background-secondary);
+    }
+}
+
+.board-action-button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: var(--font-weight-medium);
+
+    &:hover {
+        color: var(--color-primary);
+        background-color: var(--color-primary-100);
+
+        body[data-theme="dark"] & {
+            background-color: var(--color-white);
+        }
+    }
+
+    &.danger {
+        color: var(--color-danger);
+    }
+}

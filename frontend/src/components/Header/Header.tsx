@@ -9,6 +9,8 @@ import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 import { boardRouteQuery } from "../../routes/board/queries";
 import { Logo } from "../Logo/Logo";
+import * as Popover from "@radix-ui/react-popover";
+import VisuallyHidden from "../VisuallyHidden";
 
 interface HeaderProps {
   sidebarHidden: boolean;
@@ -76,10 +78,42 @@ function BoardHeader(props: BoardHeaderProps) {
         >
           Add New Task
         </Button>
-        <button className={styles.boardActionsButton}>
-          <VerticalEllipsisIcon />
-        </button>
+        <BoardActionsPopover boardId={props.boardId} />
       </div>
     </>
+  );
+}
+
+interface BoardAcionsPopoverProps {
+  boardId: string;
+}
+
+function BoardActionsPopover(props: BoardAcionsPopoverProps) {
+  return (
+    <Popover.Root>
+      <Popover.Trigger asChild>
+        <button className={styles.boardActionsButton}>
+          <VisuallyHidden>Board Actions</VisuallyHidden>
+          <VerticalEllipsisIcon />
+        </button>
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content
+          align="end"
+          sideOffset={16}
+          className={styles.boardActionsPopoverContent}
+        >
+          <Link
+            to={`boards/${props.boardId}/edit`}
+            className={styles.boardActionButton}
+          >
+            Edit Board
+          </Link>
+          <button className={clsx(styles.boardActionButton, styles.danger)}>
+            Delete Board
+          </button>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }
