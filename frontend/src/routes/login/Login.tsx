@@ -3,7 +3,7 @@ import { Link, useActionData, useLocation, useSubmit } from "react-router-dom";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import { useLoginForm } from "../../components/LoginForm/hook";
 import { ActionData } from "./action";
-import { LoginFormFieldValues } from "../../components/LoginForm/types";
+import { LoginFormData } from "../../components/LoginForm/types";
 import { useState } from "react";
 import { Logo } from "../../components/Logo/Logo";
 
@@ -29,7 +29,7 @@ export function Login() {
     }
   }
 
-  const handleSubmit = (credentials: LoginFormFieldValues) => {
+  const handleSubmit = (credentials: LoginFormData) => {
     submit(
       { credentials, redirectTo: from },
       {

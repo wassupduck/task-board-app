@@ -10,5 +10,7 @@ export function RootErrorBoundary() {
     return <Navigate to={"/login?" + params.toString()} />;
   }
 
+  console.log(error);
+
   return <h1>Something went wrong</h1>;
 }

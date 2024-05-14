@@ -35,6 +35,6 @@ export function Task() {
   const board = getFragmentData(TaskRoute_BoardFragment, boardRouteData.board);
 
   return (
-    <TaskViewModal board={board} task={task} onClose={() => navigate(`..`)} />
+    <TaskViewModal board={board} task={task} onClose={() => navigate("..")} />
   );
 }

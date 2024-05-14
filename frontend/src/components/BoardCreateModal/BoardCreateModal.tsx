@@ -3,7 +3,7 @@ import { useFetcher } from "react-router-dom";
 import { useState } from "react";
 import { BoardsRouteActionData } from "../../routes/boards";
 import { useBoardForm } from "../BoardForm/hook";
-import { BoardFormFieldValues } from "../BoardForm/types";
+import { BoardFormData } from "../BoardForm/types";
 import BoardForm from "../BoardForm/BoardForm";
 
 type FetcherData = Exclude<BoardsRouteActionData, Response>;
@@ -35,7 +35,7 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
     }
   }
 
-  const handleSubmit = (board: BoardFormFieldValues) => {
+  const handleSubmit = (board: BoardFormData) => {
     fetcher.submit(board, {
       method: "post",
       action: "boards",

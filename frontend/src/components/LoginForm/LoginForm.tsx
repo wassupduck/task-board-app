@@ -3,11 +3,11 @@ import TextInput from "../TextInput";
 import Button from "../Button";
 import styles from "./LoginForm.module.css";
 import { preventLeadingSpaces } from "../../utils";
-import { UseLoginFormReturn, LoginFormFieldValues } from "./types";
+import { UseLoginFormReturn, LoginFormData } from "./types";
 
 export interface LoginFormProps {
   form: UseLoginFormReturn;
-  onSubmit: (board: LoginFormFieldValues) => void;
+  onSubmit: (board: LoginFormData) => void;
 }
 
 export default function LoginForm(props: LoginFormProps) {

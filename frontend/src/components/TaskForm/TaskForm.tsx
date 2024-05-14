@@ -26,6 +26,7 @@ export interface TaskFormProps {
   board: FragmentType<typeof TaskForm_BoardFragment>;
   onSubmit: (task: TaskFormData) => void;
   submitButtonText: string;
+  disableSubmit?: boolean;
 }
 
 export default function TaskForm(props: TaskFormProps) {
@@ -96,7 +97,7 @@ export default function TaskForm(props: TaskFormProps) {
           )}
         />
       </div>
-      <Button type="submit" block={true} /*disabled={!isValid}*/>
+      <Button type="submit" block={true} disabled={props.disableSubmit}>
         {props.submitButtonText}
       </Button>
     </form>

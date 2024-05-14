@@ -10,9 +10,10 @@ const boardRouteQueryDocument = graphql(`
       }
       ...Board_BoardFragment
       ...BoardHeader_BoardFragment
-      ...TaskRoute_BoardFragment
       ...EditBoardRoute_BoardFragment
+      ...TaskRoute_BoardFragment
       ...NewTaskRoute_BoardFragment
+      ...EditTaskRoute_BoardFragment
     }
   }
 `);

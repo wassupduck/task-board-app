@@ -3,11 +3,11 @@ import TextInput from "../TextInput";
 import Button from "../Button";
 import styles from "./SignupForm.module.css";
 import { preventLeadingSpaces } from "../../utils";
-import { UseSignupFormReturn, SignupFormFieldValues } from "./types";
+import { UseSignupFormReturn, SignupFormData } from "./types";
 
 export interface SignupFormProps {
   form: UseSignupFormReturn;
-  onSubmit: (board: SignupFormFieldValues) => void;
+  onSubmit: (board: SignupFormData) => void;
 }
 
 export default function SignupForm(props: SignupFormProps) {

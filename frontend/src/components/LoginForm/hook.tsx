@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { loginFormSchema } from "./schema";
-import { LoginFormFieldValues } from "./types";
+import { LoginFormData } from "./types";
 
 export function useLoginForm() {
-  return useForm<LoginFormFieldValues>({
+  return useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
   });
 }

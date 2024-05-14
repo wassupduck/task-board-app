@@ -10,6 +10,7 @@ import * as login from "./routes/login";
 import * as logout from "./routes/logout";
 import * as signup from "./routes/signup";
 import * as newTask from "./routes/tasks-new";
+import * as editTask from "./routes/task-edit";
 
 export const createRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
@@ -37,15 +38,22 @@ export const createRouter = (queryClient: QueryClient) =>
               action: editBoard.action(queryClient),
             },
             {
+              path: "tasks/new",
+              element: <newTask.Component />,
+              action: newTask.action(queryClient),
+            },
+            {
+              id: "task",
               path: "tasks/:taskId",
               element: <task.Component />,
               loader: protectedLoader(task.loader(queryClient)),
               action: task.action(queryClient),
             },
             {
-              path: "tasks/new",
-              element: <newTask.Component />,
-              action: newTask.action(queryClient),
+              path: "tasks/:taskId/edit",
+              element: <editTask.Component />,
+              loader: protectedLoader(editTask.loader(queryClient)),
+              action: editTask.action(queryClient),
             },
           ],
         },

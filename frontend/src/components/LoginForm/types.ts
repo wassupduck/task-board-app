@@ -1,8 +1,8 @@
 import { UseFormReturn } from "react-hook-form";
 
-export type LoginFormFieldValues = {
+export type LoginFormData = {
   username: string;
   password: string;
 };
 
-export type UseLoginFormReturn = UseFormReturn<LoginFormFieldValues>;
+export type UseLoginFormReturn = UseFormReturn<LoginFormData>;

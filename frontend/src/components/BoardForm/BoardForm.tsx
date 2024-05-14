@@ -9,11 +9,11 @@ import VisuallyHidden from "../VisuallyHidden";
 import clsx from "clsx";
 import { useFieldArray } from "react-hook-form";
 import { preventLeadingSpaces } from "../../utils";
-import { UseBoardFormReturn, BoardFormFieldValues } from "./types";
+import { UseBoardFormReturn, BoardFormData } from "./types";
 
 export interface BoardFormProps {
   form: UseBoardFormReturn;
-  onSubmit: (board: BoardFormFieldValues) => void;
+  onSubmit: (board: BoardFormData) => void;
   submitButtonText: string;
 }
 

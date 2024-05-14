@@ -1,14 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormProps } from "react-hook-form";
 import { boardFormSchema } from "./schema";
-import { BoardFormFieldValues } from "./types";
+import { BoardFormData } from "./types";
 
 interface UseBoardFormProps {
-  defaultValues?: UseFormProps<BoardFormFieldValues>["defaultValues"];
+  defaultValues?: UseFormProps<BoardFormData>["defaultValues"];
 }
 
 export function useBoardForm(props?: UseBoardFormProps) {
-  return useForm<BoardFormFieldValues>({
+  return useForm<BoardFormData>({
     resolver: zodResolver(boardFormSchema),
     defaultValues: props?.defaultValues,
   });

@@ -1,4 +1,9 @@
-import { useNavigate, useParams, useSubmit } from "react-router-dom";
+import {
+  useNavigate,
+  useNavigation,
+  useParams,
+  useSubmit,
+} from "react-router-dom";
 import Modal from "../../components/Modal";
 import { useTaskForm } from "../../components/TaskForm/hook";
 import TaskForm from "../../components/TaskForm/TaskForm";
@@ -22,6 +27,9 @@ const NewTaskRoute_BoardFragment = graphql(`
 
 export function NewTask() {
   const navigate = useNavigate();
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state !== "idle";
+
   const params = useParams();
   invariant(params.boardId, "Missing boardId param");
 
@@ -60,7 +68,8 @@ export function NewTask() {
         form={taskForm}
         board={board}
         onSubmit={handleSubmit}
-        submitButtonText="Create Task"
+        submitButtonText={isSubmitting ? "Creating Task..." : "Create Task"}
+        disableSubmit={isSubmitting}
       />
     </Modal>
   );

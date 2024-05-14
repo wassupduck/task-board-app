@@ -2,7 +2,7 @@ import styles from "./Signup.module.css";
 import SignupForm from "../../components/SignupForm/SignupForm";
 import { useSignupForm } from "../../components/SignupForm/hook";
 import { Link, useActionData, useSubmit } from "react-router-dom";
-import { SignupFormFieldValues } from "../../components/SignupForm/types";
+import { SignupFormData } from "../../components/SignupForm/types";
 import { useState } from "react";
 import { ActionData } from "./action";
 import { Logo } from "../../components/Logo/Logo";
@@ -28,7 +28,7 @@ export function Signup() {
     }
   }
 
-  const handleSubmit = (values: SignupFormFieldValues) => {
+  const handleSubmit = (values: SignupFormData) => {
     const newUser = { username: values.username, password: values.password };
     submit(newUser, {
       method: "post",

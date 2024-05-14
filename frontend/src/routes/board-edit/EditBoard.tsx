@@ -6,7 +6,7 @@ import { getFragmentData, graphql } from "../../gql";
 import BoardForm from "../../components/BoardForm/BoardForm";
 import { useFetcher, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { BoardFormFieldValues } from "../../components/BoardForm/types";
+import { BoardFormData } from "../../components/BoardForm/types";
 import { ActionData, ActionRequestJson } from "./action";
 import {
   UpdateBoardColumnInput,
@@ -64,7 +64,7 @@ export function EditBoard() {
     }
   }
 
-  const handleSubmit = (editedBoard: BoardFormFieldValues) => {
+  const handleSubmit = (editedBoard: BoardFormData) => {
     function updateColumnsPatch(): UpdateBoardColumnsPatchInput {
       const additions: UpdateBoardColumnsPatchAdditionInput[] = [];
       const updates: UpdateBoardColumnInput[] = [];
