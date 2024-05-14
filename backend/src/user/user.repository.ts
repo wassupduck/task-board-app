@@ -9,6 +9,8 @@ import {
 import { UniqueViolationError } from 'db-errors';
 import { UserUsernameConflictError } from './user.errors.js';
 
+type NewUser = Pick<User, 'username' | 'passwordHash'>;
+
 @Injectable()
 export class UserRepository {
   constructor(private readonly db: DatabaseClient) {}
@@ -21,9 +23,7 @@ export class UserRepository {
     return await this.db.queryOneOrNone(selectUserByUsername, { username });
   }
 
-  async createUser(
-    user: Pick<User, 'username' | 'passwordHash'>,
-  ): Promise<User> {
+  async createUser(user: NewUser): Promise<User> {
     try {
       return await this.db.queryOne(insertUser, { user });
     } catch (error) {
