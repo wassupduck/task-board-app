@@ -18,6 +18,10 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export type AddTaskSubtaskInput = {
+  subtask: NewSubtaskInput;
+};
+
 export type Board = {
   __typename?: 'Board';
   columns: BoardColumnsConnection;
@@ -146,6 +150,7 @@ export type Mutation = {
   updateBoardColumns: UpdateBoardColumnsResponse;
   updateSubtaskCompleted: UpdateSubtaskCompletedResponse;
   updateTask: UpdateTaskResponse;
+  updateTaskSubtasks: UpdateTaskSubtasksResponse;
 };
 
 
@@ -196,6 +201,11 @@ export type MutationUpdateSubtaskCompletedArgs = {
 
 export type MutationUpdateTaskArgs = {
   input: UpdateTaskInput;
+};
+
+
+export type MutationUpdateTaskSubtasksArgs = {
+  input: UpdateTaskSubtasksInput;
 };
 
 export type NewBoardColumnInput = {
@@ -265,6 +275,11 @@ export type Subtask = {
   id: Scalars['ID']['output'];
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type SubtaskTitleConflictError = ErrorResponse & {
+  __typename?: 'SubtaskTitleConflictError';
+  message: Scalars['String']['output'];
 };
 
 export type Task = {
@@ -364,6 +379,34 @@ export type UpdateTaskPatchInput = {
 };
 
 export type UpdateTaskResponse = BoardColumnNotFoundError | NotFoundError | UpdateTaskSuccess;
+
+export type UpdateTaskSubtaskInput = {
+  id: Scalars['ID']['input'];
+  patch: UpdateTaskSubtaskPatchInput;
+};
+
+export type UpdateTaskSubtaskPatchInput = {
+  completed?: InputMaybe<Scalars['Boolean']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateTaskSubtasksInput = {
+  patch: UpdateTaskSubtasksPatchInput;
+  taskId: Scalars['ID']['input'];
+};
+
+export type UpdateTaskSubtasksPatchInput = {
+  additions?: InputMaybe<Array<AddTaskSubtaskInput>>;
+  deletions?: InputMaybe<Array<Scalars['ID']['input']>>;
+  updates?: InputMaybe<Array<UpdateTaskSubtaskInput>>;
+};
+
+export type UpdateTaskSubtasksResponse = InvalidInputError | NotFoundError | SubtaskTitleConflictError | UpdateTaskSubtasksSuccess;
+
+export type UpdateTaskSubtasksSuccess = {
+  __typename?: 'UpdateTaskSubtasksSuccess';
+  task: Task;
+};
 
 export type UpdateTaskSuccess = {
   __typename?: 'UpdateTaskSuccess';

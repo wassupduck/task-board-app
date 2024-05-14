@@ -338,6 +338,50 @@ const insertSubtasksIR: any = {"usedParamSet":{"subtasks":true},"params":[{"name
 export const insertSubtasks = new PreparedQuery<IInsertSubtasksParams,IInsertSubtasksResult>(insertSubtasksIR);
 
 
+/** 'UpdateTaskSubtasks' parameters type */
+export interface IUpdateTaskSubtasksParams {
+  subtasks: readonly ({
+    id: string,
+    title: string | null | void,
+    completed: string | null | void
+  })[];
+  taskId: NumberOrString;
+}
+
+/** 'UpdateTaskSubtasks' return type */
+export interface IUpdateTaskSubtasksResult {
+  completed: boolean;
+  createdAt: Date;
+  id: string;
+  taskId: string;
+  title: string;
+  updatedAt: Date;
+}
+
+/** 'UpdateTaskSubtasks' query type */
+export interface IUpdateTaskSubtasksQuery {
+  params: IUpdateTaskSubtasksParams;
+  result: IUpdateTaskSubtasksResult;
+}
+
+const updateTaskSubtasksIR: any = {"usedParamSet":{"subtasks":true,"taskId":true},"params":[{"name":"subtasks","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"id","required":true},{"name":"title","required":false},{"name":"completed","required":false}]},"locs":[{"a":170,"b":179}]},{"name":"taskId","required":true,"transform":{"type":"scalar"},"locs":[{"a":289,"b":296}]}],"statement":"update subtask\nset\n    title = coalesce(subtask_update.title, subtask.title),\n    completed = coalesce(subtask_update.completed::boolean, subtask.completed)\nfrom (values :subtasks!) as subtask_update(id, title, completed)\nwhere subtask.id = subtask_update.id::bigint\nand subtask.task_id = :taskId!\nreturning subtask.*"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * update subtask
+ * set
+ *     title = coalesce(subtask_update.title, subtask.title),
+ *     completed = coalesce(subtask_update.completed::boolean, subtask.completed)
+ * from (values :subtasks!) as subtask_update(id, title, completed)
+ * where subtask.id = subtask_update.id::bigint
+ * and subtask.task_id = :taskId!
+ * returning subtask.*
+ * ```
+ */
+export const updateTaskSubtasks = new PreparedQuery<IUpdateTaskSubtasksParams,IUpdateTaskSubtasksResult>(updateTaskSubtasksIR);
+
+
 /** 'UpdateSubtaskCompletedByIdAsUser' parameters type */
 export interface IUpdateSubtaskCompletedByIdAsUserParams {
   completed: boolean;
@@ -381,5 +425,41 @@ const updateSubtaskCompletedByIdAsUserIR: any = {"usedParamSet":{"completed":tru
  * ```
  */
 export const updateSubtaskCompletedByIdAsUser = new PreparedQuery<IUpdateSubtaskCompletedByIdAsUserParams,IUpdateSubtaskCompletedByIdAsUserResult>(updateSubtaskCompletedByIdAsUserIR);
+
+
+/** 'DeleteTaskSubtasks' parameters type */
+export interface IDeleteTaskSubtasksParams {
+  subtaskIds: readonly (NumberOrString)[];
+  taskId: NumberOrString;
+}
+
+/** 'DeleteTaskSubtasks' return type */
+export interface IDeleteTaskSubtasksResult {
+  completed: boolean;
+  createdAt: Date;
+  id: string;
+  taskId: string;
+  title: string;
+  updatedAt: Date;
+}
+
+/** 'DeleteTaskSubtasks' query type */
+export interface IDeleteTaskSubtasksQuery {
+  params: IDeleteTaskSubtasksParams;
+  result: IDeleteTaskSubtasksResult;
+}
+
+const deleteTaskSubtasksIR: any = {"usedParamSet":{"subtaskIds":true,"taskId":true},"params":[{"name":"subtaskIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":32,"b":43}]},{"name":"taskId","required":true,"transform":{"type":"scalar"},"locs":[{"a":59,"b":66}]}],"statement":"delete from subtask\nwhere id in :subtaskIds!\nand task_id = :taskId!\nreturning *"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * delete from subtask
+ * where id in :subtaskIds!
+ * and task_id = :taskId!
+ * returning *
+ * ```
+ */
+export const deleteTaskSubtasks = new PreparedQuery<IDeleteTaskSubtasksParams,IDeleteTaskSubtasksResult>(deleteTaskSubtasksIR);
 
 

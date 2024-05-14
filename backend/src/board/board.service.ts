@@ -110,7 +110,7 @@ export class BoardService {
     input: UpdateBoardColumnsPatchInput,
     userId: string,
   ): Promise<Board> {
-    // Parse and validate patch
+    // Parse and validate input
     const validation = updateBoardColumnsPatchInputSchema.safeParse(input);
     if (!validation.success) {
       // TODO: Better validation errors
@@ -144,6 +144,10 @@ export class BoardService {
 
       // Old columns in position order
       const prevColumns = await this.boardRepository.getBoardColumns(boardId);
+
+      // TODO: Should updates be done first as
+      // the user could update the name of a column and then
+      // add a new one with the old name?
 
       // Add new columns
       let addedColumns: BoardColumn[] = [];

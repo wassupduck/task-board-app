@@ -13,6 +13,8 @@ import { BoardService } from '../board/index.js';
 import { NewTaskInput } from './dto/new-task.input.js';
 import { BoardColumnNotFoundError } from './task.errors.js';
 import { DatabaseClient, DatabaseTransactor } from '../database/index.js';
+import { UpdateTaskSubtasksPatchInput } from './dto/update-task-subtasks.input.js';
+import { updateTaskSubtasksPatchInputSchema } from './schemas/update-task-subtasks-patch-input.schema.js';
 
 @Injectable()
 export class TaskService {
@@ -138,5 +140,48 @@ export class TaskService {
       completed,
       userId,
     );
+  }
+
+  async updateTaskSubtasks(
+    taskId: string,
+    input: UpdateTaskSubtasksPatchInput,
+    userId: string,
+  ): Promise<Task> {
+    // Parse and validate input
+    const validation = updateTaskSubtasksPatchInputSchema.safeParse(input);
+    if (!validation.success) {
+      // TODO: Better validation errors
+      const issue = validation.error.issues[0];
+      throw new ValidationError(`${issue.path.join('.')}: ${issue.message}`);
+    }
+
+    const task = await this.getTaskByIdAsUser(taskId, userId);
+    if (!task) {
+      throw new NotFoundError(`Task not found: ${taskId}`);
+    }
+
+    const patch = validation.data;
+
+    await this.db.inTransaction(async () => {
+      if (patch.deletions.length > 0) {
+        await this.taskRepository.deleteTaskSubtasks(taskId, patch.deletions);
+      }
+
+      if (patch.updates.length > 0) {
+        await this.taskRepository.updateTaskSubtasks(
+          taskId,
+          patch.updates.map(({ id, patch }) => ({ id, ...patch })),
+        );
+      }
+
+      if (patch.additions.length > 0) {
+        await this.taskRepository.createTaskSubtasks(
+          taskId,
+          patch.additions.map(({ subtask }) => subtask),
+        );
+      }
+    });
+
+    return task;
   }
 }

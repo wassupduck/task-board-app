@@ -66,7 +66,7 @@ returning *;
     @param columnIds -> (...)
 */
 delete from board_column
-where id in :columnIds
+where id in :columnIds!
 and board_id = :boardId!;
 
 /*

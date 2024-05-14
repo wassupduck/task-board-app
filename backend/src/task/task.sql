@@ -78,6 +78,19 @@ insert into subtask(title, task_id)
 values :subtasks!
 returning *;
 
+/*
+    @name updateTaskSubtasks
+    @param subtasks -> ((id!, title, completed)...)
+*/
+update subtask
+set
+    title = coalesce(subtask_update.title, subtask.title),
+    completed = coalesce(subtask_update.completed::boolean, subtask.completed)
+from (values :subtasks!) as subtask_update(id, title, completed)
+where subtask.id = subtask_update.id::bigint
+and subtask.task_id = :taskId!
+returning subtask.*;
+
 /* @name updateSubtaskCompletedByIdAsUser */
 update subtask
 set completed = :completed!
@@ -90,4 +103,13 @@ where id = (
     where subtask.id = :id!
     and board.app_user_id = :userId!
 )
+returning *;
+
+/* 
+    @name deleteTaskSubtasks
+    @param subtaskIds -> (...)
+*/
+delete from subtask
+where id in :subtaskIds!
+and task_id = :taskId!
 returning *;

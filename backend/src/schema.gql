@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AddTaskSubtaskInput {
+  subtask: NewSubtaskInput!
+}
+
 type Board {
   columns: BoardColumnsConnection!
   createdAt: DateTime!
@@ -121,6 +125,7 @@ type Mutation {
   updateBoardColumns(input: UpdateBoardColumnsInput!): UpdateBoardColumnsResponse!
   updateSubtaskCompleted(input: UpdateSubtaskCompletedInput!): UpdateSubtaskCompletedResponse!
   updateTask(input: UpdateTaskInput!): UpdateTaskResponse!
+  updateTaskSubtasks(input: UpdateTaskSubtasksInput!): UpdateTaskSubtasksResponse!
 }
 
 input NewBoardColumnInput {
@@ -176,6 +181,10 @@ type Subtask {
   id: ID!
   title: String!
   updatedAt: DateTime!
+}
+
+type SubtaskTitleConflictError implements ErrorResponse {
+  message: String!
 }
 
 type Task {
@@ -272,6 +281,33 @@ input UpdateTaskPatchInput {
 }
 
 union UpdateTaskResponse = BoardColumnNotFoundError | NotFoundError | UpdateTaskSuccess
+
+input UpdateTaskSubtaskInput {
+  id: ID!
+  patch: UpdateTaskSubtaskPatchInput!
+}
+
+input UpdateTaskSubtaskPatchInput {
+  completed: Boolean
+  title: String
+}
+
+input UpdateTaskSubtasksInput {
+  patch: UpdateTaskSubtasksPatchInput!
+  taskId: ID!
+}
+
+input UpdateTaskSubtasksPatchInput {
+  additions: [AddTaskSubtaskInput!]
+  deletions: [ID!]
+  updates: [UpdateTaskSubtaskInput!]
+}
+
+union UpdateTaskSubtasksResponse = InvalidInputError | NotFoundError | SubtaskTitleConflictError | UpdateTaskSubtasksSuccess
+
+type UpdateTaskSubtasksSuccess {
+  task: Task!
+}
 
 type UpdateTaskSuccess {
   task: Task!

@@ -19,6 +19,7 @@
     "test:cov": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --coverage",
     "test:debug": "node --experimental-vm-modules --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --config ./test/jest-e2e.json",
+    "dev:env:dc": "docker-compose -p task-board-app-dev -f docker-compose.dev.yml",
     "dev:env:up": "docker-compose -p task-board-app-dev -f docker-compose.dev.yml up -d --wait && yarn migrate",
     "dev:env:down": "docker-compose -p task-board-app-dev -f docker-compose.dev.yml down",
     "dev:env:restart": "yarn dev:env:down && yarn dev:env:up",

@@ -322,7 +322,7 @@ export const updateBoard = new PreparedQuery<IUpdateBoardParams,IUpdateBoardResu
 /** 'DeleteBoardColumns' parameters type */
 export interface IDeleteBoardColumnsParams {
   boardId: NumberOrString;
-  columnIds: readonly (NumberOrString | null | void)[];
+  columnIds: readonly (NumberOrString)[];
 }
 
 /** 'DeleteBoardColumns' return type */
@@ -334,13 +334,13 @@ export interface IDeleteBoardColumnsQuery {
   result: IDeleteBoardColumnsResult;
 }
 
-const deleteBoardColumnsIR: any = {"usedParamSet":{"columnIds":true,"boardId":true},"params":[{"name":"columnIds","required":false,"transform":{"type":"array_spread"},"locs":[{"a":37,"b":46}]},{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":63,"b":71}]}],"statement":"delete from board_column\nwhere id in :columnIds\nand board_id = :boardId!"};
+const deleteBoardColumnsIR: any = {"usedParamSet":{"columnIds":true,"boardId":true},"params":[{"name":"columnIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":37,"b":47}]},{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":64,"b":72}]}],"statement":"delete from board_column\nwhere id in :columnIds!\nand board_id = :boardId!"};
 
 /**
  * Query generated from SQL:
  * ```
  * delete from board_column
- * where id in :columnIds
+ * where id in :columnIds!
  * and board_id = :boardId!
  * ```
  */

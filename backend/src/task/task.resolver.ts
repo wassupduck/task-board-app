@@ -24,12 +24,19 @@ import { UpdateTaskResponse } from './dto/update-task-response.dto.js';
 import { UpdateTaskSuccess } from './dto/update-task-success.dto.js';
 import { CreateTaskResponse } from './dto/create-task-response.dto.js';
 import { CreateTaskSuccess } from './dto/create-task-success.dto.js';
-import { BoardColumnNotFoundError } from './task.errors.js';
+import {
+  BoardColumnNotFoundError,
+  SubtaskTitleConflictError,
+} from './task.errors.js';
 import { BoardColumnNotFoundErrorResponse } from './dto/board-column-not-found-error.dto.js';
 import { DeleteTaskResponse } from './dto/delete-task-response.dto.js';
 import { DeleteTaskInput } from './dto/delete-task.input.js';
 import { DeleteTaskSuccess } from './dto/delete-task-success.dto.js';
 import { CurrentUser } from '../auth/index.js';
+import { UpdateTaskSubtasksResponse } from './dto/update-task-subtasks-response.dto.js';
+import { UpdateTaskSubtasksInput } from './dto/update-task-subtasks.input.js';
+import { UpdateTaskSubtasksSuccess } from './dto/update-task-subtasks-success.dto.js';
+import { SubtaskTitleConflictErrorResponse } from './dto/subtask-title-conflict-error.dto.js';
 
 @Resolver(Task)
 export class TaskResolver {
@@ -108,6 +115,30 @@ export class TaskResolver {
     }
 
     return new UpdateTaskSuccess(task);
+  }
+
+  @Mutation(() => UpdateTaskSubtasksResponse)
+  async updateTaskSubtasks(
+    @Args('input') input: UpdateTaskSubtasksInput,
+    @CurrentUser('id') userId: string,
+  ): Promise<typeof UpdateTaskSubtasksResponse> {
+    let task: Task;
+    try {
+      task = await this.taskService.updateTaskSubtasks(
+        input.taskId,
+        input.patch,
+        userId,
+      );
+    } catch (error) {
+      if (error instanceof SubtaskTitleConflictError) {
+        return new SubtaskTitleConflictErrorResponse(error.message);
+      }
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
+    }
+
+    return new UpdateTaskSubtasksSuccess(task);
   }
 
   @Mutation(() => UpdateSubtaskCompletedResponse)

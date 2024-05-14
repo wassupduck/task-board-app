@@ -25,6 +25,12 @@ import {
   BoardNameConflictError,
 } from './board.errors.js';
 import { NotFoundError } from '../common/errors/not-found-error.js';
+import { getDuplicateKeyValues } from '../database/helpers/unique-violation-error-duplicate-key-values.js';
+
+type NewBoard = Pick<Board, 'name' | 'appUserId'>;
+type EditBoard = Partial<Pick<Board, 'name'>>;
+type NewBoardColumn = Pick<BoardColumn, 'name' | 'position'>;
+type EditBoardColumn = Partial<Pick<BoardColumn, 'name' | 'position'>>;
 
 export type AliasToIdMapping = { [key: string]: string | undefined };
 
@@ -74,7 +80,7 @@ export class BoardRepository {
     return await this.db.queryOne(selectBoardColumnsConnection, { boardId });
   }
 
-  async createBoard(board: Pick<Board, 'name' | 'appUserId'>): Promise<Board> {
+  async createBoard(board: NewBoard): Promise<Board> {
     try {
       return await this.db.queryOne(insertBoard, { board });
     } catch (error) {
@@ -89,10 +95,7 @@ export class BoardRepository {
     }
   }
 
-  async updateBoard(
-    id: string,
-    fieldsToUpdate: Partial<Pick<Board, 'name'>>,
-  ): Promise<Board> {
+  async updateBoard(id: string, fieldsToUpdate: EditBoard): Promise<Board> {
     let board: Board | null;
     try {
       board = await this.db.queryOneOrNone(updateBoard, {
@@ -117,7 +120,7 @@ export class BoardRepository {
 
   async createBoardColumns(
     boardId: string,
-    columns: (Pick<BoardColumn, 'name' | 'position'> & { idAlias?: string })[],
+    columns: (NewBoardColumn & { idAlias?: string })[],
   ): Promise<[BoardColumn[], AliasToIdMapping]> {
     let newColumns: IInsertBoardColumnsResult[];
     try {
@@ -135,16 +138,9 @@ export class BoardRepository {
         error.cause instanceof UniqueViolationError &&
         error.cause.constraint === 'board_column_board_id_name_unique_idx'
       ) {
-        let columnName = 'unknown';
-        if (
-          'detail' in error.cause.nativeError &&
-          typeof error.cause.nativeError.detail === 'string'
-        ) {
-          const re = /Key \(board_id, name\)=\(.*, (.*)\) already exists./;
-          columnName =
-            error.cause.nativeError.detail.match(re)?.[1] ?? columnName;
-        }
-        throw new BoardColumnNameConflictError(columnName);
+        const duplicateKeyValues = getDuplicateKeyValues(error.cause);
+        const duplicateColummName = duplicateKeyValues?.['name'] ?? 'unknown';
+        throw new BoardColumnNameConflictError(duplicateColummName);
       }
       throw error;
     }
@@ -168,14 +164,12 @@ export class BoardRepository {
 
   async updateBoardColumns(
     boardId: string,
-    columns: ({ id: string } & Partial<
-      Pick<BoardColumn, 'name' | 'position'>
-    >)[],
+    columns: ({ id: string } & EditBoardColumn)[],
   ): Promise<BoardColumn[]> {
     return this.db.queryAll(updateBoardColumns, {
       boardId,
       columns: columns.map((column) => ({
-        ...column,
+        id: column.id,
         name: column.name,
         position: column.position?.toString(),
       })),
