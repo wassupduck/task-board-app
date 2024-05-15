@@ -11,6 +11,8 @@ import { boardRouteQuery } from "../../routes/board/queries";
 import { Logo } from "../Logo/Logo";
 import * as Popover from "@radix-ui/react-popover";
 import VisuallyHidden from "../VisuallyHidden";
+import { useState } from "react";
+import { BoardDeleteModal } from "../BoardDeleteModal/BoardDeleteModal";
 
 interface HeaderProps {
   sidebarHidden: boolean;
@@ -54,6 +56,7 @@ interface BoardHeaderProps {
 
 function BoardHeader(props: BoardHeaderProps) {
   const navigate = useNavigate();
+  const [showDeleteBoardModal, setShowDeleteBoardModal] = useState(false);
 
   const initialData = useBoardRouteLoaderData();
   const { data, isError } = useQuery({
@@ -78,14 +81,24 @@ function BoardHeader(props: BoardHeaderProps) {
         >
           Add New Task
         </Button>
-        <BoardActionsPopover boardId={props.boardId} />
+        <BoardActionsPopover
+          boardId={props.boardId}
+          onDeleteBoardClick={() => setShowDeleteBoardModal(true)}
+        />
       </div>
+      {showDeleteBoardModal ? (
+        <BoardDeleteModal
+          board={board}
+          onCloseOrCancel={() => setShowDeleteBoardModal(false)}
+        />
+      ) : null}
     </>
   );
 }
 
 interface BoardAcionsPopoverProps {
   boardId: string;
+  onDeleteBoardClick: () => void;
 }
 
 function BoardActionsPopover(props: BoardAcionsPopoverProps) {
@@ -109,7 +122,10 @@ function BoardActionsPopover(props: BoardAcionsPopoverProps) {
           >
             Edit Board
           </Link>
-          <button className={clsx(styles.boardActionButton, styles.danger)}>
+          <button
+            className={clsx(styles.boardActionButton, styles.danger)}
+            onClick={props.onDeleteBoardClick}
+          >
             Delete Board
           </button>
         </Popover.Content>

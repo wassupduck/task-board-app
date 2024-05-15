@@ -33,6 +33,7 @@ const documents = {
     "\n  mutation UpdateBoard($input: UpdateBoardInput!) {\n    updateBoard(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateBoardDocument,
     "\n  mutation UpdateBoardColumns($input: UpdateBoardColumnsInput!) {\n    updateBoardColumns(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateBoardColumnsDocument,
     "\n  query BoardRoute_Query($id: ID!) {\n    board(id: $id) {\n      id\n      columns {\n        totalCount\n      }\n      ...Board_BoardFragment\n      ...BoardHeader_BoardFragment\n      ...EditBoardRoute_BoardFragment\n      ...TaskRoute_BoardFragment\n      ...NewTaskRoute_BoardFragment\n      ...EditTaskRoute_BoardFragment\n    }\n  }\n": types.BoardRoute_QueryDocument,
+    "\n  mutation DeleteBoard($input: DeleteBoardInput!) {\n    deleteBoard(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.DeleteBoardDocument,
     "\n  mutation CreateBoard($input: CreateBoardInput!) {\n    createBoard(input: $input) {\n      __typename\n      ... on CreateBoardSuccess {\n        board {\n          id\n        }\n      }\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.CreateBoardDocument,
     "\n  query RootRoute_Query {\n    boards {\n      id\n    }\n    ...Sidebar_QueryFragment\n  }\n": types.RootRoute_QueryDocument,
     "\n  mutation Signup($input: SignupInput!) {\n    signup(input: $input) {\n      __typename\n      ... on SignupSuccess {\n        user {\n          ...AuthProvider_UserFragment\n        }\n      }\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.SignupDocument,
@@ -141,6 +142,10 @@ export function graphql(source: "\n  mutation UpdateBoardColumns($input: UpdateB
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query BoardRoute_Query($id: ID!) {\n    board(id: $id) {\n      id\n      columns {\n        totalCount\n      }\n      ...Board_BoardFragment\n      ...BoardHeader_BoardFragment\n      ...EditBoardRoute_BoardFragment\n      ...TaskRoute_BoardFragment\n      ...NewTaskRoute_BoardFragment\n      ...EditTaskRoute_BoardFragment\n    }\n  }\n"): (typeof documents)["\n  query BoardRoute_Query($id: ID!) {\n    board(id: $id) {\n      id\n      columns {\n        totalCount\n      }\n      ...Board_BoardFragment\n      ...BoardHeader_BoardFragment\n      ...EditBoardRoute_BoardFragment\n      ...TaskRoute_BoardFragment\n      ...NewTaskRoute_BoardFragment\n      ...EditTaskRoute_BoardFragment\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeleteBoard($input: DeleteBoardInput!) {\n    deleteBoard(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteBoard($input: DeleteBoardInput!) {\n    deleteBoard(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

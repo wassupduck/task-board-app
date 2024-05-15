@@ -31,6 +31,7 @@ export const createRouter = (queryClient: QueryClient) =>
           path: "boards/:boardId",
           element: <board.Component />,
           loader: protectedLoader(board.loader(queryClient)),
+          action: board.action(queryClient),
           children: [
             {
               path: "edit",

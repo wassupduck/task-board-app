@@ -25,4 +25,8 @@
 .title {
     font-size: var(--font-size-heading-medium);
     font-weight: var(--font-weight-bold);
+
+    .modal.destructive & {
+        color: var(--color-danger);
+    }
 }

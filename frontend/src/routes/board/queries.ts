@@ -35,3 +35,21 @@ export const boardRouteQuery = (id: string) => ({
   queryKey: boardRouteQueryKey(id),
   queryFn: boardRouteQueryFn(id),
 });
+
+const deleteBoardMutationDocument = graphql(`
+  mutation DeleteBoard($input: DeleteBoardInput!) {
+    deleteBoard(input: $input) {
+      __typename
+      ... on ErrorResponse {
+        message
+      }
+    }
+  }
+`);
+
+export async function deleteBoard(id: string) {
+  const resp = await graphQLClient.request(deleteBoardMutationDocument, {
+    input: { id },
+  });
+  return resp.deleteBoard;
+}

@@ -36,10 +36,10 @@
 
     &.destructive {
         color: var(--color-white);
-        background-color: var(--color-red);
+        background-color: var(--color-danger);
 
         &:not(:disabled):hover {
-            background-color: var(--color-red-light);
+            background-color: var(--color-danger-light);
         }
     }
 
