@@ -1,4 +1,4 @@
-.task-card {
+.wrapper {
     padding: 24px 16px;
     display: flex;
     flex-direction: column;
@@ -6,16 +6,30 @@
     background-color: var(--color-background-primary);
     border-radius: 8px;
     cursor: pointer;
+    touch-action: none;
 
     /* TODO: fix box shadow */
     box-shadow: 0 4px 6px var(--color-lines-dark-100);
+
+    &.dragging {
+        cursor: grabbing;
+    }
+
+    &.placeholder {
+        background-color: var(--color-grey-medium-100);
+        box-shadow: none;
+
+        & * {
+            visibility: hidden;
+        }
+    }
 }
 
 .title {
     font-size: var(--font-size-heading-small);
     font-weight: var(--font-weight-bold);
 
-    .task-card:hover & {
+    .task-card:is(:hover, .dragging) & {
         color: var(--color-primary);
     }
 }

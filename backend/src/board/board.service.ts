@@ -13,6 +13,7 @@ import { NotFoundError } from '../common/errors/not-found-error.js';
 import { updateBoardColumnsPatchInputSchema } from './schemas/update-board-columns-patch-input.schema.js';
 import { emptyPatch } from '../common/helpers/empty-patch.js';
 import { NewBoardInput } from './dto/new-board.input.js';
+import { BoardColumnTasksConnection } from './entities/board-column-tasks-connection.entity.js';
 
 @Injectable()
 export class BoardService {
@@ -29,11 +30,20 @@ export class BoardService {
     return this.boardRepository.getBoardByIdAsUser(id, userId);
   }
 
-  async getBoardColumnByIdAsUser(
+  async getBoardColumnsConnection(
+    boardId: string,
+  ): Promise<BoardColumnsConnection> {
+    return this.boardRepository.getBoardColumnsConnection(boardId);
+  }
+
+  async getForUpdateBoardColumnByIdAsUser(
     id: string,
     userId: string,
   ): Promise<BoardColumn | null> {
-    return await this.boardRepository.getBoardColumnByIdAsUser(id, userId);
+    return await this.boardRepository.getForUpdateBoardColumnByIdAsUser(
+      id,
+      userId,
+    );
   }
 
   async getBoardColumns(boardId: string): Promise<BoardColumn[]> {
@@ -44,10 +54,12 @@ export class BoardService {
     return this.boardRepository.getBoardColumnsByIds(ids);
   }
 
-  async getBoardColumnsConnection(
-    boardId: string,
-  ): Promise<BoardColumnsConnection> {
-    return this.boardRepository.getBoardColumnsConnection(boardId);
+  async getBoardColumnTasksConnections(
+    boardColumnIds: string[],
+  ): Promise<BoardColumnTasksConnection[]> {
+    return await this.boardRepository.getBoardColumnTasksConnections(
+      boardColumnIds,
+    );
   }
 
   async createBoard(input: NewBoardInput, userId: string): Promise<Board> {

@@ -5,11 +5,12 @@ import {
   deleteTaskSubtasks,
   insertSubtasks,
   insertTask,
+  selectLastTaskInBoardColumn,
   selectSubtasksByTaskIds,
   selectSubtasksConnectionsByTaskIds,
   selectTaskByIdAsUser,
-  selectTasksByBoardId,
   selectTasksByColumnIds,
+  selectTasksSurroundingBoardColumnPosition,
   updateSubtaskCompletedByIdAsUser,
   updateTask,
   updateTaskSubtasks,
@@ -22,10 +23,15 @@ import { SubtaskTitleConflictError } from './task.errors.js';
 import { getDuplicateKeyValues } from '../database/helpers/unique-violation-error-duplicate-key-values.js';
 import { UniqueViolationError } from 'db-errors';
 
-type NewTask = Pick<Task, 'title' | 'description' | 'boardColumnId'>;
-type EditTask = Partial<Pick<Task, 'title' | 'description' | 'boardColumnId'>>;
-type NewSubtask = Pick<Subtask, 'title'>;
-type EditSubtask = Partial<Pick<Subtask, 'title' | 'completed'>>;
+export type NewTask = Pick<
+  Task,
+  'title' | 'description' | 'boardColumnId' | 'position'
+>;
+export type EditTask = Partial<
+  Pick<Task, 'title' | 'description' | 'boardColumnId' | 'position'>
+>;
+export type NewSubtask = Pick<Subtask, 'title'>;
+export type EditSubtask = Partial<Pick<Subtask, 'title' | 'completed'>>;
 
 @Injectable()
 export class TaskRepository {
@@ -35,12 +41,46 @@ export class TaskRepository {
     return this.db.queryOneOrNone(selectTaskByIdAsUser, { id, userId });
   }
 
-  async getTasksByBoardId(boardId: string): Promise<Task[]> {
-    return this.db.queryAll(selectTasksByBoardId, { boardId });
-  }
-
   async getTasksInColumns(columnIds: string[]): Promise<Task[]> {
     return this.db.queryAll(selectTasksByColumnIds, { columnIds });
+  }
+
+  async getTasksSurroundingBoardColumnPosition(
+    boardColumnId: string,
+    position: string,
+  ): Promise<{
+    taskAboveOrAtPosition: Task | null;
+    taskBelowPosition: Task | null;
+  }> {
+    const tasks = await this.db.queryAll(
+      selectTasksSurroundingBoardColumnPosition,
+      { boardColumnId, position },
+    );
+
+    let taskAboveOrAtPosition: Task | null = null;
+    let taskBelowPosition: Task | null = null;
+    if (tasks[0] !== undefined) {
+      const task = tasks[0] as Task;
+      if (task.position <= position) {
+        taskAboveOrAtPosition = task;
+        if (tasks[1] !== undefined) {
+          taskBelowPosition = tasks[1] as Task;
+        }
+      } else {
+        taskBelowPosition = task;
+      }
+    }
+
+    return {
+      taskAboveOrAtPosition,
+      taskBelowPosition,
+    };
+  }
+
+  async getLastTaskInBoardColumn(boardColumnId: string): Promise<Task | null> {
+    return this.db.queryOneOrNone(selectLastTaskInBoardColumn, {
+      boardColumnId,
+    });
   }
 
   async createTask(task: NewTask): Promise<Task> {

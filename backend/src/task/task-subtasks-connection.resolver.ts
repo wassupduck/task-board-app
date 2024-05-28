@@ -12,6 +12,6 @@ export class TaskSubtasksConnectionResolver {
     @Parent() { taskId }: TaskSubtasksConnection,
     @Context('loaders') { taskLoaders }: Loaders,
   ): Promise<Subtask[]> {
-    return taskLoaders.subtasksByTaskIdLoader.load(taskId);
+    return await taskLoaders.subtasksByTaskIdLoader.load(taskId);
   }
 }

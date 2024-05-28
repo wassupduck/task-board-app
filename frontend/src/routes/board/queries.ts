@@ -1,4 +1,5 @@
 import { graphql } from "../../gql";
+import { MoveTaskMoveInput } from "../../gql/graphql";
 import { graphQLClient } from "../../graphql-client";
 
 const boardRouteQueryDocument = graphql(`
@@ -7,6 +8,18 @@ const boardRouteQueryDocument = graphql(`
       id
       columns {
         totalCount
+        nodes {
+          id
+          tasks {
+            nodes {
+              id
+              position
+              column {
+                id
+              }
+            }
+          }
+        }
       }
       ...Board_BoardFragment
       ...BoardHeader_BoardFragment
@@ -52,4 +65,22 @@ export async function deleteBoard(id: string) {
     input: { id },
   });
   return resp.deleteBoard;
+}
+
+const moveTaskMutationDocument = graphql(`
+  mutation MoveTask($input: MoveTaskInput!) {
+    moveTask(input: $input) {
+      __typename
+      ... on ErrorResponse {
+        message
+      }
+    }
+  }
+`);
+
+export async function moveTask(id: string, move: MoveTaskMoveInput) {
+  const resp = await graphQLClient.request(moveTaskMutationDocument, {
+    input: { id, move },
+  });
+  return resp.moveTask;
 }

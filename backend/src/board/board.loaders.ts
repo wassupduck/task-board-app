@@ -4,6 +4,7 @@ import { BoardColumn } from './entities/board-column.entity.js';
 import { FactoryProvider } from '@nestjs/common';
 import { BoardLoaders } from './interfaces/board-loaders.interface.js';
 import { BOARD_LOADERS_FACTORY } from './board.constants.js';
+import { BoardColumnTasksConnection } from './entities/board-column-tasks-connection.entity.js';
 
 export function createBoardLoaders(boardService: BoardService): BoardLoaders {
   const boardColumnByIdLoader = new Dataloader(
@@ -15,8 +16,31 @@ export function createBoardLoaders(boardService: BoardService): BoardLoaders {
     },
   );
 
+  const boardColumnTasksConnectionLoader = new Dataloader(
+    async (boardColumnIds: readonly string[]) => {
+      const tasksConnections =
+        await boardService.getBoardColumnTasksConnections(
+          boardColumnIds as string[],
+        );
+      const tasksConnectionsByBoardColumnId: Partial<
+        Record<string, BoardColumnTasksConnection>
+      > = Object.fromEntries(
+        tasksConnections.map((tasksConnection) => [
+          tasksConnection.boardColumnId,
+          tasksConnection,
+        ]),
+      );
+      return boardColumnIds.map(
+        (boardColumnId) =>
+          tasksConnectionsByBoardColumnId[boardColumnId] ??
+          new Error(`Board column not found: ${boardColumnId}`),
+      );
+    },
+  );
+
   return {
     boardColumnByIdLoader,
+    boardColumnTasksConnectionLoader,
   };
 }
 

@@ -6,25 +6,46 @@ inner join board on board.id = board_column.board_id
 where task.id = :id!
 and board.app_user_id = :userId!;
 
-/* @name selectTasksByBoardId */
-select task.*
-from task
-inner join board_column on board_column.id = task.board_column_id
-where board_column.board_id = :boardId!;
-
 /*
     @name selectTasksByColumnIds
     @param columnIds -> (...)
 */
 select *
 from task
-where task.board_column_id in :columnIds!;
+where board_column_id in :columnIds!
+order by board_column_id, position asc;
+
+/* @name selectTasksSurroundingBoardColumnPosition */
+select *
+from ((
+    select *
+    from task
+    where board_column_id = :boardColumnId!
+    and position <= :position!
+    order by position desc
+    limit 1
+) union (
+    select *
+    from task
+    where board_column_id = :boardColumnId!
+    and position > :position!
+    order by position asc
+    limit 1
+))
+order by position asc;
+
+/* @name selectLastTaskInBoardColumn */
+select *
+from task
+where board_column_id = :boardColumnId!
+order by position desc
+limit 1;
 
 /*
     @name insertTask
-    @param task -> (title!, description!, boardColumnId!)
+    @param task -> (title!, description!, boardColumnId!, position!)
 */
-insert into task(title, description, board_column_id)
+insert into task(title, description, board_column_id, position)
 values :task
 returning *;
 
@@ -32,7 +53,8 @@ returning *;
 update task set
     title = coalesce(:title, title),
     description = coalesce(:description, description),
-    board_column_id = coalesce(:boardColumnId, board_column_id)
+    board_column_id = coalesce(:boardColumnId, board_column_id),
+    position = coalesce(:position, position)
 where id = :id!
 returning *;
 

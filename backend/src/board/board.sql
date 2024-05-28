@@ -17,12 +17,22 @@ from board
 where id = :id!
 and app_user_id = :userId!;
 
-/* @name selectBoardColumnByIdAsUser */
+/* @name selectBoardColumnsConnection */
+select
+    board.id as "board_id!",
+    count(board_column.id)::integer as "total_count!"
+from board
+left join board_column on board_column.board_id = board.id
+where board.id = :boardId!
+group by board.id;
+
+/* @name selectForUpdateBoardColumnByIdAsUser */
 select board_column.*
 from board_column
 inner join board on board.id = board_column.board_id
 where board_column.id = :id!
-and board.app_user_id = :userId!;
+and board.app_user_id = :userId!
+for update;
 
 /* @name selectBoardColumnsByBoardId */
 select *
@@ -38,14 +48,17 @@ select *
 from board_column
 where id in :ids!;
 
-/* @name selectBoardColumnsConnection */
+/*
+    @name selectBoardColumnTasksConnections
+    @param boardColumnIds -> (...)
+*/
 select
-    board.id as "board_id!",
-    count(board_column.id)::integer as "total_count!"
-from board
-left join board_column on board_column.board_id = board.id
-where board.id = :boardId!
-group by board.id;
+    board_column.id as "board_column_id!",
+    count(task.id)::integer as "total_count!"
+from board_column
+left join task on task.board_column_id = board_column.id
+where board_column.id in :boardColumnIds!
+group by board_column.id;
 
 /*
     @name insertBoard

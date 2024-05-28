@@ -8,6 +8,8 @@ export class Task {
   title!: string;
   @Field()
   description!: string;
+  @Field()
+  position!: string;
   boardColumnId!: string;
   @Field()
   createdAt!: Date;

@@ -37,6 +37,9 @@ import { UpdateTaskSubtasksResponse } from './dto/update-task-subtasks-response.
 import { UpdateTaskSubtasksInput } from './dto/update-task-subtasks.input.js';
 import { UpdateTaskSubtasksSuccess } from './dto/update-task-subtasks-success.dto.js';
 import { SubtaskTitleConflictErrorResponse } from './dto/subtask-title-conflict-error.dto.js';
+import { MoveTaskInput } from './dto/move-task.input.js';
+import { MoveTaskResponse } from './dto/move-task-response.dto.js';
+import { MoveTaskSuccess } from './dto/move-task-success.dto.js';
 
 @Resolver(Task)
 export class TaskResolver {
@@ -117,6 +120,42 @@ export class TaskResolver {
     return new UpdateTaskSuccess(task);
   }
 
+  @Mutation(() => DeleteTaskResponse)
+  async deleteTask(
+    @Args('input') input: DeleteTaskInput,
+    @CurrentUser('id') userId: string,
+  ): Promise<typeof DeleteTaskResponse> {
+    try {
+      await this.taskService.deleteTask(input.id, userId);
+    } catch (error) {
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
+    }
+
+    return new DeleteTaskSuccess(input.id);
+  }
+
+  @Mutation(() => MoveTaskResponse)
+  async moveTask(
+    @Args('input') input: MoveTaskInput,
+    @CurrentUser('id') userId: string,
+  ): Promise<typeof MoveTaskResponse> {
+    let task: Task;
+    try {
+      task = await this.taskService.moveTask(input.id, input.move, userId);
+    } catch (error) {
+      if (error instanceof BoardColumnNotFoundError) {
+        return new BoardColumnNotFoundErrorResponse(error.message);
+      }
+      const commonErrorResponse = responseFromCommonError(error);
+      if (commonErrorResponse) return commonErrorResponse;
+      throw error;
+    }
+
+    return new MoveTaskSuccess(task);
+  }
+
   @Mutation(() => UpdateTaskSubtasksResponse)
   async updateTaskSubtasks(
     @Args('input') input: UpdateTaskSubtasksInput,
@@ -160,21 +199,5 @@ export class TaskResolver {
     }
 
     return new UpdateSubtaskCompletedSuccess(subtask);
-  }
-
-  @Mutation(() => DeleteTaskResponse)
-  async deleteTask(
-    @Args('input') input: DeleteTaskInput,
-    @CurrentUser('id') userId: string,
-  ): Promise<typeof DeleteTaskResponse> {
-    try {
-      await this.taskService.deleteTask(input.id, userId);
-    } catch (error) {
-      const commonErrorResponse = responseFromCommonError(error);
-      if (commonErrorResponse) return commonErrorResponse;
-      throw error;
-    }
-
-    return new DeleteTaskSuccess(input.id);
   }
 }

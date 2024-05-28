@@ -7,13 +7,15 @@ import { BoardColumnResolver } from './board-column.resolver.js';
 import { boardLoadersFactoryProvider } from './board.loaders.js';
 import { BOARD_LOADERS_FACTORY } from './board.constants.js';
 import { BoardColumnsConnectionResolver } from './board-columns-connection.resolver.js';
+import { BoardColumnTasksConnectionResolver } from './board-column-tasks-connection-resolver.js';
 
 @Module({
   imports: [forwardRef(() => TaskModule)],
   providers: [
     BoardResolver,
-    BoardColumnResolver,
     BoardColumnsConnectionResolver,
+    BoardColumnResolver,
+    BoardColumnTasksConnectionResolver,
     BoardService,
     BoardRepository,
     boardLoadersFactoryProvider,

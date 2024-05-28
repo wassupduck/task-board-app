@@ -8,12 +8,13 @@ import {
   insertBoard,
   insertBoardColumns,
   selectBoardByIdAsUser,
-  selectBoardColumnByIdAsUser,
   selectBoardColumnsByBoardId,
   selectBoardColumnsByIds,
   selectBoardColumnsConnection,
+  selectBoardColumnTasksConnections,
   selectBoardsByUserId,
   selectForUpdateBoardByIdAsUser,
+  selectForUpdateBoardColumnByIdAsUser,
   updateBoard,
   updateBoardColumns,
 } from './board.queries.js';
@@ -26,6 +27,7 @@ import {
 } from './board.errors.js';
 import { NotFoundError } from '../common/errors/not-found-error.js';
 import { getDuplicateKeyValues } from '../database/helpers/unique-violation-error-duplicate-key-values.js';
+import { BoardColumnTasksConnection } from './entities/board-column-tasks-connection.entity.js';
 
 type NewBoard = Pick<Board, 'name' | 'appUserId'>;
 type EditBoard = Partial<Pick<Board, 'name'>>;
@@ -56,11 +58,17 @@ export class BoardRepository {
     });
   }
 
-  async getBoardColumnByIdAsUser(
+  async getBoardColumnsConnection(
+    boardId: string,
+  ): Promise<BoardColumnsConnection> {
+    return await this.db.queryOne(selectBoardColumnsConnection, { boardId });
+  }
+
+  async getForUpdateBoardColumnByIdAsUser(
     id: string,
     userId: string,
   ): Promise<BoardColumn | null> {
-    return await this.db.queryOneOrNone(selectBoardColumnByIdAsUser, {
+    return await this.db.queryOneOrNone(selectForUpdateBoardColumnByIdAsUser, {
       id,
       userId,
     });
@@ -74,10 +82,12 @@ export class BoardRepository {
     return await this.db.queryAll(selectBoardColumnsByIds, { ids });
   }
 
-  async getBoardColumnsConnection(
-    boardId: string,
-  ): Promise<BoardColumnsConnection> {
-    return await this.db.queryOne(selectBoardColumnsConnection, { boardId });
+  async getBoardColumnTasksConnections(
+    boardColumnIds: string[],
+  ): Promise<BoardColumnTasksConnection[]> {
+    return await this.db.queryAll(selectBoardColumnTasksConnections, {
+      boardColumnIds,
+    });
   }
 
   async createBoard(board: NewBoard): Promise<Board> {

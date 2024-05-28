@@ -15,6 +15,7 @@ export interface ISelectTaskByIdAsUserResult {
   createdAt: Date;
   description: string;
   id: string;
+  position: string;
   title: string;
   updatedAt: Date;
 }
@@ -41,41 +42,6 @@ const selectTaskByIdAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"p
 export const selectTaskByIdAsUser = new PreparedQuery<ISelectTaskByIdAsUserParams,ISelectTaskByIdAsUserResult>(selectTaskByIdAsUserIR);
 
 
-/** 'SelectTasksByBoardId' parameters type */
-export interface ISelectTasksByBoardIdParams {
-  boardId: NumberOrString;
-}
-
-/** 'SelectTasksByBoardId' return type */
-export interface ISelectTasksByBoardIdResult {
-  boardColumnId: string;
-  createdAt: Date;
-  description: string;
-  id: string;
-  title: string;
-  updatedAt: Date;
-}
-
-/** 'SelectTasksByBoardId' query type */
-export interface ISelectTasksByBoardIdQuery {
-  params: ISelectTasksByBoardIdParams;
-  result: ISelectTasksByBoardIdResult;
-}
-
-const selectTasksByBoardIdIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":120,"b":128}]}],"statement":"select task.*\nfrom task\ninner join board_column on board_column.id = task.board_column_id\nwhere board_column.board_id = :boardId!"};
-
-/**
- * Query generated from SQL:
- * ```
- * select task.*
- * from task
- * inner join board_column on board_column.id = task.board_column_id
- * where board_column.board_id = :boardId!
- * ```
- */
-export const selectTasksByBoardId = new PreparedQuery<ISelectTasksByBoardIdParams,ISelectTasksByBoardIdResult>(selectTasksByBoardIdIR);
-
-
 /** 'SelectTasksByColumnIds' parameters type */
 export interface ISelectTasksByColumnIdsParams {
   columnIds: readonly (NumberOrString)[];
@@ -87,6 +53,7 @@ export interface ISelectTasksByColumnIdsResult {
   createdAt: Date;
   description: string;
   id: string;
+  position: string;
   title: string;
   updatedAt: Date;
 }
@@ -97,17 +64,105 @@ export interface ISelectTasksByColumnIdsQuery {
   result: ISelectTasksByColumnIdsResult;
 }
 
-const selectTasksByColumnIdsIR: any = {"usedParamSet":{"columnIds":true},"params":[{"name":"columnIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":49,"b":59}]}],"statement":"select *\nfrom task\nwhere task.board_column_id in :columnIds!"};
+const selectTasksByColumnIdsIR: any = {"usedParamSet":{"columnIds":true},"params":[{"name":"columnIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":44,"b":54}]}],"statement":"select *\nfrom task\nwhere board_column_id in :columnIds!\norder by board_column_id, position asc"};
 
 /**
  * Query generated from SQL:
  * ```
  * select *
  * from task
- * where task.board_column_id in :columnIds!
+ * where board_column_id in :columnIds!
+ * order by board_column_id, position asc
  * ```
  */
 export const selectTasksByColumnIds = new PreparedQuery<ISelectTasksByColumnIdsParams,ISelectTasksByColumnIdsResult>(selectTasksByColumnIdsIR);
+
+
+/** 'SelectTasksSurroundingBoardColumnPosition' parameters type */
+export interface ISelectTasksSurroundingBoardColumnPositionParams {
+  boardColumnId: NumberOrString;
+  position: string;
+}
+
+/** 'SelectTasksSurroundingBoardColumnPosition' return type */
+export interface ISelectTasksSurroundingBoardColumnPositionResult {
+  boardColumnId: string | null;
+  createdAt: Date | null;
+  description: string | null;
+  id: string | null;
+  position: string | null;
+  title: string | null;
+  updatedAt: Date | null;
+}
+
+/** 'SelectTasksSurroundingBoardColumnPosition' query type */
+export interface ISelectTasksSurroundingBoardColumnPositionQuery {
+  params: ISelectTasksSurroundingBoardColumnPositionParams;
+  result: ISelectTasksSurroundingBoardColumnPositionResult;
+}
+
+const selectTasksSurroundingBoardColumnPositionIR: any = {"usedParamSet":{"boardColumnId":true,"position":true},"params":[{"name":"boardColumnId","required":true,"transform":{"type":"scalar"},"locs":[{"a":72,"b":86},{"a":223,"b":237}]},{"name":"position","required":true,"transform":{"type":"scalar"},"locs":[{"a":108,"b":117},{"a":258,"b":267}]}],"statement":"select *\nfrom ((\n    select *\n    from task\n    where board_column_id = :boardColumnId!\n    and position <= :position!\n    order by position desc\n    limit 1\n) union (\n    select *\n    from task\n    where board_column_id = :boardColumnId!\n    and position > :position!\n    order by position asc\n    limit 1\n))\norder by position asc"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * select *
+ * from ((
+ *     select *
+ *     from task
+ *     where board_column_id = :boardColumnId!
+ *     and position <= :position!
+ *     order by position desc
+ *     limit 1
+ * ) union (
+ *     select *
+ *     from task
+ *     where board_column_id = :boardColumnId!
+ *     and position > :position!
+ *     order by position asc
+ *     limit 1
+ * ))
+ * order by position asc
+ * ```
+ */
+export const selectTasksSurroundingBoardColumnPosition = new PreparedQuery<ISelectTasksSurroundingBoardColumnPositionParams,ISelectTasksSurroundingBoardColumnPositionResult>(selectTasksSurroundingBoardColumnPositionIR);
+
+
+/** 'SelectLastTaskInBoardColumn' parameters type */
+export interface ISelectLastTaskInBoardColumnParams {
+  boardColumnId: NumberOrString;
+}
+
+/** 'SelectLastTaskInBoardColumn' return type */
+export interface ISelectLastTaskInBoardColumnResult {
+  boardColumnId: string;
+  createdAt: Date;
+  description: string;
+  id: string;
+  position: string;
+  title: string;
+  updatedAt: Date;
+}
+
+/** 'SelectLastTaskInBoardColumn' query type */
+export interface ISelectLastTaskInBoardColumnQuery {
+  params: ISelectLastTaskInBoardColumnParams;
+  result: ISelectLastTaskInBoardColumnResult;
+}
+
+const selectLastTaskInBoardColumnIR: any = {"usedParamSet":{"boardColumnId":true},"params":[{"name":"boardColumnId","required":true,"transform":{"type":"scalar"},"locs":[{"a":43,"b":57}]}],"statement":"select *\nfrom task\nwhere board_column_id = :boardColumnId!\norder by position desc\nlimit 1"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * select *
+ * from task
+ * where board_column_id = :boardColumnId!
+ * order by position desc
+ * limit 1
+ * ```
+ */
+export const selectLastTaskInBoardColumn = new PreparedQuery<ISelectLastTaskInBoardColumnParams,ISelectLastTaskInBoardColumnResult>(selectLastTaskInBoardColumnIR);
 
 
 /** 'InsertTask' parameters type */
@@ -115,7 +170,8 @@ export interface IInsertTaskParams {
   task: {
     title: string,
     description: string,
-    boardColumnId: NumberOrString
+    boardColumnId: NumberOrString,
+    position: string
   };
 }
 
@@ -125,6 +181,7 @@ export interface IInsertTaskResult {
   createdAt: Date;
   description: string;
   id: string;
+  position: string;
   title: string;
   updatedAt: Date;
 }
@@ -135,12 +192,12 @@ export interface IInsertTaskQuery {
   result: IInsertTaskResult;
 }
 
-const insertTaskIR: any = {"usedParamSet":{"task":true},"params":[{"name":"task","required":false,"transform":{"type":"pick_tuple","keys":[{"name":"title","required":true},{"name":"description","required":true},{"name":"boardColumnId","required":true}]},"locs":[{"a":61,"b":65}]}],"statement":"insert into task(title, description, board_column_id)\nvalues :task\nreturning *"};
+const insertTaskIR: any = {"usedParamSet":{"task":true},"params":[{"name":"task","required":false,"transform":{"type":"pick_tuple","keys":[{"name":"title","required":true},{"name":"description","required":true},{"name":"boardColumnId","required":true},{"name":"position","required":true}]},"locs":[{"a":71,"b":75}]}],"statement":"insert into task(title, description, board_column_id, position)\nvalues :task\nreturning *"};
 
 /**
  * Query generated from SQL:
  * ```
- * insert into task(title, description, board_column_id)
+ * insert into task(title, description, board_column_id, position)
  * values :task
  * returning *
  * ```
@@ -153,6 +210,7 @@ export interface IUpdateTaskParams {
   boardColumnId?: NumberOrString | null | void;
   description?: string | null | void;
   id: NumberOrString;
+  position?: string | null | void;
   title?: string | null | void;
 }
 
@@ -162,6 +220,7 @@ export interface IUpdateTaskResult {
   createdAt: Date;
   description: string;
   id: string;
+  position: string;
   title: string;
   updatedAt: Date;
 }
@@ -172,7 +231,7 @@ export interface IUpdateTaskQuery {
   result: IUpdateTaskResult;
 }
 
-const updateTaskIR: any = {"usedParamSet":{"title":true,"description":true,"boardColumnId":true,"id":true},"params":[{"name":"title","required":false,"transform":{"type":"scalar"},"locs":[{"a":37,"b":42}]},{"name":"description","required":false,"transform":{"type":"scalar"},"locs":[{"a":80,"b":91}]},{"name":"boardColumnId","required":false,"transform":{"type":"scalar"},"locs":[{"a":139,"b":152}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":183,"b":186}]}],"statement":"update task set\n    title = coalesce(:title, title),\n    description = coalesce(:description, description),\n    board_column_id = coalesce(:boardColumnId, board_column_id)\nwhere id = :id!\nreturning *"};
+const updateTaskIR: any = {"usedParamSet":{"title":true,"description":true,"boardColumnId":true,"position":true,"id":true},"params":[{"name":"title","required":false,"transform":{"type":"scalar"},"locs":[{"a":37,"b":42}]},{"name":"description","required":false,"transform":{"type":"scalar"},"locs":[{"a":80,"b":91}]},{"name":"boardColumnId","required":false,"transform":{"type":"scalar"},"locs":[{"a":139,"b":152}]},{"name":"position","required":false,"transform":{"type":"scalar"},"locs":[{"a":197,"b":205}]},{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":229,"b":232}]}],"statement":"update task set\n    title = coalesce(:title, title),\n    description = coalesce(:description, description),\n    board_column_id = coalesce(:boardColumnId, board_column_id),\n    position = coalesce(:position, position)\nwhere id = :id!\nreturning *"};
 
 /**
  * Query generated from SQL:
@@ -180,7 +239,8 @@ const updateTaskIR: any = {"usedParamSet":{"title":true,"description":true,"boar
  * update task set
  *     title = coalesce(:title, title),
  *     description = coalesce(:description, description),
- *     board_column_id = coalesce(:boardColumnId, board_column_id)
+ *     board_column_id = coalesce(:boardColumnId, board_column_id),
+ *     position = coalesce(:position, position)
  * where id = :id!
  * returning *
  * ```
@@ -200,6 +260,7 @@ export interface IDeleteTaskAsUserResult {
   createdAt: Date;
   description: string;
   id: string;
+  position: string;
   title: string;
   updatedAt: Date;
 }

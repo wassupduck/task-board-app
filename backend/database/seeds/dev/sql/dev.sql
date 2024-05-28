@@ -12,16 +12,16 @@ insert into board_column(name, position, board_id) values
     ('Doing', 1, 1),
     ('Done', 2, 1);
 
-insert into task(title, board_column_id) values
-    ('Build UI for onboarding flow', 1),
-    ('Build UI for search', 1),
-    ('Build settings for UI', 1),
-    ('Design settings and search pages', 2),
-    ('Add account management endpoints', 2),
-    ('Create paper prototypes and conduct 10 usability tests with potential customers', 3),
-    ('Review results of usability tests and iterate', 3),
-    ('Create wireframe prototype', 3),
-    ('Conduct 5 wireframe tests', 3);
+insert into task(title, board_column_id, position) values
+    ('Build UI for onboarding flow', 1, '9'),
+    ('Build UI for search', 1, 'f'),
+    ('Build settings for UI', 1, 'p'),
+    ('Design settings and search pages', 2, 'h'),
+    ('Add account management endpoints', 2, 'a'),
+    ('Create paper prototypes and conduct 10 usability tests with potential customers', 3, '4'),
+    ('Review results of usability tests and iterate', 3, 'y'),
+    ('Create wireframe prototype', 3, 'm'),
+    ('Conduct 5 wireframe tests', 3, 'b');
 
 insert into subtask(title, completed, task_id) values
     ('Create account tables', true, 5),

@@ -108,14 +108,48 @@ const selectBoardByIdAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"
 export const selectBoardByIdAsUser = new PreparedQuery<ISelectBoardByIdAsUserParams,ISelectBoardByIdAsUserResult>(selectBoardByIdAsUserIR);
 
 
-/** 'SelectBoardColumnByIdAsUser' parameters type */
-export interface ISelectBoardColumnByIdAsUserParams {
+/** 'SelectBoardColumnsConnection' parameters type */
+export interface ISelectBoardColumnsConnectionParams {
+  boardId: NumberOrString;
+}
+
+/** 'SelectBoardColumnsConnection' return type */
+export interface ISelectBoardColumnsConnectionResult {
+  boardId: string;
+  totalCount: number;
+}
+
+/** 'SelectBoardColumnsConnection' query type */
+export interface ISelectBoardColumnsConnectionQuery {
+  params: ISelectBoardColumnsConnectionParams;
+  result: ISelectBoardColumnsConnectionResult;
+}
+
+const selectBoardColumnsConnectionIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":177,"b":185}]}],"statement":"select\n    board.id as \"board_id!\",\n    count(board_column.id)::integer as \"total_count!\"\nfrom board\nleft join board_column on board_column.board_id = board.id\nwhere board.id = :boardId!\ngroup by board.id"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * select
+ *     board.id as "board_id!",
+ *     count(board_column.id)::integer as "total_count!"
+ * from board
+ * left join board_column on board_column.board_id = board.id
+ * where board.id = :boardId!
+ * group by board.id
+ * ```
+ */
+export const selectBoardColumnsConnection = new PreparedQuery<ISelectBoardColumnsConnectionParams,ISelectBoardColumnsConnectionResult>(selectBoardColumnsConnectionIR);
+
+
+/** 'SelectForUpdateBoardColumnByIdAsUser' parameters type */
+export interface ISelectForUpdateBoardColumnByIdAsUserParams {
   id: NumberOrString;
   userId: NumberOrString;
 }
 
-/** 'SelectBoardColumnByIdAsUser' return type */
-export interface ISelectBoardColumnByIdAsUserResult {
+/** 'SelectForUpdateBoardColumnByIdAsUser' return type */
+export interface ISelectForUpdateBoardColumnByIdAsUserResult {
   boardId: string;
   createdAt: Date;
   id: string;
@@ -124,13 +158,13 @@ export interface ISelectBoardColumnByIdAsUserResult {
   updatedAt: Date;
 }
 
-/** 'SelectBoardColumnByIdAsUser' query type */
-export interface ISelectBoardColumnByIdAsUserQuery {
-  params: ISelectBoardColumnByIdAsUserParams;
-  result: ISelectBoardColumnByIdAsUserResult;
+/** 'SelectForUpdateBoardColumnByIdAsUser' query type */
+export interface ISelectForUpdateBoardColumnByIdAsUserQuery {
+  params: ISelectForUpdateBoardColumnByIdAsUserParams;
+  result: ISelectForUpdateBoardColumnByIdAsUserResult;
 }
 
-const selectBoardColumnByIdAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":117,"b":120}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":146,"b":153}]}],"statement":"select board_column.*\nfrom board_column\ninner join board on board.id = board_column.board_id\nwhere board_column.id = :id!\nand board.app_user_id = :userId!"};
+const selectForUpdateBoardColumnByIdAsUserIR: any = {"usedParamSet":{"id":true,"userId":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":117,"b":120}]},{"name":"userId","required":true,"transform":{"type":"scalar"},"locs":[{"a":146,"b":153}]}],"statement":"select board_column.*\nfrom board_column\ninner join board on board.id = board_column.board_id\nwhere board_column.id = :id!\nand board.app_user_id = :userId!\nfor update"};
 
 /**
  * Query generated from SQL:
@@ -140,9 +174,10 @@ const selectBoardColumnByIdAsUserIR: any = {"usedParamSet":{"id":true,"userId":t
  * inner join board on board.id = board_column.board_id
  * where board_column.id = :id!
  * and board.app_user_id = :userId!
+ * for update
  * ```
  */
-export const selectBoardColumnByIdAsUser = new PreparedQuery<ISelectBoardColumnByIdAsUserParams,ISelectBoardColumnByIdAsUserResult>(selectBoardColumnByIdAsUserIR);
+export const selectForUpdateBoardColumnByIdAsUser = new PreparedQuery<ISelectForUpdateBoardColumnByIdAsUserParams,ISelectForUpdateBoardColumnByIdAsUserResult>(selectForUpdateBoardColumnByIdAsUserIR);
 
 
 /** 'SelectBoardColumnsByBoardId' parameters type */
@@ -214,38 +249,38 @@ const selectBoardColumnsByIdsIR: any = {"usedParamSet":{"ids":true},"params":[{"
 export const selectBoardColumnsByIds = new PreparedQuery<ISelectBoardColumnsByIdsParams,ISelectBoardColumnsByIdsResult>(selectBoardColumnsByIdsIR);
 
 
-/** 'SelectBoardColumnsConnection' parameters type */
-export interface ISelectBoardColumnsConnectionParams {
-  boardId: NumberOrString;
+/** 'SelectBoardColumnTasksConnections' parameters type */
+export interface ISelectBoardColumnTasksConnectionsParams {
+  boardColumnIds: readonly (NumberOrString)[];
 }
 
-/** 'SelectBoardColumnsConnection' return type */
-export interface ISelectBoardColumnsConnectionResult {
-  boardId: string;
+/** 'SelectBoardColumnTasksConnections' return type */
+export interface ISelectBoardColumnTasksConnectionsResult {
+  boardColumnId: string;
   totalCount: number;
 }
 
-/** 'SelectBoardColumnsConnection' query type */
-export interface ISelectBoardColumnsConnectionQuery {
-  params: ISelectBoardColumnsConnectionParams;
-  result: ISelectBoardColumnsConnectionResult;
+/** 'SelectBoardColumnTasksConnections' query type */
+export interface ISelectBoardColumnTasksConnectionsQuery {
+  params: ISelectBoardColumnTasksConnectionsParams;
+  result: ISelectBoardColumnTasksConnectionsResult;
 }
 
-const selectBoardColumnsConnectionIR: any = {"usedParamSet":{"boardId":true},"params":[{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":177,"b":185}]}],"statement":"select\n    board.id as \"board_id!\",\n    count(board_column.id)::integer as \"total_count!\"\nfrom board\nleft join board_column on board_column.board_id = board.id\nwhere board.id = :boardId!\ngroup by board.id"};
+const selectBoardColumnTasksConnectionsIR: any = {"usedParamSet":{"boardColumnIds":true},"params":[{"name":"boardColumnIds","required":true,"transform":{"type":"array_spread"},"locs":[{"a":196,"b":211}]}],"statement":"select\n    board_column.id as \"board_column_id!\",\n    count(task.id)::integer as \"total_count!\"\nfrom board_column\nleft join task on task.board_column_id = board_column.id\nwhere board_column.id in :boardColumnIds!\ngroup by board_column.id"};
 
 /**
  * Query generated from SQL:
  * ```
  * select
- *     board.id as "board_id!",
- *     count(board_column.id)::integer as "total_count!"
- * from board
- * left join board_column on board_column.board_id = board.id
- * where board.id = :boardId!
- * group by board.id
+ *     board_column.id as "board_column_id!",
+ *     count(task.id)::integer as "total_count!"
+ * from board_column
+ * left join task on task.board_column_id = board_column.id
+ * where board_column.id in :boardColumnIds!
+ * group by board_column.id
  * ```
  */
-export const selectBoardColumnsConnection = new PreparedQuery<ISelectBoardColumnsConnectionParams,ISelectBoardColumnsConnectionResult>(selectBoardColumnsConnectionIR);
+export const selectBoardColumnTasksConnections = new PreparedQuery<ISelectBoardColumnTasksConnectionsParams,ISelectBoardColumnTasksConnectionsResult>(selectBoardColumnTasksConnectionsIR);
 
 
 /** 'InsertBoard' parameters type */

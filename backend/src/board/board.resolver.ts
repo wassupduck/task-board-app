@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 import { BoardService } from './board.service.js';
 import { Board } from './entities/board.entity.js';
-import { Task, TaskService } from '../task/index.js';
+import { TaskService } from '../task/index.js';
 import { BoardColumnsConnection } from './entities/board-columns-connection.entity.js';
 import { CreateBoardInput } from './dto/create-board.input.js';
 import { CreateBoardResponse } from './dto/create-board-response.dto.js';
@@ -55,11 +55,6 @@ export class BoardResolver {
   @ResolveField(() => BoardColumnsConnection)
   async columns(@Parent() board: Board): Promise<BoardColumnsConnection> {
     return this.boardService.getBoardColumnsConnection(board.id);
-  }
-
-  @ResolveField(() => [Task])
-  async tasks(@Parent() board: Board): Promise<Task[]> {
-    return this.taskService.getTasksByBoardId(board.id);
   }
 
   @Mutation(() => CreateBoardResponse)

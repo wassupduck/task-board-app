@@ -235,6 +235,7 @@
         --color-grey-light: hsl(220deg 69% 97%);
         --color-grey-medium: hsl(216deg 15% 57%);
         --color-grey-medium-250: hsl(216deg 15% 57% / 25%);
+        --color-grey-medium-100: hsl(216deg 15% 57% / 10%);
         --color-grey-dark: hsl(235deg 12% 19%);
         --color-grey-very-dark: hsl(235deg 16% 15%);
         --color-black: hsl(237deg 100% 4%);

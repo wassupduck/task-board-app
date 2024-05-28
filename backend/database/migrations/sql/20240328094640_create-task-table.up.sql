@@ -3,12 +3,13 @@ create table if not exists task (
   title           varchar not null,
   description     varchar not null default '',
   board_column_id bigint not null references board_column(id) on delete cascade,
+  position        varchar not null,
   created_at      timestamptz not null default current_timestamp,
   updated_at      timestamptz not null default current_timestamp,
   constraint nonempty_title check (title <> '')
 );
 
-create index if not exists task_board_column_id_idx on task(board_column_id);
+create unique index if not exists task_board_column_id_position_idx on task(board_column_id, position);
 
 create or replace trigger task_set_updated_at_trigger
 before update on task
