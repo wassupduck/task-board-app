@@ -22,7 +22,6 @@ export default function BoardForm(props: BoardFormProps) {
   const { register, handleSubmit, formState } = form;
   // Must read all formState values to subscribe to changes
   const { errors } = formState;
-  const isValid = formState.isValid && Object.keys(errors).length === 0;
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(props.onSubmit)}>
@@ -47,7 +46,7 @@ export default function BoardForm(props: BoardFormProps) {
         <legend className="form-label">Columns</legend>
         <BoardColumnsList form={form} />
       </fieldset>
-      <Button type="submit" block={true} disabled={!isValid}>
+      <Button type="submit" block={true}>
         {props.submitButtonText}
       </Button>
     </form>

@@ -14,7 +14,7 @@ export default function LoginForm(props: LoginFormProps) {
   const { form } = props;
   const { register, handleSubmit, formState } = form;
   // Must read all formState values to subscribe to changes
-  const { errors, isValid } = formState;
+  const { errors } = formState;
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(props.onSubmit)}>
@@ -55,7 +55,7 @@ export default function LoginForm(props: LoginFormProps) {
           aria-invalid={errors.password ? "true" : "false"}
         />
       </div>
-      <Button type="submit" block={true} disabled={!isValid}>
+      <Button type="submit" block={true}>
         Login
       </Button>
     </form>

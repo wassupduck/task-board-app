@@ -15,7 +15,6 @@ export default function SignupForm(props: SignupFormProps) {
   const { register, handleSubmit, formState } = form;
   // Must read all formState values to subscribe to changes
   const { errors } = formState;
-  const isValid = formState.isValid && Object.keys(errors).length === 0;
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(props.onSubmit)}>
@@ -67,7 +66,7 @@ export default function SignupForm(props: SignupFormProps) {
           aria-invalid={errors.confirm ? "true" : "false"}
         />
       </div>
-      <Button type="submit" block={true} disabled={!isValid}>
+      <Button type="submit" block={true}>
         Signup
       </Button>
     </form>
