@@ -147,33 +147,36 @@ export class BoardService {
         return board;
       }
 
-      // TODO: Tidy up below
-
       // Delete columns
       if (patch.deletions.length > 0) {
         await this.boardRepository.deleteBoardColumns(boardId, patch.deletions);
       }
 
-      // Old columns in position order
-      const prevColumns = await this.boardRepository.getBoardColumns(boardId);
+      // Update columns
+      if (patch.updates.length > 0) {
+        await this.boardRepository.updateBoardColumns(
+          boardId,
+          patch.updates.map(({ id, patch }) => ({ id, ...patch })),
+        );
+      }
 
-      // TODO: Should updates be done first as
-      // the user could update the name of a column and then
-      // add a new one with the old name?
+      if (!(patch.additions.length > 0 || patch.columnOrder.length > 0)) {
+        return board;
+      }
+
+      // Current columns in position order
+      const prevColumns = await this.boardRepository.getBoardColumns(boardId);
 
       // Add new columns
       let addedColumns: BoardColumn[] = [];
       let aliasToIdMapping: AliasToIdMapping = {};
       if (patch.additions.length > 0) {
+        const offset = prevColumns.length;
         const columnsToAdd = patch.additions.map((addition, idx) => ({
           ...addition.column,
           idAlias: addition.idAlias,
-          // Position in order starting at 0.
-          // This will conflict with exiting columns
-          // but will be corrected in an update below.
-          // Unique constraint on position column is "deferrable initially deferred"
-          // so this is ok until the end of the transaction
-          position: idx,
+          // Position after existing columns (initially)
+          position: offset + idx,
         }));
 
         [addedColumns, aliasToIdMapping] =
@@ -181,65 +184,47 @@ export class BoardService {
           await this.boardRepository.createBoardColumns(boardId, columnsToAdd);
       }
 
-      const updates: {
-        [key: string]:
-          | Partial<Pick<BoardColumn, 'name' | 'position'>>
-          | undefined;
-      } = {};
+      // Update column order
+      if (patch.columnOrder.length > 0) {
+        // All columns in position order
+        const allColumns = prevColumns.concat(addedColumns);
+        const allColumnIds = new Set(allColumns.map(({ id }) => id));
 
-      // Reorder columns i.e update column positions
-      if (
-        patch.deletions.length > 0 ||
-        patch.additions.length > 0 ||
-        patch.columnOrder.length > 0
-      ) {
-        // Columns
-        const columns = [...prevColumns, ...addedColumns];
-        const columnIds = new Set(columns.map(({ id }) => id));
-
-        let newColumnOrder: string[] = [];
-        if (patch.columnOrder.length > 0) {
-          newColumnOrder = patch.columnOrder
-            .map((idOrAlias) => {
-              return columnIds.has(idOrAlias)
-                ? idOrAlias
-                : aliasToIdMapping[idOrAlias];
-            })
-            .filter((c) => c !== undefined) as string[];
-          const orderedColumnIds = new Set(newColumnOrder);
-          for (const column of columns) {
-            if (!orderedColumnIds.has(column.id)) {
-              newColumnOrder.push(column.id);
-            }
+        const newColumnOrder = patch.columnOrder
+          .map((idOrAlias) => {
+            return allColumnIds.has(idOrAlias)
+              ? idOrAlias
+              : aliasToIdMapping[idOrAlias];
+          })
+          .filter((c) => c !== undefined) as string[];
+        const orderedColumnIds = new Set(newColumnOrder);
+        // Loop over all columns in position order and append
+        // any that were not ordered in the patch
+        for (const column of allColumns) {
+          if (!orderedColumnIds.has(column.id)) {
+            newColumnOrder.push(column.id);
           }
-        } else {
-          newColumnOrder = columns.map(({ id }) => id);
         }
 
-        newColumnOrder.forEach((columnId, idx) => {
-          updates[columnId] = { position: idx };
-        });
-      }
-
-      // Apply column updates
-      if (patch.updates && patch.updates.length > 0) {
-        for (const { id: columnId, patch: columnPatch } of patch.updates) {
-          updates[columnId] = {
-            ...(updates[columnId] ?? {}),
-            ...columnPatch,
-          };
-        }
-      }
-
-      // Update columns
-      if (Object.keys(updates).length > 0) {
-        await this.boardRepository.updateBoardColumns(
-          boardId,
-          Object.entries(updates).map(([columnId, patch]) => ({
-            id: columnId,
-            ...patch,
-          })),
+        const columnPositionUpdates: { id: string; position: number }[] = [];
+        const newColumnPositions = Object.fromEntries(
+          newColumnOrder.map((id, idx) => [id, idx]),
         );
+        for (const column of allColumns) {
+          const newPosition = newColumnPositions[column.id];
+          if (newPosition !== column.position) {
+            columnPositionUpdates.push({
+              id: column.id,
+              position: newPosition,
+            });
+          }
+        }
+        if (columnPositionUpdates.length > 0) {
+          await this.boardRepository.updateBoardColumns(
+            boardId,
+            columnPositionUpdates,
+          );
+        }
       }
 
       return board;
