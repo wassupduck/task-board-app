@@ -23,14 +23,14 @@
     text-align: center;
     text-decoration: underline;
 
-    body[data-theme="dark"] & {
+    &:hover {
         color: var(--color-primary);
     }
 
-    &:hover {
+    body[data-theme="dark"] & {
         color: var(--color-primary);
 
-        body[data-theme="dark"] & {
+        &:hover {
             color: var(--color-primary-light);
         }
     }

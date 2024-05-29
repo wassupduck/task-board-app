@@ -69,7 +69,7 @@
     width: 192px;
     border-radius: 8px;
     background-color: var(--color-background-primary);
-    box-shadow: var(--color-lines-dark-100) 0px 0px 6px 0px;
+    box-shadow: var(--color-lines-dark-100) 0 0 6px 0;
 
     body[data-theme="dark"] & {
         background-color: var(--color-background-secondary);

@@ -21,6 +21,10 @@
     &.secondary {
         color: var(--color-primary);
 
+        body[data-theme="dark"] & {
+            background-color: var(--color-white);
+        }
+
         body[data-theme="light"] & {
             background-color: var(--color-primary-100);
 
@@ -29,9 +33,7 @@
             }
         }
 
-        body[data-theme="dark"] & {
-            background-color: var(--color-white);
-        }
+
     }
 
     &.destructive {
