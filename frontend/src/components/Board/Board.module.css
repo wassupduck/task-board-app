@@ -1,10 +1,7 @@
 .board {
-    --column-gap: 24px;
-    --task-list-scrollbar-padding: 4px;
-
     height: 100%;
     display: flex;
-    gap: calc(var(--column-gap) - var(--task-list-scrollbar-padding));
+    gap: 20px;
     padding: 24px;
     padding-bottom: 32px;
     overflow-x: auto;
@@ -13,12 +10,11 @@
 .column {
     display: flex;
     flex-direction: column;
-    width: calc(280px + var(--task-list-scrollbar-padding));
-    min-width: calc(280px + var(--task-list-scrollbar-padding));
 }
 
 .column-header {
     margin-bottom: 20px;
+    padding-left: 8px;
     text-transform: uppercase;
     letter-spacing: 0.2rem;
     font-size: var(--font-size-body-small);
@@ -27,10 +23,12 @@
 }
 
 .column-task-list {
+    min-width: calc(280px + 16px);
+    padding: 8px;
+    padding-top: 0px;
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding-right: var(--task-list-scrollbar-padding);
     overflow-y: auto;
 }
