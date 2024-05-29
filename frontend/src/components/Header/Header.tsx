@@ -29,9 +29,9 @@ export default function Header(props: HeaderProps) {
           props.sidebarHidden && styles.sidebarHidden
         )}
       >
-        <Link to="/" className={styles.siteLogo}>
+        <div className={styles.siteLogo}>
           <Logo />
-        </Link>
+        </div>
       </div>
       <div className={styles.headerMain}>
         {params.boardId && <BoardHeader boardId={params.boardId} />}
