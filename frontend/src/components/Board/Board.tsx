@@ -125,7 +125,7 @@ export function Board(props: BoardProps) {
     }
 
     const overColumnId = over.id.toString().startsWith("column")
-      ? over.id.toString().split("-")[1]
+      ? over.id.toString().split(/:(.*)/s)[1]
       : columns
           .flatMap(({ tasks }) => tasks.nodes)
           .find(({ id }) => id === over.id)?.column.id;
@@ -222,7 +222,7 @@ export function Board(props: BoardProps) {
 
       if (overId != null) {
         if (overId.toString().startsWith("column")) {
-          const columnId = overId.toString().split("-")[1];
+          const columnId = overId.toString().split(/:(.*)/s)[1];
           const columnTasks = columns
             .find(({ id }) => id === columnId)!
             .tasks.nodes.map(({ id }) => id);
@@ -291,7 +291,7 @@ function Column(props: ColumnProps) {
   const column = getFragmentData(Column_BoardColumnFragment, props.column);
 
   const { setNodeRef } = useDroppable({
-    id: `column-${column.id}`,
+    id: `column:${column.id}`,
   });
 
   const tasks = column.tasks.nodes;

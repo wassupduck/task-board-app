@@ -109,7 +109,7 @@ set
     title = coalesce(subtask_update.title, subtask.title),
     completed = coalesce(subtask_update.completed::boolean, subtask.completed)
 from (values :subtasks!) as subtask_update(id, title, completed)
-where subtask.id = subtask_update.id::bigint
+where subtask.id = subtask_update.id::uuid
 and subtask.task_id = :taskId!
 returning subtask.*;
 

@@ -92,8 +92,8 @@ new_column_data as (
         id_alias,
         name,
         position::smallint,
-        board_id::bigint,
-        nextval('board_column_id_seq'::regclass) as id
+        board_id::uuid,
+        gen_random_uuid() as id
     from (values :columns!) as c (id_alias, name, position, board_id)
 ),
 new_column as (
@@ -118,7 +118,7 @@ set
     name = coalesce(column_update.name, board_column.name),
     position = coalesce(column_update.position::smallint, board_column.position)
 from (values :columns!) as column_update(id, name, position)
-where board_column.id = column_update.id::bigint
+where board_column.id = column_update.id::uuid
 and board_column.board_id = :boardId!
 returning board_column.*;
 

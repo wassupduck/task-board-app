@@ -1,12 +1,10 @@
 /** Types generated for queries found in "src/task/task.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type NumberOrString = number | string;
-
 /** 'SelectTaskByIdAsUser' parameters type */
 export interface ISelectTaskByIdAsUserParams {
-  id: NumberOrString;
-  userId: NumberOrString;
+  id: string;
+  userId: string;
 }
 
 /** 'SelectTaskByIdAsUser' return type */
@@ -44,7 +42,7 @@ export const selectTaskByIdAsUser = new PreparedQuery<ISelectTaskByIdAsUserParam
 
 /** 'SelectTasksByColumnIds' parameters type */
 export interface ISelectTasksByColumnIdsParams {
-  columnIds: readonly (NumberOrString)[];
+  columnIds: readonly (string)[];
 }
 
 /** 'SelectTasksByColumnIds' return type */
@@ -80,7 +78,7 @@ export const selectTasksByColumnIds = new PreparedQuery<ISelectTasksByColumnIdsP
 
 /** 'SelectTasksSurroundingBoardColumnPosition' parameters type */
 export interface ISelectTasksSurroundingBoardColumnPositionParams {
-  boardColumnId: NumberOrString;
+  boardColumnId: string;
   position: string;
 }
 
@@ -130,7 +128,7 @@ export const selectTasksSurroundingBoardColumnPosition = new PreparedQuery<ISele
 
 /** 'SelectLastTaskInBoardColumn' parameters type */
 export interface ISelectLastTaskInBoardColumnParams {
-  boardColumnId: NumberOrString;
+  boardColumnId: string;
 }
 
 /** 'SelectLastTaskInBoardColumn' return type */
@@ -170,7 +168,7 @@ export interface IInsertTaskParams {
   task: {
     title: string,
     description: string,
-    boardColumnId: NumberOrString,
+    boardColumnId: string,
     position: string
   };
 }
@@ -207,9 +205,9 @@ export const insertTask = new PreparedQuery<IInsertTaskParams,IInsertTaskResult>
 
 /** 'UpdateTask' parameters type */
 export interface IUpdateTaskParams {
-  boardColumnId?: NumberOrString | null | void;
+  boardColumnId?: string | null | void;
   description?: string | null | void;
-  id: NumberOrString;
+  id: string;
   position?: string | null | void;
   title?: string | null | void;
 }
@@ -250,8 +248,8 @@ export const updateTask = new PreparedQuery<IUpdateTaskParams,IUpdateTaskResult>
 
 /** 'DeleteTaskAsUser' parameters type */
 export interface IDeleteTaskAsUserParams {
-  id: NumberOrString;
-  userId: NumberOrString;
+  id: string;
+  userId: string;
 }
 
 /** 'DeleteTaskAsUser' return type */
@@ -293,7 +291,7 @@ export const deleteTaskAsUser = new PreparedQuery<IDeleteTaskAsUserParams,IDelet
 
 /** 'SelectSubtasksConnectionsByTaskIds' parameters type */
 export interface ISelectSubtasksConnectionsByTaskIdsParams {
-  taskIds: readonly (NumberOrString)[];
+  taskIds: readonly (string)[];
 }
 
 /** 'SelectSubtasksConnectionsByTaskIds' return type */
@@ -329,7 +327,7 @@ export const selectSubtasksConnectionsByTaskIds = new PreparedQuery<ISelectSubta
 
 /** 'SelectSubtasksByTaskIds' parameters type */
 export interface ISelectSubtasksByTaskIdsParams {
-  taskIds: readonly (NumberOrString)[];
+  taskIds: readonly (string)[];
 }
 
 /** 'SelectSubtasksByTaskIds' return type */
@@ -366,7 +364,7 @@ export const selectSubtasksByTaskIds = new PreparedQuery<ISelectSubtasksByTaskId
 export interface IInsertSubtasksParams {
   subtasks: readonly ({
     title: string,
-    taskId: NumberOrString
+    taskId: string
   })[];
 }
 
@@ -406,7 +404,7 @@ export interface IUpdateTaskSubtasksParams {
     title: string | null | void,
     completed: string | null | void
   })[];
-  taskId: NumberOrString;
+  taskId: string;
 }
 
 /** 'UpdateTaskSubtasks' return type */
@@ -425,7 +423,7 @@ export interface IUpdateTaskSubtasksQuery {
   result: IUpdateTaskSubtasksResult;
 }
 
-const updateTaskSubtasksIR: any = {"usedParamSet":{"subtasks":true,"taskId":true},"params":[{"name":"subtasks","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"id","required":true},{"name":"title","required":false},{"name":"completed","required":false}]},"locs":[{"a":170,"b":179}]},{"name":"taskId","required":true,"transform":{"type":"scalar"},"locs":[{"a":289,"b":296}]}],"statement":"update subtask\nset\n    title = coalesce(subtask_update.title, subtask.title),\n    completed = coalesce(subtask_update.completed::boolean, subtask.completed)\nfrom (values :subtasks!) as subtask_update(id, title, completed)\nwhere subtask.id = subtask_update.id::bigint\nand subtask.task_id = :taskId!\nreturning subtask.*"};
+const updateTaskSubtasksIR: any = {"usedParamSet":{"subtasks":true,"taskId":true},"params":[{"name":"subtasks","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"id","required":true},{"name":"title","required":false},{"name":"completed","required":false}]},"locs":[{"a":170,"b":179}]},{"name":"taskId","required":true,"transform":{"type":"scalar"},"locs":[{"a":287,"b":294}]}],"statement":"update subtask\nset\n    title = coalesce(subtask_update.title, subtask.title),\n    completed = coalesce(subtask_update.completed::boolean, subtask.completed)\nfrom (values :subtasks!) as subtask_update(id, title, completed)\nwhere subtask.id = subtask_update.id::uuid\nand subtask.task_id = :taskId!\nreturning subtask.*"};
 
 /**
  * Query generated from SQL:
@@ -435,7 +433,7 @@ const updateTaskSubtasksIR: any = {"usedParamSet":{"subtasks":true,"taskId":true
  *     title = coalesce(subtask_update.title, subtask.title),
  *     completed = coalesce(subtask_update.completed::boolean, subtask.completed)
  * from (values :subtasks!) as subtask_update(id, title, completed)
- * where subtask.id = subtask_update.id::bigint
+ * where subtask.id = subtask_update.id::uuid
  * and subtask.task_id = :taskId!
  * returning subtask.*
  * ```
@@ -446,8 +444,8 @@ export const updateTaskSubtasks = new PreparedQuery<IUpdateTaskSubtasksParams,IU
 /** 'UpdateSubtaskCompletedByIdAsUser' parameters type */
 export interface IUpdateSubtaskCompletedByIdAsUserParams {
   completed: boolean;
-  id: NumberOrString;
-  userId: NumberOrString;
+  id: string;
+  userId: string;
 }
 
 /** 'UpdateSubtaskCompletedByIdAsUser' return type */
@@ -490,8 +488,8 @@ export const updateSubtaskCompletedByIdAsUser = new PreparedQuery<IUpdateSubtask
 
 /** 'DeleteTaskSubtasks' parameters type */
 export interface IDeleteTaskSubtasksParams {
-  subtaskIds: readonly (NumberOrString)[];
-  taskId: NumberOrString;
+  subtaskIds: readonly (string)[];
+  taskId: string;
 }
 
 /** 'DeleteTaskSubtasks' return type */

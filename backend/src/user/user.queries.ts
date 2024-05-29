@@ -1,11 +1,9 @@
 /** Types generated for queries found in "src/user/user.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type NumberOrString = number | string;
-
 /** 'SelectUserById' parameters type */
 export interface ISelectUserByIdParams {
-  id: NumberOrString;
+  id: string;
 }
 
 /** 'SelectUserById' return type */

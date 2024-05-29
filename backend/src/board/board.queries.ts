@@ -1,11 +1,9 @@
 /** Types generated for queries found in "src/board/board.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type NumberOrString = number | string;
-
 /** 'SelectBoardsByUserId' parameters type */
 export interface ISelectBoardsByUserIdParams {
-  userId: NumberOrString;
+  userId: string;
 }
 
 /** 'SelectBoardsByUserId' return type */
@@ -39,8 +37,8 @@ export const selectBoardsByUserId = new PreparedQuery<ISelectBoardsByUserIdParam
 
 /** 'SelectForUpdateBoardByIdAsUser' parameters type */
 export interface ISelectForUpdateBoardByIdAsUserParams {
-  id: NumberOrString;
-  userId: NumberOrString;
+  id: string;
+  userId: string;
 }
 
 /** 'SelectForUpdateBoardByIdAsUser' return type */
@@ -75,8 +73,8 @@ export const selectForUpdateBoardByIdAsUser = new PreparedQuery<ISelectForUpdate
 
 /** 'SelectBoardByIdAsUser' parameters type */
 export interface ISelectBoardByIdAsUserParams {
-  id: NumberOrString;
-  userId: NumberOrString;
+  id: string;
+  userId: string;
 }
 
 /** 'SelectBoardByIdAsUser' return type */
@@ -110,7 +108,7 @@ export const selectBoardByIdAsUser = new PreparedQuery<ISelectBoardByIdAsUserPar
 
 /** 'SelectBoardColumnsConnection' parameters type */
 export interface ISelectBoardColumnsConnectionParams {
-  boardId: NumberOrString;
+  boardId: string;
 }
 
 /** 'SelectBoardColumnsConnection' return type */
@@ -144,8 +142,8 @@ export const selectBoardColumnsConnection = new PreparedQuery<ISelectBoardColumn
 
 /** 'SelectForUpdateBoardColumnByIdAsUser' parameters type */
 export interface ISelectForUpdateBoardColumnByIdAsUserParams {
-  id: NumberOrString;
-  userId: NumberOrString;
+  id: string;
+  userId: string;
 }
 
 /** 'SelectForUpdateBoardColumnByIdAsUser' return type */
@@ -182,7 +180,7 @@ export const selectForUpdateBoardColumnByIdAsUser = new PreparedQuery<ISelectFor
 
 /** 'SelectBoardColumnsByBoardId' parameters type */
 export interface ISelectBoardColumnsByBoardIdParams {
-  boardId: NumberOrString;
+  boardId: string;
 }
 
 /** 'SelectBoardColumnsByBoardId' return type */
@@ -217,7 +215,7 @@ export const selectBoardColumnsByBoardId = new PreparedQuery<ISelectBoardColumns
 
 /** 'SelectBoardColumnsByIds' parameters type */
 export interface ISelectBoardColumnsByIdsParams {
-  ids: readonly (NumberOrString)[];
+  ids: readonly (string)[];
 }
 
 /** 'SelectBoardColumnsByIds' return type */
@@ -251,7 +249,7 @@ export const selectBoardColumnsByIds = new PreparedQuery<ISelectBoardColumnsById
 
 /** 'SelectBoardColumnTasksConnections' parameters type */
 export interface ISelectBoardColumnTasksConnectionsParams {
-  boardColumnIds: readonly (NumberOrString)[];
+  boardColumnIds: readonly (string)[];
 }
 
 /** 'SelectBoardColumnTasksConnections' return type */
@@ -287,7 +285,7 @@ export const selectBoardColumnTasksConnections = new PreparedQuery<ISelectBoardC
 export interface IInsertBoardParams {
   board: {
     name: string | null | void,
-    appUserId: NumberOrString | null | void
+    appUserId: string | null | void
   };
 }
 
@@ -321,7 +319,7 @@ export const insertBoard = new PreparedQuery<IInsertBoardParams,IInsertBoardResu
 
 /** 'UpdateBoard' parameters type */
 export interface IUpdateBoardParams {
-  id: NumberOrString;
+  id: string;
   name?: string | null | void;
 }
 
@@ -356,8 +354,8 @@ export const updateBoard = new PreparedQuery<IUpdateBoardParams,IUpdateBoardResu
 
 /** 'DeleteBoardColumns' parameters type */
 export interface IDeleteBoardColumnsParams {
-  boardId: NumberOrString;
-  columnIds: readonly (NumberOrString)[];
+  boardId: string;
+  columnIds: readonly (string)[];
 }
 
 /** 'DeleteBoardColumns' return type */
@@ -409,7 +407,7 @@ export interface IInsertBoardColumnsQuery {
   result: IInsertBoardColumnsResult;
 }
 
-const insertBoardColumnsIR: any = {"usedParamSet":{"columns":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"idAlias","required":false},{"name":"name","required":true},{"name":"position","required":true},{"name":"boardId","required":true}]},"locs":[{"a":195,"b":203}]}],"statement":"with\nnew_column_data as (\n    select\n        id_alias,\n        name,\n        position::smallint,\n        board_id::bigint,\n        nextval('board_column_id_seq'::regclass) as id\n    from (values :columns!) as c (id_alias, name, position, board_id)\n),\nnew_column as (\n    insert into board_column(id, name, position, board_id)\n    select id, name, position, board_id\n    from new_column_data\n    returning *\n)\nselect\n    new_column.*,\n    new_column_data.id_alias\nfrom new_column\ninner join new_column_data on new_column_data.id = new_column.id\norder by new_column.position asc"};
+const insertBoardColumnsIR: any = {"usedParamSet":{"columns":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"idAlias","required":false},{"name":"name","required":true},{"name":"position","required":true},{"name":"boardId","required":true}]},"locs":[{"a":170,"b":178}]}],"statement":"with\nnew_column_data as (\n    select\n        id_alias,\n        name,\n        position::smallint,\n        board_id::uuid,\n        gen_random_uuid() as id\n    from (values :columns!) as c (id_alias, name, position, board_id)\n),\nnew_column as (\n    insert into board_column(id, name, position, board_id)\n    select id, name, position, board_id\n    from new_column_data\n    returning *\n)\nselect\n    new_column.*,\n    new_column_data.id_alias\nfrom new_column\ninner join new_column_data on new_column_data.id = new_column.id\norder by new_column.position asc"};
 
 /**
  * Query generated from SQL:
@@ -420,8 +418,8 @@ const insertBoardColumnsIR: any = {"usedParamSet":{"columns":true},"params":[{"n
  *         id_alias,
  *         name,
  *         position::smallint,
- *         board_id::bigint,
- *         nextval('board_column_id_seq'::regclass) as id
+ *         board_id::uuid,
+ *         gen_random_uuid() as id
  *     from (values :columns!) as c (id_alias, name, position, board_id)
  * ),
  * new_column as (
@@ -443,7 +441,7 @@ export const insertBoardColumns = new PreparedQuery<IInsertBoardColumnsParams,II
 
 /** 'UpdateBoardColumns' parameters type */
 export interface IUpdateBoardColumnsParams {
-  boardId: NumberOrString;
+  boardId: string;
   columns: readonly ({
     id: string,
     name: string | null | void,
@@ -467,7 +465,7 @@ export interface IUpdateBoardColumnsQuery {
   result: IUpdateBoardColumnsResult;
 }
 
-const updateBoardColumnsIR: any = {"usedParamSet":{"columns":true,"boardId":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"id","required":true},{"name":"name","required":false},{"name":"position","required":false}]},"locs":[{"a":178,"b":186}]},{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":303,"b":311}]}],"statement":"update board_column\nset\n    name = coalesce(column_update.name, board_column.name),\n    position = coalesce(column_update.position::smallint, board_column.position)\nfrom (values :columns!) as column_update(id, name, position)\nwhere board_column.id = column_update.id::bigint\nand board_column.board_id = :boardId!\nreturning board_column.*"};
+const updateBoardColumnsIR: any = {"usedParamSet":{"columns":true,"boardId":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"id","required":true},{"name":"name","required":false},{"name":"position","required":false}]},"locs":[{"a":178,"b":186}]},{"name":"boardId","required":true,"transform":{"type":"scalar"},"locs":[{"a":301,"b":309}]}],"statement":"update board_column\nset\n    name = coalesce(column_update.name, board_column.name),\n    position = coalesce(column_update.position::smallint, board_column.position)\nfrom (values :columns!) as column_update(id, name, position)\nwhere board_column.id = column_update.id::uuid\nand board_column.board_id = :boardId!\nreturning board_column.*"};
 
 /**
  * Query generated from SQL:
@@ -477,7 +475,7 @@ const updateBoardColumnsIR: any = {"usedParamSet":{"columns":true,"boardId":true
  *     name = coalesce(column_update.name, board_column.name),
  *     position = coalesce(column_update.position::smallint, board_column.position)
  * from (values :columns!) as column_update(id, name, position)
- * where board_column.id = column_update.id::bigint
+ * where board_column.id = column_update.id::uuid
  * and board_column.board_id = :boardId!
  * returning board_column.*
  * ```
@@ -487,8 +485,8 @@ export const updateBoardColumns = new PreparedQuery<IUpdateBoardColumnsParams,IU
 
 /** 'DeleteBoardAsUser' parameters type */
 export interface IDeleteBoardAsUserParams {
-  id: NumberOrString;
-  userId: NumberOrString;
+  id: string;
+  userId: string;
 }
 
 /** 'DeleteBoardAsUser' return type */
