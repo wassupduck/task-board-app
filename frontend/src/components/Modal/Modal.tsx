@@ -2,26 +2,25 @@ import clsx from "clsx";
 import styles from "./Modal.module.css";
 import * as Dialog from "@radix-ui/react-dialog";
 
-interface ModalProps {
-  children: React.ReactNode;
-  onClose?: () => void;
+interface ModalProps extends Dialog.DialogProps {}
+
+const Modal = (props: ModalProps) => <Dialog.Root {...props}></Dialog.Root>;
+
+interface ModalContentProps {
   variant?: "destructive";
+  children: React.ReactNode;
 }
 
-export default function Modal(props: ModalProps) {
-  return (
-    <Dialog.Root open={true} onOpenChange={props.onClose}>
-      <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content
-          className={clsx(styles.modal, props.variant && styles[props.variant])}
-        >
-          <article className={styles.content}>{props.children}</article>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
-  );
-}
+Modal.Content = (props: ModalContentProps) => (
+  <Dialog.Portal>
+    <Dialog.Overlay className={styles.overlay} />
+    <Dialog.Content
+      className={clsx(styles.modal, props.variant && styles[props.variant])}
+    >
+      <article className={styles.content}>{props.children}</article>
+    </Dialog.Content>
+  </Dialog.Portal>
+);
 
 interface ModalTitleProps extends Dialog.DialogTitleProps {}
 
@@ -39,3 +38,8 @@ Modal.Title = (props: ModalTitleProps) => {
     </Dialog.Title>
   );
 };
+
+Modal.Trigger = Dialog.Trigger;
+Modal.Close = Dialog.Close;
+
+export default Modal;

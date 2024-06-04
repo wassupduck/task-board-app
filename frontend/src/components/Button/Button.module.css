@@ -50,6 +50,10 @@
         width: 100%;
     }
 
+    &.small {
+        padding: 10px 18px;
+    }
+
     &.large {
         padding-block: 12px;
     }

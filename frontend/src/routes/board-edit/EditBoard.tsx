@@ -1,7 +1,5 @@
-import invariant from "tiny-invariant";
 import { useBoardForm } from "../../components/BoardForm/hook";
 import Modal from "../../components/Modal";
-import { useBoardRouteLoaderData } from "../board/loader";
 import { getFragmentData, graphql } from "../../gql";
 import BoardForm from "../../components/BoardForm/BoardForm";
 import { useFetcher, useNavigate } from "react-router-dom";
@@ -13,6 +11,7 @@ import {
   UpdateBoardColumnsPatchAdditionInput,
   UpdateBoardColumnsPatchInput,
 } from "../../gql/graphql";
+import { useBoard } from "../board/context";
 
 type FetcherData = Exclude<ActionData, Response>;
 
@@ -32,9 +31,7 @@ const EditBoardRoute_BoardFragment = graphql(`
 export function EditBoard() {
   const navigate = useNavigate();
 
-  const data = useBoardRouteLoaderData();
-  invariant(data.board, "Board not found");
-  const board = getFragmentData(EditBoardRoute_BoardFragment, data.board);
+  const board = getFragmentData(EditBoardRoute_BoardFragment, useBoard());
 
   const boardForm = useBoardForm({
     defaultValues: {
@@ -112,13 +109,16 @@ export function EditBoard() {
   };
 
   return (
-    <Modal onClose={() => navigate("..")}>
-      <Modal.Title>Edit Board</Modal.Title>
-      <BoardForm
-        form={boardForm}
-        onSubmit={handleSubmit}
-        submitButtonText="Save Changes"
-      />
+    <Modal defaultOpen={true} onOpenChange={() => navigate("..")}>
+      <Modal.Trigger />
+      <Modal.Content>
+        <Modal.Title>Edit Board</Modal.Title>
+        <BoardForm
+          form={boardForm}
+          onSubmit={handleSubmit}
+          submitButtonText="Save Changes"
+        />
+      </Modal.Content>
     </Modal>
   );
 }

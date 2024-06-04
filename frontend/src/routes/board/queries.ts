@@ -34,7 +34,7 @@ const boardRouteQueryDocument = graphql(`
 export const boardRouteQueryKey = (boardId: string) =>
   ["boards", boardId] as const;
 
-const boardRouteQueryFn = (id: string) => async () => {
+export const fetchBoardRouteData = async (id: string) => {
   const resp = await graphQLClient.request(boardRouteQueryDocument, {
     id,
   });
@@ -46,7 +46,7 @@ const boardRouteQueryFn = (id: string) => async () => {
 
 export const boardRouteQuery = (id: string) => ({
   queryKey: boardRouteQueryKey(id),
-  queryFn: boardRouteQueryFn(id),
+  queryFn: () => fetchBoardRouteData(id),
 });
 
 const deleteBoardMutationDocument = graphql(`

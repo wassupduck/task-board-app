@@ -1,6 +1,6 @@
 import Modal from "../Modal";
 import { useFetcher } from "react-router-dom";
-import { useState } from "react";
+import React, { useState } from "react";
 import { BoardsRouteActionData } from "../../routes/boards";
 import { useBoardForm } from "../BoardForm/hook";
 import { BoardFormData } from "../BoardForm/types";
@@ -9,7 +9,8 @@ import BoardForm from "../BoardForm/BoardForm";
 type FetcherData = Exclude<BoardsRouteActionData, Response>;
 
 interface BoardCreateModalProps {
-  onClose: () => void;
+  onOpenChange?: (open: boolean) => void;
+  children: React.ReactNode;
 }
 
 export default function BoardCreateModal(props: BoardCreateModalProps) {
@@ -44,13 +45,16 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
   };
 
   return (
-    <Modal onClose={props.onClose}>
-      <Modal.Title>Add New Board</Modal.Title>
-      <BoardForm
-        form={boardForm}
-        onSubmit={handleSubmit}
-        submitButtonText="Create New Board"
-      />
+    <Modal onOpenChange={props.onOpenChange}>
+      <Modal.Trigger asChild>{props.children}</Modal.Trigger>
+      <Modal.Content>
+        <Modal.Title>Add New Board</Modal.Title>
+        <BoardForm
+          form={boardForm}
+          onSubmit={handleSubmit}
+          submitButtonText="Create New Board"
+        />
+      </Modal.Content>
     </Modal>
   );
 }

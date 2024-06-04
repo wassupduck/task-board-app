@@ -23,6 +23,9 @@
 }
 
 .subtask-list-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     padding: 12px;
     background-color: var(--color-background-secondary);
     border-radius: 4px;
@@ -36,14 +39,11 @@
 }
 
 .subtask-list-item-label {
-    display: flex;
-    align-items: center;
-    gap: 16px;
     cursor: inherit;
     color: var(--color-text-secondary);
-}
 
-.subtask-list-item-label p.completed {
-    text-decoration: line-through;
-    color: var(--color-text-primary);
+    &.completed {
+        text-decoration: line-through;
+        color: var(--color-text-primary);
+    }
 }

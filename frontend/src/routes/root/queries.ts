@@ -6,6 +6,7 @@ const rootRouteQueryDocument = graphql(`
     boards {
       id
     }
+    ...Header_QueryFragment
     ...Sidebar_QueryFragment
   }
 `);

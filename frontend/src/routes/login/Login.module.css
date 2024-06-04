@@ -9,7 +9,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 400px;
+    width: 90vw;
+    max-width: 400px;
     padding: 32px;
     border-radius: 6px;
     background-color: var(--color-background-primary);

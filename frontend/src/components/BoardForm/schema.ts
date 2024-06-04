@@ -44,7 +44,7 @@ export const boardFormSchema = z.object({
       const invalidEmptyColumnIdxs = columns
         .slice(0, lastNonEmptyColumnIdx + 1)
         .map(({ name }, idx) => (name.length === 0 ? idx : null))
-        .filter((i) => i !== null);
+        .filter((i) => i !== null) as number[];
 
       for (const idx of invalidEmptyColumnIdxs) {
         ctx.addIssue({

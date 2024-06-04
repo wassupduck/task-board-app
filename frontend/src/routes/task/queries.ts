@@ -5,7 +5,20 @@ import { graphQLClient } from "../../graphql-client";
 const taskRouteQueryDocument = graphql(`
   query TaskRoute_Query($id: ID!) {
     task(id: $id) {
-      ...TaskViewModal_TaskFragment
+      id
+      title
+      description
+      column {
+        id
+        name
+      }
+      subtasks {
+        totalCount
+        completedCount
+        nodes {
+          ...SubtaskList_SubtaskFragment
+        }
+      }
     }
   }
 `);

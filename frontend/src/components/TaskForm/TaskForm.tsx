@@ -130,10 +130,10 @@ function SubtasksList(props: SubtasksListProps) {
             return (
               <li key={field.id} className={styles.subtaskListItem}>
                 <label style={{ flex: 1 }}>
-                  <VisuallyHidden>Subtask 1</VisuallyHidden>
+                  <VisuallyHidden>Subtask {idx + 1}</VisuallyHidden>
                   {errors.subtasks?.[idx]?.title && (
                     <p className="invalid-feedback" role="alert">
-                      {errors.subtasks[idx].title.message}
+                      {errors.subtasks[idx]?.title?.message}
                     </p>
                   )}
                   <TextInput

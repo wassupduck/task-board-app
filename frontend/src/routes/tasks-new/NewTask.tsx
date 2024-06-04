@@ -1,16 +1,8 @@
-import {
-  useNavigate,
-  useNavigation,
-  useParams,
-  useSubmit,
-} from "react-router-dom";
+import { useNavigate, useNavigation, useSubmit } from "react-router-dom";
 import Modal from "../../components/Modal";
 import { useTaskForm } from "../../components/TaskForm/hook";
 import TaskForm from "../../components/TaskForm/TaskForm";
-import invariant from "tiny-invariant";
-import { useBoardRouteLoaderData } from "../board";
-import { useQuery } from "@tanstack/react-query";
-import { boardRouteQuery } from "../board/queries";
+import { useBoard } from "../board";
 import { getFragmentData, graphql } from "../../gql";
 import { TaskFormData } from "../../components/TaskForm/types";
 
@@ -30,18 +22,7 @@ export function NewTask() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state !== "idle";
 
-  const params = useParams();
-  invariant(params.boardId, "Missing boardId param");
-
-  const initialBoardRouteData = useBoardRouteLoaderData();
-  const { data: boardRouteData } = useQuery({
-    ...boardRouteQuery(params.boardId),
-    initialData: initialBoardRouteData,
-  });
-  const board = getFragmentData(
-    NewTaskRoute_BoardFragment,
-    boardRouteData.board
-  );
+  const board = getFragmentData(NewTaskRoute_BoardFragment, useBoard());
 
   const taskForm = useTaskForm({
     // Recommended to use default values for entire form
@@ -62,15 +43,21 @@ export function NewTask() {
   };
 
   return (
-    <Modal onClose={() => navigate("..", { replace: true })}>
-      <Modal.Title>Add New Task</Modal.Title>
-      <TaskForm
-        form={taskForm}
-        board={board}
-        onSubmit={handleSubmit}
-        submitButtonText={isSubmitting ? "Creating Task..." : "Create Task"}
-        disableSubmit={isSubmitting}
-      />
+    <Modal
+      defaultOpen={true}
+      onOpenChange={() => navigate("..", { replace: true })}
+    >
+      <Modal.Trigger />
+      <Modal.Content>
+        <Modal.Title>Add New Task</Modal.Title>
+        <TaskForm
+          form={taskForm}
+          board={board}
+          onSubmit={handleSubmit}
+          submitButtonText={isSubmitting ? "Creating Task..." : "Create Task"}
+          disableSubmit={isSubmitting}
+        />
+      </Modal.Content>
     </Modal>
   );
 }

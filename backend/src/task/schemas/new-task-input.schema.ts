@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { newSubtaskInputSchema } from './new-subtask-input.schema.js';
 
 export const newTaskInputSchema = z.object({
-  title: z.string().trim().min(1).max(50),
+  title: z.string().trim().min(1).max(150),
   description: z
     .string()
     .nullish()

@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { boardRouteQuery } from "./queries";
 import { ActionPostRequestJson } from "./action";
 import { arrayMove } from "@dnd-kit/sortable";
+import { BoardRouteContext } from "./context";
 
 export function Board() {
   const fetcher = useFetcher();
@@ -97,7 +98,7 @@ export function Board() {
       ) : (
         <EmptyBoard />
       )}
-      <Outlet />
+      <Outlet context={{ board } satisfies BoardRouteContext} />
     </div>
   );
 }

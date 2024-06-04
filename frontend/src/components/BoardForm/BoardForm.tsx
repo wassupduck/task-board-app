@@ -80,7 +80,7 @@ function BoardColumnsList(props: BoardColumnsListProps) {
                 <VisuallyHidden>Column 1</VisuallyHidden>
                 {errors.columns?.[idx]?.name && (
                   <p className="invalid-feedback" role="alert">
-                    {errors.columns[idx].name.message}
+                    {errors.columns[idx]?.name?.message}
                   </p>
                 )}
                 <TextInput

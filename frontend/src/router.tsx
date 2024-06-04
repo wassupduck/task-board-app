@@ -20,7 +20,7 @@ export const createRouter = (queryClient: QueryClient) =>
       loader: protectedLoader(root.loader(queryClient)),
       errorElement: <root.ErrorBoundary />,
       children: [
-        { index: true, element: <root.Index /> },
+        { index: true, element: <root.IndexComponent /> },
         {
           id: "boards",
           path: "boards",

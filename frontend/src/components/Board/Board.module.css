@@ -1,3 +1,5 @@
+@value mobileAndSmaller from "../../breakpoints.module.css";
+
 .board {
     height: 100%;
     display: flex;
@@ -5,6 +7,10 @@
     padding: 24px;
     padding-bottom: 32px;
     overflow-x: auto;
+
+    @media mobileAndSmaller {
+        padding: 24px 16px 0;
+    }
 }
 
 .column {

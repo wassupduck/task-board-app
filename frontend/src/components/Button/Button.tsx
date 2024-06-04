@@ -6,7 +6,7 @@ export interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   children: React.ReactNode;
   block?: boolean;
   variant?: "primary" | "secondary" | "destructive";
-  size?: "large";
+  size?: "small" | "medium" | "large";
 }
 
 export default function Button(props: ButtonProps) {

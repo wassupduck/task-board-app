@@ -1,3 +1,5 @@
+@value mobileAndSmaller from "../../breakpoints.module.css";
+
 .wrapper {
     height: 100%;
 }
@@ -9,6 +11,10 @@
     justify-items: center;
     gap: 2rem;
     padding-inline: 72px;
+
+    @media mobileAndSmaller {
+        padding-inline: 52px;
+    }
 }
 
 .empty-board-message {

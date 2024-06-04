@@ -1,11 +1,13 @@
 /// <reference types="vite-plugin-svgr/client" />
-import clsx from "clsx";
 import BoardIcon from "../../assets/icon-board.svg?react";
 import styles from "./BoardNav.module.css";
+import clsx from "clsx";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import BoardCreateModal from "../BoardCreateModal";
+import { CSSProperties } from "react";
 
-const BoardNav_BoardFragment = graphql(`
+const BoardNav_QueryFragment = graphql(`
   fragment BoardNav_QueryFragment on Query {
     boards {
       id
@@ -15,12 +17,13 @@ const BoardNav_BoardFragment = graphql(`
 `);
 
 export interface BoardNavProps {
-  query: FragmentType<typeof BoardNav_BoardFragment>;
+  query: FragmentType<typeof BoardNav_QueryFragment>;
+  onModalOpenChange?: (open: boolean) => void;
+  activeLinkOffset?: string;
 }
 
 export default function BoardNav(props: BoardNavProps) {
-  const navigate = useNavigate();
-  const query = getFragmentData(BoardNav_BoardFragment, props.query);
+  const query = getFragmentData(BoardNav_QueryFragment, props.query);
   const boards = query.boards;
 
   return (
@@ -32,7 +35,12 @@ export default function BoardNav(props: BoardNavProps) {
             <NavLink
               to={`boards/${board.id}`}
               className={({ isActive }) =>
-                clsx(styles.boardItem, isActive && styles.selected)
+                clsx(styles.boardItem, isActive && styles.active)
+              }
+              style={
+                {
+                  "--board-item-active-offset": props.activeLinkOffset,
+                } as CSSProperties
               }
             >
               <BoardIcon />
@@ -41,15 +49,14 @@ export default function BoardNav(props: BoardNavProps) {
           </li>
         ))}
         <li>
-          <button
-            className={clsx(styles.createBoardButton)}
-            onClick={() => navigate("?new_board=true")}
-          >
-            <div className={styles.boardItem}>
-              <BoardIcon />
-              <span>Create New Board</span>
-            </div>
-          </button>
+          <BoardCreateModal onOpenChange={props.onModalOpenChange}>
+            <button className={clsx(styles.createBoardButton)}>
+              <div className={styles.boardItem}>
+                <BoardIcon />
+                <span>Create New Board</span>
+              </div>
+            </button>
+          </BoardCreateModal>
         </li>
       </ul>
     </nav>

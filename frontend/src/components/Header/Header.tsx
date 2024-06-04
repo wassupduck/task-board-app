@@ -1,31 +1,46 @@
 /// <reference types="vite-plugin-svgr/client" />
 import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react";
+import AddTaskMobileIcon from "../../assets/icon-add-task-mobile.svg?react";
 import Button from "../Button";
 import styles from "./Header.module.css";
-import { getFragmentData, graphql } from "../../gql";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import breakpoints from "../../breakpoints.module.css";
+import { FragmentType, getFragmentData, graphql } from "../../gql";
+import { Link, useNavigate } from "react-router-dom";
 import { useBoardRouteLoaderData } from "../../routes/board";
 import clsx from "clsx";
-import { useQuery } from "@tanstack/react-query";
-import { boardRouteQuery } from "../../routes/board/queries";
 import { Logo } from "../Logo/Logo";
 import * as Popover from "@radix-ui/react-popover";
 import VisuallyHidden from "../VisuallyHidden";
-import { useState } from "react";
 import { BoardDeleteModal } from "../BoardDeleteModal/BoardDeleteModal";
+import { useMediaQuery } from "@uidotdev/usehooks";
+import { MobileMenu } from "../MobileMenu/MobileMenu";
+import { useState } from "react";
+
+const Header_QueryFragment = graphql(`
+  fragment Header_QueryFragment on Query {
+    ...MobileMenu_QueryFragment
+    ...BoardHeader_QueryFragment
+  }
+`);
 
 interface HeaderProps {
   sidebarHidden: boolean;
+  query: FragmentType<typeof Header_QueryFragment>;
 }
 
 export default function Header(props: HeaderProps) {
-  const params = useParams();
+  const isMobile = useMediaQuery(breakpoints.mobileAndSmaller);
+
+  const query = getFragmentData(Header_QueryFragment, props.query);
+
+  const boardRouteData = useBoardRouteLoaderData();
+  const board = boardRouteData?.board;
 
   return (
     <header className={styles.wrapper}>
       <div
         className={clsx(
-          styles.headerLeft,
+          styles.sidebarHeader,
           props.sidebarHidden && styles.sidebarHidden
         )}
       >
@@ -33,12 +48,25 @@ export default function Header(props: HeaderProps) {
           <Logo />
         </div>
       </div>
-      <div className={styles.headerMain}>
-        {params.boardId && <BoardHeader boardId={params.boardId} />}
+      <div className={styles.mainHeader}>
+        <div className={styles.mobileSiteLogo}>
+          <Logo mobile={true} />
+        </div>
+        {board ? (
+          <BoardHeader board={board} query={query} />
+        ) : (
+          isMobile && <MobileMenu query={query}>Menu</MobileMenu>
+        )}
       </div>
     </header>
   );
 }
+
+const BoardHeader_QueryFragment = graphql(`
+  fragment BoardHeader_QueryFragment on Query {
+    ...MobileMenu_QueryFragment
+  }
+`);
 
 const BoardHeader_BoardFragment = graphql(`
   fragment BoardHeader_BoardFragment on Board {
@@ -51,59 +79,64 @@ const BoardHeader_BoardFragment = graphql(`
 `);
 
 interface BoardHeaderProps {
-  boardId: string;
+  board: FragmentType<typeof BoardHeader_BoardFragment>;
+  query: FragmentType<typeof BoardHeader_QueryFragment>;
 }
 
 function BoardHeader(props: BoardHeaderProps) {
   const navigate = useNavigate();
-  const [showDeleteBoardModal, setShowDeleteBoardModal] = useState(false);
+  const isMobile = useMediaQuery(breakpoints.mobileAndSmaller);
 
-  const initialData = useBoardRouteLoaderData();
-  const { data, isError } = useQuery({
-    ...boardRouteQuery(props.boardId),
-    initialData,
-    throwOnError: false,
-  });
-  if (isError) return null;
+  const board = getFragmentData(BoardHeader_BoardFragment, props.board);
+  const query = getFragmentData(BoardHeader_QueryFragment, props.query);
 
-  const board = getFragmentData(BoardHeader_BoardFragment, data.board);
-
+  const heading = <h2 className={styles.boardHeading}>{board.name}</h2>;
   return (
-    <>
-      <h2 className={styles.boardHeading}>{board.name}</h2>
+    <div className={styles.boardHeaderWrapper}>
+      {isMobile ? <MobileMenu query={query}>{heading}</MobileMenu> : heading}
       <div className={styles.buttonGroup}>
         <Button
           disabled={board.columns.totalCount === 0}
-          size="large"
+          size={isMobile ? "small" : "large"}
           onClick={() =>
             navigate(`boards/${board.id}/tasks/new`, { replace: true })
           }
+          style={{ whiteSpace: "nowrap" }}
         >
-          Add New Task
+          {isMobile ? (
+            <AddTaskMobileIcon style={{ minWidth: "12px" }} />
+          ) : (
+            "Add New Task"
+          )}
         </Button>
-        <BoardActionsPopover
-          boardId={props.boardId}
-          onDeleteBoardClick={() => setShowDeleteBoardModal(true)}
-        />
+        <BoardActionsPopover board={board} />
       </div>
-      {showDeleteBoardModal ? (
-        <BoardDeleteModal
-          board={board}
-          onCloseOrCancel={() => setShowDeleteBoardModal(false)}
-        />
-      ) : null}
-    </>
+    </div>
   );
 }
 
-interface BoardAcionsPopoverProps {
-  boardId: string;
-  onDeleteBoardClick: () => void;
+interface BoardActionsPopoverProps {
+  board: {
+    id: string;
+    name: string;
+  };
 }
 
-function BoardActionsPopover(props: BoardAcionsPopoverProps) {
+function BoardActionsPopover(props: BoardActionsPopoverProps) {
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [hasOpenModal, setHasOpenModal] = useState(false);
+  const isTabletOrSmaller = useMediaQuery(breakpoints.tabletAndSmaller);
+  const isMobileOrSmaller = useMediaQuery(breakpoints.mobileAndSmaller);
+
+  function handleModalActionOpenChange(open: boolean) {
+    setHasOpenModal(open);
+    if (open === false) {
+      setPopoverOpen(false);
+    }
+  }
+
   return (
-    <Popover.Root>
+    <Popover.Root open={popoverOpen} onOpenChange={setPopoverOpen}>
       <Popover.Trigger asChild>
         <button className={styles.boardActionsButton}>
           <VisuallyHidden>Board Actions</VisuallyHidden>
@@ -113,21 +146,34 @@ function BoardActionsPopover(props: BoardAcionsPopoverProps) {
       <Popover.Portal>
         <Popover.Content
           align="end"
-          sideOffset={16}
-          className={styles.boardActionsPopoverContent}
+          sideOffset={isMobileOrSmaller ? 24 : isTabletOrSmaller ? 28 : 32}
+          className={clsx(
+            styles.boardActionsPopoverContent,
+            hasOpenModal && styles.hidden
+          )}
         >
-          <Link
-            to={`boards/${props.boardId}/edit`}
-            className={styles.boardActionButton}
-          >
-            Edit Board
-          </Link>
-          <button
-            className={clsx(styles.boardActionButton, styles.danger)}
-            onClick={props.onDeleteBoardClick}
-          >
-            Delete Board
-          </button>
+          <ul className={styles.boardActionList}>
+            <li>
+              <Link
+                to={`boards/${props.board.id}/edit`}
+                className={styles.boardActionButton}
+              >
+                Edit Board
+              </Link>
+            </li>
+            <li>
+              <BoardDeleteModal
+                board={props.board}
+                onOpenChange={handleModalActionOpenChange}
+              >
+                <button
+                  className={clsx(styles.boardActionButton, styles.danger)}
+                >
+                  Delete Board
+                </button>
+              </BoardDeleteModal>
+            </li>
+          </ul>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>

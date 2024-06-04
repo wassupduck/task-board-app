@@ -5,7 +5,7 @@ export const taskFormSchema = z.object({
     .string()
     .trim()
     .min(1, { message: "Title is required" })
-    .max(50, { message: "Title must be less than 51 characters" }),
+    .max(150, { message: "Title must be less than 151 characters" }),
   description: z.string().optional(),
   boardColumnId: z.string(),
   subtasks: z
@@ -15,7 +15,7 @@ export const taskFormSchema = z.object({
         title: z
           .string()
           .trim()
-          .max(50, { message: "Subtask must be less than 51 characters" }),
+          .max(200, { message: "Subtask must be less than 201 characters" }),
       })
     )
     .superRefine((subtasks, ctx) => {
@@ -46,7 +46,7 @@ export const taskFormSchema = z.object({
       const invalidEmptySubtaskIdxs = subtasks
         .slice(0, lastNonEmptySubtaskIdx + 1)
         .map(({ title }, idx) => (title.length === 0 ? idx : null))
-        .filter((i) => i !== null);
+        .filter((i) => i !== null) as number[];
 
       for (const idx of invalidEmptySubtaskIdxs) {
         ctx.addIssue({

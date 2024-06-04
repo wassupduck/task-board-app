@@ -1,4 +1,4 @@
-@value tabletAndSmaller from "../../breakpoints.module.css";
+@value tabletAndSmaller, mobileAndSmaller from "../../breakpoints.module.css";
 
 .wrapper {
     grid-area: header;
@@ -6,7 +6,7 @@
     background-color: var(--color-background-primary);
 }
 
-.header-left {
+.sidebar-header {
     min-width: var(--sidebar-width);
     padding-inline-start: 32px;
     display: flex;
@@ -15,6 +15,10 @@
 
     @media tabletAndSmaller {
         padding-inline-start: 24px;
+    }
+
+    @media mobileAndSmaller {
+        display: none;
     }
 
     &.sidebar-hidden {
@@ -33,18 +37,45 @@
     margin-left: -15px;
 }
 
-.header-main {
-    width: 100%;
+.mobile-site-logo {
+    display: none;
+
+    @media mobileAndSmaller {
+        min-width: 24px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+.main-header {
+    flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding-inline: 24px;
     border-bottom: 1px solid var(--color-lines);
+
+    @media mobileAndSmaller {
+        gap: 16px;
+        padding-inline: 16px;
+    }
+}
+
+.board-header-wrapper {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
 }
 
 .board-heading {
     font-size: var(--font-size-heading-large);
     font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     @media tabletAndSmaller {
         font-size: var(--font-size-heading-medium);
@@ -63,20 +94,25 @@
 }
 
 .board-actions-popover-content {
-    display: flex;
-    flex-direction: column;
     padding: 8px;
     width: 192px;
     border-radius: 8px;
     background-color: var(--color-background-primary);
     box-shadow: var(--color-lines-dark-100) 0 0 6px 0;
 
-    body[data-theme="dark"] & {
-        background-color: var(--color-background-secondary);
+    &.hidden {
+        display: none;
     }
 }
 
+.board-action-list {
+    display: flex;
+    flex-direction: column;
+}
+
 .board-action-button {
+    display: block;
+    width: 100%;
     padding: 8px 12px;
     border-radius: 6px;
     font-weight: var(--font-weight-medium);

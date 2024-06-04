@@ -8,7 +8,8 @@ interface BoardDeleteModalProps {
     id: string;
     name: string;
   };
-  onCloseOrCancel: () => void;
+  onOpenChange: (open: boolean) => void;
+  children: React.ReactNode;
 }
 
 export function BoardDeleteModal(props: BoardDeleteModalProps) {
@@ -16,35 +17,39 @@ export function BoardDeleteModal(props: BoardDeleteModalProps) {
   const isSubmitting = navigation.state !== "idle";
 
   return (
-    <Modal onClose={props.onCloseOrCancel} variant="destructive">
-      <Modal.Title>Delete this board?</Modal.Title>
-      <p>
-        Are you sure you want to delete the "{props.board.name}" board? This
-        action will remove all columns and tasks and cannot be reversed.
-      </p>
-      <Form
-        action={`/boards/${props.board.id}`}
-        method="DELETE"
-        className={styles.form}
-      >
-        <Button
-          type="submit"
-          variant="destructive"
-          block
-          disabled={isSubmitting}
+    <Modal onOpenChange={props.onOpenChange}>
+      <Modal.Trigger asChild>{props.children}</Modal.Trigger>
+      <Modal.Content variant="destructive">
+        <Modal.Title>Delete this board?</Modal.Title>
+        <p>
+          Are you sure you want to delete the "{props.board.name}" board? This
+          action will remove all columns and tasks and cannot be reversed.
+        </p>
+        <Form
+          action={`/boards/${props.board.id}`}
+          method="DELETE"
+          className={styles.form}
         >
-          {isSubmitting ? "Deleting..." : "Delete"}
-        </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          block
-          onClick={props.onCloseOrCancel}
-          disabled={isSubmitting}
-        >
-          Cancel
-        </Button>
-      </Form>
+          <Button
+            type="submit"
+            variant="destructive"
+            block
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Deleting..." : "Delete"}
+          </Button>
+          <Modal.Close asChild>
+            <Button
+              type="button"
+              variant="secondary"
+              block
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+          </Modal.Close>
+        </Form>
+      </Modal.Content>
     </Modal>
   );
 }

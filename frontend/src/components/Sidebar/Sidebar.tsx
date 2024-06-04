@@ -29,8 +29,11 @@ export default function Sidebar(props: SidebarProps) {
   };
 
   return (
-    <aside className={styles.wrapper}>
-      <BoardNav query={query} />
+    <div className={styles.wrapper}>
+      <BoardNav
+        query={query}
+        activeLinkOffset={"calc(-1 * var(--sidebar-padding-left))"}
+      />
       <div className={styles.bottomButtonGroup}>
         <div className={styles.themeToggleWrapper}>
           <ThemeToggle />
@@ -43,6 +46,6 @@ export default function Sidebar(props: SidebarProps) {
           Logout
         </button>
       </div>
-    </aside>
+    </div>
   );
 }

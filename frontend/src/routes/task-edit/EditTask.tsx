@@ -9,9 +9,8 @@ import Modal from "../../components/Modal";
 import TaskForm from "../../components/TaskForm/TaskForm";
 import { useTaskForm } from "../../components/TaskForm/hook";
 import invariant from "tiny-invariant";
-import { useBoardRouteLoaderData } from "../board";
+import { useBoard } from "../board";
 import { useQuery } from "@tanstack/react-query";
-import { boardRouteQuery } from "../board/queries";
 import { getFragmentData, graphql } from "../../gql";
 import { LoaderData } from "./loader";
 import { editTaskRouteQuery } from "./queries";
@@ -45,15 +44,7 @@ export function EditTask() {
   });
   const { task } = data;
 
-  const initialBoardRouteData = useBoardRouteLoaderData();
-  const { data: boardRouteData } = useQuery({
-    ...boardRouteQuery(params.boardId),
-    initialData: initialBoardRouteData,
-  });
-  const board = getFragmentData(
-    EditTaskRoute_BoardFragment,
-    boardRouteData.board
-  );
+  const board = getFragmentData(EditTaskRoute_BoardFragment, useBoard());
 
   const taskForm = useTaskForm({
     defaultValues: {
@@ -149,15 +140,21 @@ export function EditTask() {
   };
 
   return (
-    <Modal onClose={() => navigate("..", { relative: "path" })}>
-      <Modal.Title>Edit Task</Modal.Title>
-      <TaskForm
-        board={board}
-        form={taskForm}
-        onSubmit={handleSubmit}
-        submitButtonText={isSubmitting ? "Saving Changes..." : "Save Changes"}
-        disableSubmit={isSubmitting}
-      />
+    <Modal
+      defaultOpen={true}
+      onOpenChange={() => navigate("..", { relative: "path" })}
+    >
+      <Modal.Trigger />
+      <Modal.Content>
+        <Modal.Title>Edit Task</Modal.Title>
+        <TaskForm
+          board={board}
+          form={taskForm}
+          onSubmit={handleSubmit}
+          submitButtonText={isSubmitting ? "Saving Changes..." : "Save Changes"}
+          disableSubmit={isSubmitting}
+        />
+      </Modal.Content>
     </Modal>
   );
 }

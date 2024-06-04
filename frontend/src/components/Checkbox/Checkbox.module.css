@@ -1,6 +1,6 @@
-.checkbox {
-    width: 16px;
-    height: 16px;
+.wrapper {
+    min-width: 16px;
+    min-height: 16px;
     display: grid;
     place-content: center;
     background-color: var(--color-background-primary);

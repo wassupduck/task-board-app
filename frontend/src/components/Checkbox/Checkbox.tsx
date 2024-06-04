@@ -12,7 +12,7 @@ interface CheckboxProps
 
 export default function Checkbox(props: CheckboxProps) {
   return (
-    <RadixCheckbox.Root {...props} className={styles.checkbox}>
+    <RadixCheckbox.Root {...props} className={styles.wrapper}>
       <RadixCheckbox.Indicator>
         <CheckIcon />
       </RadixCheckbox.Indicator>

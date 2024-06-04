@@ -1,4 +1,4 @@
-@value tabletAndSmaller from "../../breakpoints.module.css";
+@value tabletAndSmaller, mobileAndSmaller from "../../breakpoints.module.css";
 
 .wrapper {
     --sidebar-width: 300px;
@@ -15,13 +15,18 @@
         grid-template-rows: 80px minmax(0, 1fr);
     }
 
-    &.sidebar-hidden {
+    @media mobileAndSmaller {
         grid-template:
-            'header' 96px
+            'header' 64px
             'main' minmax(0, 1fr) / minmax(0, 1fr);
+    }
 
-        @media tabletAndSmaller {
-            grid-template-rows: 80px minmax(0, 1fr);
+    @media not mobileAndSmaller {
+        &.sidebar-hidden {
+            grid-template-areas:
+                'header'
+                'main';
+            grid-template-columns: minmax(0, 1fr);
         }
     }
 }
@@ -37,7 +42,7 @@
     padding-right: 24px;
     position: absolute;
     left: 0;
-    bottom: 64px;
+    bottom: 78px;
     width: 56px;
     height: 48px;
     background-color: var(--color-primary);
