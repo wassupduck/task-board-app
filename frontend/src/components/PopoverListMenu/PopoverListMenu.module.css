@@ -1,0 +1,44 @@
+.trigger-button {
+    min-width: 32px;
+    padding: 16px 8px;
+    display: grid;
+    place-content: center;
+}
+
+.content {
+    padding: 8px;
+    width: 192px;
+    border-radius: 8px;
+    background-color: var(--color-background-primary);
+    box-shadow: var(--color-lines-dark-100) 0 0 6px 0;
+
+    &.hidden {
+        display: none;
+    }
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-button {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: var(--font-weight-medium);
+
+    &:hover {
+        color: var(--color-primary);
+        background-color: var(--color-primary-100);
+
+        body[data-theme="dark"] & {
+            background-color: var(--color-white);
+        }
+    }
+
+    &.destructive {
+        color: var(--color-danger);
+    }
+}

@@ -4,9 +4,8 @@
     gap: 16px;
 }
 
-.task-actions-button {
+.task-actions-menu-button {
     margin-right: -14px;
-    min-width: 32px;
     display: grid;
     place-content: center;
 }

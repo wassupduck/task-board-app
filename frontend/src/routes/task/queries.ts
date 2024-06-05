@@ -76,3 +76,21 @@ export async function updateSubtaskCompleted(id: string, completed: boolean) {
   );
   return resp.updateSubtaskCompleted;
 }
+
+const deleteTaskMutationDocument = graphql(`
+  mutation DeleteTask($input: DeleteTaskInput!) {
+    deleteTask(input: $input) {
+      __typename
+      ... on ErrorResponse {
+        message
+      }
+    }
+  }
+`);
+
+export async function deleteTask(id: string) {
+  const resp = await graphQLClient.request(deleteTaskMutationDocument, {
+    input: { id },
+  });
+  return resp.deleteTask;
+}

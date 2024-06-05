@@ -1,20 +1,17 @@
 /// <reference types="vite-plugin-svgr/client" />
-import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react";
 import AddTaskMobileIcon from "../../assets/icon-add-task-mobile.svg?react";
 import Button from "../Button";
 import styles from "./Header.module.css";
 import breakpoints from "../../breakpoints.module.css";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useBoardRouteLoaderData } from "../../routes/board";
 import clsx from "clsx";
 import { Logo } from "../Logo/Logo";
-import * as Popover from "@radix-ui/react-popover";
-import VisuallyHidden from "../VisuallyHidden";
 import { BoardDeleteModal } from "../BoardDeleteModal/BoardDeleteModal";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { MobileMenu } from "../MobileMenu/MobileMenu";
-import { useState } from "react";
+import PopoverListMenu from "../PopoverListMenu/PopoverListMenu";
 
 const Header_QueryFragment = graphql(`
   fragment Header_QueryFragment on Query {
@@ -109,73 +106,43 @@ function BoardHeader(props: BoardHeaderProps) {
             "Add New Task"
           )}
         </Button>
-        <BoardActionsPopover board={board} />
+        <BoardActionsMenu board={board} />
       </div>
     </div>
   );
 }
 
-interface BoardActionsPopoverProps {
+interface BoardActionsMenuProps {
   board: {
     id: string;
     name: string;
   };
 }
 
-function BoardActionsPopover(props: BoardActionsPopoverProps) {
-  const [popoverOpen, setPopoverOpen] = useState(false);
-  const [hasOpenModal, setHasOpenModal] = useState(false);
+function BoardActionsMenu(props: BoardActionsMenuProps) {
   const isTabletOrSmaller = useMediaQuery(breakpoints.tabletAndSmaller);
   const isMobileOrSmaller = useMediaQuery(breakpoints.mobileAndSmaller);
 
-  function handleModalActionOpenChange(open: boolean) {
-    setHasOpenModal(open);
-    if (open === false) {
-      setPopoverOpen(false);
-    }
-  }
-
   return (
-    <Popover.Root open={popoverOpen} onOpenChange={setPopoverOpen}>
-      <Popover.Trigger asChild>
-        <button className={styles.boardActionsButton}>
-          <VisuallyHidden>Board Actions</VisuallyHidden>
-          <VerticalEllipsisIcon />
-        </button>
-      </Popover.Trigger>
-      <Popover.Portal>
-        <Popover.Content
-          align="end"
-          sideOffset={isMobileOrSmaller ? 24 : isTabletOrSmaller ? 28 : 32}
-          className={clsx(
-            styles.boardActionsPopoverContent,
-            hasOpenModal && styles.hidden
+    <PopoverListMenu>
+      <PopoverListMenu.Trigger label="Board actions" />
+      <PopoverListMenu.List
+        align="end"
+        sideOffset={isMobileOrSmaller ? 24 : isTabletOrSmaller ? 28 : 32}
+      >
+        <PopoverListMenu.LinkItem to={`boards/${props.board.id}/edit`}>
+          Edit Board
+        </PopoverListMenu.LinkItem>
+        <PopoverListMenu.ModalItem>
+          {({ onOpenChange }) => (
+            <BoardDeleteModal board={props.board} onOpenChange={onOpenChange}>
+              <PopoverListMenu.Button variant="destructive">
+                Delete Board
+              </PopoverListMenu.Button>
+            </BoardDeleteModal>
           )}
-        >
-          <ul className={styles.boardActionList}>
-            <li>
-              <Link
-                to={`boards/${props.board.id}/edit`}
-                className={styles.boardActionButton}
-              >
-                Edit Board
-              </Link>
-            </li>
-            <li>
-              <BoardDeleteModal
-                board={props.board}
-                onOpenChange={handleModalActionOpenChange}
-              >
-                <button
-                  className={clsx(styles.boardActionButton, styles.danger)}
-                >
-                  Delete Board
-                </button>
-              </BoardDeleteModal>
-            </li>
-          </ul>
-        </Popover.Content>
-      </Popover.Portal>
-    </Popover.Root>
+        </PopoverListMenu.ModalItem>
+      </PopoverListMenu.List>
+    </PopoverListMenu>
   );
 }

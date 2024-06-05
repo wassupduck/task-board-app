@@ -48,7 +48,7 @@ export const action =
       await queryClient.invalidateQueries({
         queryKey: boardRouteQueryKey(boardId),
       });
-      await queryClient.invalidateQueries({
+      await queryClient.refetchQueries({
         queryKey: taskRouteQueryKey(taskId),
       });
     }

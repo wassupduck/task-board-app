@@ -51,7 +51,10 @@ export function EditTask() {
       title: task.title,
       description: task.description,
       boardColumnId: task.column.id,
-      subtasks: task.subtasks.nodes,
+      subtasks:
+        task.subtasks.nodes.length > 0
+          ? task.subtasks.nodes
+          : [{ title: "" }, { title: "" }],
     },
   });
   // Must read all formState values to subscribe to changes

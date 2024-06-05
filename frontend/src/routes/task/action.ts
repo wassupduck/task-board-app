@@ -1,6 +1,7 @@
-import { ActionFunctionArgs, json } from "react-router-dom";
+import { ActionFunctionArgs, json, redirect } from "react-router-dom";
 import invariant from "tiny-invariant";
 import {
+  deleteTask,
   taskRouteQueryKey,
   updateSubtaskCompleted,
   updateTask,
@@ -14,9 +15,23 @@ export const action =
     invariant(params.taskId, "Missing taskId param");
     invariant(params.boardId, "Missing boardId param");
     const { taskId, boardId } = params;
-    const data = await request.json();
+
+    if (request.method === "DELETE") {
+      const resp = await deleteTask(taskId);
+
+      if (resp.__typename === "NotFoundError") {
+        throw new Response("Not found", { status: 404 });
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: boardRouteQueryKey(boardId),
+      });
+
+      return redirect(`/boards/${boardId}`);
+    }
 
     if (request.method === "PATCH") {
+      const data = await request.json();
       const { intent, patch } = data;
 
       let resp;

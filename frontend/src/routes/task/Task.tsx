@@ -1,5 +1,3 @@
-/// <reference types="vite-plugin-svgr/client" />
-import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react";
 import styles from "./Task.module.css";
 import {
   useLoaderData,
@@ -7,7 +5,6 @@ import {
   useParams,
   useFetcher,
 } from "react-router-dom";
-import VisuallyHidden from "../../components/VisuallyHidden";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
 import clsx from "clsx";
 import Checkbox from "../../components/Checkbox";
@@ -18,6 +15,9 @@ import invariant from "tiny-invariant";
 import { LoaderData } from "./loader";
 import { useQuery } from "@tanstack/react-query";
 import { taskRouteQuery } from "./queries";
+import PopoverListMenu from "../../components/PopoverListMenu/PopoverListMenu";
+import { TaskDeleteModal } from "../../components/TaskDeleteModal/TaskDeleteModal";
+import { useState } from "react";
 
 const TaskRoute_BoardFragment = graphql(`
   fragment TaskRoute_BoardFragment on Board {
@@ -62,16 +62,17 @@ export function Task() {
     );
   }
 
+  const [hasOpenModal, setHasOpenModal] = useState(false);
+
   return (
     <Modal defaultOpen={true} onOpenChange={() => navigate("..")}>
       <Modal.Trigger />
-      <Modal.Content>
+      <Modal.Content hidden={hasOpenModal}>
         <header className={styles.header}>
           <Modal.Title>{task.title}</Modal.Title>
-          <button className={styles.taskActionsButton}>
-            <VerticalEllipsisIcon />
-            <VisuallyHidden>Task actions</VisuallyHidden>
-          </button>
+          <div className={styles.taskActionsMenuButton}>
+            <TaskActionsMenu task={task} onModalOpenChange={setHasOpenModal} />
+          </div>
         </header>
         {task.description.length > 0 && (
           <p className={styles.description}>{task.description}</p>
@@ -100,6 +101,37 @@ export function Task() {
         </div>
       </Modal.Content>
     </Modal>
+  );
+}
+
+interface TaskActionsMenuProps {
+  task: { id: string; title: string };
+  onModalOpenChange: (open: boolean) => void;
+}
+
+function TaskActionsMenu(props: TaskActionsMenuProps) {
+  return (
+    <PopoverListMenu onModalItemOpenChange={props.onModalOpenChange}>
+      <PopoverListMenu.Trigger label="Task actions" />
+      <PopoverListMenu.List align="center" sideOffset={8}>
+        <PopoverListMenu.LinkItem to={`./edit`}>
+          Edit Task
+        </PopoverListMenu.LinkItem>
+        <PopoverListMenu.ModalItem>
+          {({ onOpenChange }) => (
+            <TaskDeleteModal
+              task={props.task}
+              onOpenChange={onOpenChange}
+              overlay={false}
+            >
+              <PopoverListMenu.Button variant="destructive">
+                Delete Task
+              </PopoverListMenu.Button>
+            </TaskDeleteModal>
+          )}
+        </PopoverListMenu.ModalItem>
+      </PopoverListMenu.List>
+    </PopoverListMenu>
   );
 }
 

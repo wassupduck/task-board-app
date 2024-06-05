@@ -47,6 +47,7 @@ const documents = {
     "\n  query TaskRoute_Query($id: ID!) {\n    task(id: $id) {\n      id\n      title\n      description\n      column {\n        id\n        name\n      }\n      subtasks {\n        totalCount\n        completedCount\n        nodes {\n          ...SubtaskList_SubtaskFragment\n        }\n      }\n    }\n  }\n": types.TaskRoute_QueryDocument,
     "\n  mutation UpdateTask($input: UpdateTaskInput!) {\n    updateTask(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateTaskDocument,
     "\n  mutation UpdateSubtaskCompleted($input: UpdateSubtaskCompletedInput!) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.UpdateSubtaskCompletedDocument,
+    "\n  mutation DeleteTask($input: DeleteTaskInput!) {\n    deleteTask(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.DeleteTaskDocument,
     "\n  fragment NewTaskRoute_BoardFragment on Board {\n    columns {\n      nodes {\n        id\n      }\n    }\n    ...TaskForm_BoardFragment\n  }\n": types.NewTaskRoute_BoardFragmentFragmentDoc,
     "\n  mutation CreateTask($input: CreateTaskInput!) {\n    createTask(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n": types.CreateTaskDocument,
 };
@@ -201,6 +202,10 @@ export function graphql(source: "\n  mutation UpdateTask($input: UpdateTaskInput
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation UpdateSubtaskCompleted($input: UpdateSubtaskCompletedInput!) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateSubtaskCompleted($input: UpdateSubtaskCompletedInput!) {\n    updateSubtaskCompleted(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeleteTask($input: DeleteTaskInput!) {\n    deleteTask(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteTask($input: DeleteTaskInput!) {\n    deleteTask(input: $input) {\n      __typename\n      ... on ErrorResponse {\n        message\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
