@@ -163,6 +163,7 @@ input NewBoardInput {
 }
 
 input NewSubtaskInput {
+  completed: Boolean
   title: String!
 }
 
@@ -204,6 +205,7 @@ type Subtask {
   completed: Boolean!
   createdAt: DateTime!
   id: ID!
+  position: String!
   title: String!
   updatedAt: DateTime!
 }

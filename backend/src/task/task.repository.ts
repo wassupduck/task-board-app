@@ -1,17 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseClient, DatabaseError } from '../database/index.js';
 import {
+  appendSubtasks,
   deleteTaskAsUser,
   deleteTaskSubtasks,
   insertSubtasks,
   insertTask,
+  insertTasks,
   selectLastTaskInBoardColumn,
+  selectLastTaskInBoardColumns,
   selectSubtasksByTaskIds,
-  selectSubtasksConnectionsByTaskIds,
   selectTaskByIdAsUser,
   selectTasksByColumnIds,
   selectTasksSurroundingBoardColumnPosition,
-  updateSubtaskCompletedByIdAsUser,
+  selectTaskSubtasksConnections,
+  updateSubtaskCompletedAsUser,
   updateTask,
   updateTaskSubtasks,
 } from './task.queries.js';
@@ -27,10 +30,13 @@ export type NewTask = Pick<
   Task,
   'title' | 'description' | 'boardColumnId' | 'position'
 >;
+export type NewTaskWithId = NewTask & Pick<Task, 'id'>;
 export type EditTask = Partial<
   Pick<Task, 'title' | 'description' | 'boardColumnId' | 'position'>
 >;
-export type NewSubtask = Pick<Subtask, 'title'>;
+export type NewSubtask = Pick<Subtask, 'title' | 'taskId' | 'position'> &
+  Partial<Pick<Subtask, 'completed'>>;
+export type NewSubtaskWithId = NewSubtask & Pick<Subtask, 'id'>;
 export type EditSubtask = Partial<Pick<Subtask, 'title' | 'completed'>>;
 
 @Injectable()
@@ -41,7 +47,7 @@ export class TaskRepository {
     return this.db.queryOneOrNone(selectTaskByIdAsUser, { id, userId });
   }
 
-  async getTasksInColumns(columnIds: string[]): Promise<Task[]> {
+  async getTasksByColumnIds(columnIds: string[]): Promise<Task[]> {
     return this.db.queryAll(selectTasksByColumnIds, { columnIds });
   }
 
@@ -83,8 +89,27 @@ export class TaskRepository {
     });
   }
 
+  async getLastTaskInBoardColumns(
+    boardColumnIds: string[],
+  ): Promise<{ [boardColumnId: string]: Task | undefined }> {
+    const tasks = await this.db.queryAll(selectLastTaskInBoardColumns, {
+      boardColumnIds,
+    });
+    return Object.fromEntries(tasks.map((task) => [task.boardColumnId, task]));
+  }
+
   async createTask(task: NewTask): Promise<Task> {
     return this.db.queryOne(insertTask, { task });
+  }
+
+  async createTasks(tasks: NewTaskWithId[]): Promise<Task[]> {
+    return this.db.queryAll(insertTasks, {
+      tasks,
+      returnOrder: tasks.map((task, idx) => ({
+        id: task.id,
+        idx: idx.toString(),
+      })),
+    });
   }
 
   async updateTask(id: string, fieldsToUpdate: EditTask): Promise<Task> {
@@ -108,25 +133,57 @@ export class TaskRepository {
     }
   }
 
-  async getSubtasksConnectionsByTaskIds(
+  async getTaskSubtasksConnections(
     taskIds: string[],
   ): Promise<TaskSubtasksConnection[]> {
-    return this.db.queryAll(selectSubtasksConnectionsByTaskIds, { taskIds });
+    return this.db.queryAll(selectTaskSubtasksConnections, { taskIds });
   }
 
   async getSubtasksByTaskIds(taskIds: string[]): Promise<Subtask[]> {
     return this.db.queryAll(selectSubtasksByTaskIds, { taskIds });
   }
 
-  async createTaskSubtasks(
-    taskId: string,
-    subtasks: NewSubtask[],
-  ): Promise<Subtask[]> {
+  async createSubtasks(subtasks: NewSubtask[]): Promise<Subtask[]> {
+    // TODO: Subtasks should be guaranteed to be retuned in the same
+    // order they are appear in the input.
     try {
       return await this.db.queryAll(insertSubtasks, {
         subtasks: subtasks.map((subtask) => ({
           ...subtask,
-          taskId,
+          completed: subtask.completed ?? false,
+        })),
+      });
+    } catch (error) {
+      if (
+        error instanceof DatabaseError &&
+        error.cause instanceof UniqueViolationError &&
+        error.cause.constraint === 'subtask_task_id_title_unique_idx'
+      ) {
+        const duplicateKeyValues = getDuplicateKeyValues(error.cause);
+        const taskId = duplicateKeyValues?.['task_id'] ?? 'unknown';
+        const duplicateTitle = duplicateKeyValues?.['title'] ?? 'unknown';
+        throw new SubtaskTitleConflictError(duplicateTitle, taskId);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Creates subtasks positioned after the current last subtask for a task.
+   *
+   * The task must be locked for exclusive access for calling.
+   */
+  async appendSubtasksForTask(
+    taskId: string,
+    subtasks: Omit<NewSubtask, 'taskId' | 'position'>[],
+  ): Promise<Subtask[]> {
+    try {
+      return await this.db.queryAll(appendSubtasks, {
+        taskId,
+        subtasks: subtasks.map((subtask, idx) => ({
+          ...subtask,
+          completed: subtask.completed ? 'true' : 'false',
+          _idx: idx.toString(),
         })),
       });
     } catch (error) {
@@ -137,13 +194,13 @@ export class TaskRepository {
       ) {
         const duplicateKeyValues = getDuplicateKeyValues(error.cause);
         const duplicateTitle = duplicateKeyValues?.['title'] ?? 'unknown';
-        throw new SubtaskTitleConflictError(duplicateTitle);
+        throw new SubtaskTitleConflictError(duplicateTitle, taskId);
       }
       throw error;
     }
   }
 
-  async updateTaskSubtasks(
+  async updateSubtasksForTask(
     taskId: string,
     subtasks: ({ id: string } & EditSubtask)[],
   ): Promise<Subtask[]> {
@@ -164,35 +221,32 @@ export class TaskRepository {
       ) {
         const duplicateKeyValues = getDuplicateKeyValues(error.cause);
         const duplicateTitle = duplicateKeyValues?.['title'] ?? 'unknown';
-        throw new SubtaskTitleConflictError(duplicateTitle);
+        throw new SubtaskTitleConflictError(duplicateTitle, taskId);
       }
       throw error;
     }
   }
 
-  async updateSubtaskCompletedByIdAsUser(
+  async updateSubtaskCompletedAsUser(
     id: string,
     completed: boolean,
     userId: string,
   ): Promise<Subtask> {
-    const subtask = await this.db.queryOneOrNone(
-      updateSubtaskCompletedByIdAsUser,
-      {
-        id,
-        userId,
-        completed,
-      },
-    );
+    const subtask = await this.db.queryOneOrNone(updateSubtaskCompletedAsUser, {
+      id,
+      userId,
+      completed,
+    });
     if (!subtask) {
       throw new NotFoundError(`Subtask not found: ${id}`);
     }
     return subtask;
   }
 
-  async deleteTaskSubtasks(
+  async deleteSubtasksForTask(
     taskId: string,
     subtaskIds: string[],
   ): Promise<void> {
-    await this.db.queryOneOrNone(deleteTaskSubtasks, { taskId, subtaskIds });
+    await this.db.queryAll(deleteTaskSubtasks, { taskId, subtaskIds });
   }
 }

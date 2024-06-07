@@ -13,7 +13,7 @@ export class BoardColumnsConnectionResolver {
     @Parent() { boardId }: BoardColumnsConnection,
     @Context('loaders') { boardLoaders }: Loaders,
   ): Promise<BoardColumn[]> {
-    const columns = await this.boardService.getBoardColumns(boardId);
+    const columns = await this.boardService.getBoardColumnsByBoardId(boardId);
     columns.forEach((column) =>
       boardLoaders.boardColumnByIdLoader.prime(column.id, column),
     );

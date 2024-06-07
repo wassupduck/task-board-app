@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { TaskRepository } from './task.repository.js';
+import { NewTaskWithId, TaskRepository } from './task.repository.js';
 import { Task } from './entities/task.entity.js';
 import { TaskSubtasksConnection } from './entities/task-subtasks-connection.entity.js';
 import { Subtask } from './entities/subtask.entity.js';
@@ -16,6 +16,8 @@ import { DatabaseClient, DatabaseTransactor } from '../database/index.js';
 import { UpdateTaskSubtasksPatchInput } from './dto/update-task-subtasks.input.js';
 import { updateTaskSubtasksPatchInputSchema } from './schemas/update-task-subtasks-patch-input.schema.js';
 import { MoveTaskMoveInput } from './dto/move-task.input.js';
+import { randomUUID } from 'crypto';
+import { z } from 'zod';
 
 @Injectable()
 export class TaskService {
@@ -29,26 +31,27 @@ export class TaskService {
     return this.taskRepository.getTaskByIdAsUser(id, userId);
   }
 
-  async getTasksInColumns(columnIds: string[]): Promise<Task[]> {
-    return this.taskRepository.getTasksInColumns(columnIds);
+  async getTasksByColumnIds(columnIds: string[]): Promise<Task[]> {
+    return this.taskRepository.getTasksByColumnIds(columnIds);
   }
 
-  async createTask(
-    input: NewTaskInput,
+  async createTaskAsUser(
+    newTaskInput: NewTaskInput,
     userId: string,
   ): Promise<[Task, Subtask[]]> {
     // Parse and validate input
-    const validation = newTaskInputSchema.safeParse(input);
-    if (!validation.success) {
+    const validationResult =
+      await newTaskInputSchema.safeParseAsync(newTaskInput);
+    if (!validationResult.success) {
       // TODO: Better validation errors
-      const issue = validation.error.issues[0];
+      const issue = validationResult.error.issues[0];
       throw new ValidationError(`${issue.path.join('.')}: ${issue.message}`);
     }
 
-    const newTask = validation.data;
+    const newTask = validationResult.data;
 
     return await this.db.inTransaction(async () => {
-      // Check user can move task to board column.
+      // Check user can create task in board column.
       // Lock board column to prevent concurrent insertions/moves of tasks.
       // Note: This is overly restrictive but simple
       const boardColumn =
@@ -60,26 +63,28 @@ export class TaskService {
         throw new BoardColumnNotFoundError(newTask.boardColumnId);
       }
 
-      const lastTaskInColumn =
+      const lastTaskInBoardColumn =
         await this.taskRepository.getLastTaskInBoardColumn(boardColumn.id);
 
-      const position = midPosition(
-        lastTaskInColumn?.position ?? '0',
-        'z'.padEnd((lastTaskInColumn?.position.length ?? 1) + 1, 'z'),
+      const newTaskPosition = nextPosition(
+        lastTaskInBoardColumn?.position ?? '0',
       );
 
       // Create task
       const task = await this.taskRepository.createTask({
         ...newTask,
-        position,
+        position: newTaskPosition,
       });
 
       // Create subtasks
       let subtasks: Subtask[] = [];
       if (newTask.subtasks && newTask.subtasks.length > 0) {
-        subtasks = await this.taskRepository.createTaskSubtasks(
-          task.id,
-          newTask.subtasks,
+        subtasks = await this.taskRepository.createSubtasks(
+          newTask.subtasks.map((subtask, idx) => ({
+            ...subtask,
+            taskId: task.id,
+            position: idx,
+          })),
         );
       }
 
@@ -87,16 +92,84 @@ export class TaskService {
     });
   }
 
-  async updateTask(
+  async createTasks(
+    newTaskInputs: NewTaskInput[],
+  ): Promise<{ task: Task; subtasks: Subtask[] }[]> {
+    if (newTaskInputs.length === 0) {
+      return [];
+    }
+
+    // Parse and validate input
+    const validationResult = await newTaskInputSchema
+      .array()
+      .safeParseAsync(newTaskInputs);
+    if (!validationResult.success) {
+      // TODO: Better validation errors
+      const issue = validationResult.error.issues[0];
+      throw new ValidationError(`${issue.path.join('.')}: ${issue.message}`);
+    }
+
+    const newTasks = validationResult.data;
+    const newTasksByBoardColumnId = Map.groupBy(
+      newTasks,
+      ({ boardColumnId }) => boardColumnId,
+    );
+    const boardColumnIds = [...newTasksByBoardColumnId.keys()];
+
+    return await this.db.inTransaction(async () => {
+      await this.boardService.getForUpdateBoardColumnsByIds(boardColumnIds);
+      const lastTaskInColumns =
+        await this.taskRepository.getLastTaskInBoardColumns(boardColumnIds);
+
+      const tasksToCreate: (NewTaskWithId &
+        Pick<z.infer<typeof newTaskInputSchema>, 'subtasks'>)[] = [];
+      for (const [boardColumnId, newTasks] of newTasksByBoardColumnId) {
+        const lastTaskInColumn = lastTaskInColumns[boardColumnId];
+        let position = lastTaskInColumn?.position ?? '0';
+        for (const newTask of newTasks) {
+          position = nextPosition(position);
+          tasksToCreate.push({
+            id: randomUUID(),
+            ...newTask,
+            position,
+            boardColumnId,
+          });
+        }
+      }
+
+      const subtasksToCreate = tasksToCreate.flatMap((task) =>
+        (task.subtasks ?? []).map((subtask, idx) => ({
+          ...subtask,
+          taskId: task.id,
+          position: idx,
+        })),
+      );
+
+      const tasks = await this.taskRepository.createTasks(tasksToCreate);
+      const subtasks =
+        subtasksToCreate.length > 0
+          ? await this.taskRepository.createSubtasks(subtasksToCreate)
+          : [];
+
+      const subtasksByTaskId = Map.groupBy(subtasks, ({ taskId }) => taskId);
+      return tasks.map((task) => ({
+        task,
+        subtasks: subtasksByTaskId.get(task.id) ?? [],
+      }));
+    });
+  }
+
+  async updateTaskAsUser(
     id: string,
-    input: UpdateTaskPatchInput,
+    patchInput: UpdateTaskPatchInput,
     userId: string,
   ): Promise<Task> {
     // Parse and validate patch
-    const validation = updateTaskPatchInputSchema.safeParse(input);
-    if (!validation.success) {
+    const validationResult =
+      await updateTaskPatchInputSchema.safeParseAsync(patchInput);
+    if (!validationResult.success) {
       // TODO: Better validation errors
-      const issue = validation.error.issues[0];
+      const issue = validationResult.error.issues[0];
       throw new ValidationError(`${issue.path.join('.')}: ${issue.message}`);
     }
 
@@ -106,7 +179,7 @@ export class TaskService {
       throw new NotFoundError(`Task not found ${id}`);
     }
 
-    const patch = validation.data;
+    const patch = validationResult.data;
     if (emptyPatch(patch)) {
       // No change
       return task;
@@ -114,7 +187,7 @@ export class TaskService {
 
     return await this.db.inTransaction(async () => {
       if (patch.boardColumnId !== undefined) {
-        await this._moveTask(
+        await this._moveTaskAsUser(
           task,
           { boardColumnId: patch.boardColumnId },
           userId,
@@ -127,18 +200,18 @@ export class TaskService {
     });
   }
 
-  async deleteTask(id: string, userId: string): Promise<void> {
+  async deleteTaskAsUser(id: string, userId: string): Promise<void> {
     await this.taskRepository.deleteTaskAsUser(id, userId);
   }
 
-  async moveTask(
+  async moveTaskAsUser(
     id: string,
-    input: MoveTaskMoveInput,
+    moveInput: MoveTaskMoveInput,
     userId: string,
   ): Promise<Task> {
     const destination = {
-      boardColumnId: input.to.boardColumnId ?? undefined,
-      positionAfter: input.to.positionAfter ?? undefined,
+      boardColumnId: moveInput.to.boardColumnId ?? undefined,
+      positionAfter: moveInput.to.positionAfter ?? undefined,
     };
 
     // Check user can edit task
@@ -147,10 +220,10 @@ export class TaskService {
       throw new NotFoundError(`Task not found ${id}`);
     }
 
-    return await this._moveTask(task, destination, userId);
+    return await this._moveTaskAsUser(task, destination, userId);
   }
 
-  private async _moveTask(
+  private async _moveTaskAsUser(
     task: Task,
     destination: { boardColumnId?: string; positionAfter?: string },
     userId: string,
@@ -199,11 +272,21 @@ export class TaskService {
         return task;
       }
 
-      const lowPosition = taskAboveOrAtPosition?.position ?? '0';
-      const highPosition =
-        taskBelowPosition?.position ?? 'z'.padEnd(lowPosition.length + 1, 'z');
-
-      const newPosition = midPosition(lowPosition, highPosition);
+      let newPosition: string;
+      if (!taskAboveOrAtPosition && !taskBelowPosition) {
+        newPosition = '1';
+      } else if (taskAboveOrAtPosition && !taskBelowPosition) {
+        newPosition = nextPosition(taskAboveOrAtPosition.position);
+      } else if (!taskAboveOrAtPosition && taskBelowPosition) {
+        newPosition = prevPosition(taskBelowPosition.position);
+      } else if (taskAboveOrAtPosition && taskBelowPosition) {
+        newPosition = midPosition(
+          taskAboveOrAtPosition.position,
+          taskBelowPosition.position,
+        );
+      } else {
+        throw new Error('unreachable');
+      }
 
       return await this.taskRepository.updateTask(task.id, {
         boardColumnId: boardColumnId,
@@ -212,38 +295,39 @@ export class TaskService {
     });
   }
 
-  async getSubtasksConnectionsByTaskIds(
+  async getTaskSubtasksConnections(
     taskIds: string[],
   ): Promise<TaskSubtasksConnection[]> {
-    return this.taskRepository.getSubtasksConnectionsByTaskIds(taskIds);
+    return this.taskRepository.getTaskSubtasksConnections(taskIds);
   }
 
   async getSubtasksByTaskIds(taskIds: string[]): Promise<Subtask[]> {
     return this.taskRepository.getSubtasksByTaskIds(taskIds);
   }
 
-  async updateSubtaskCompletedById(
+  async updateSubtaskCompletedAsUser(
     id: string,
     completed: boolean,
     userId: string,
   ): Promise<Subtask> {
-    return this.taskRepository.updateSubtaskCompletedByIdAsUser(
+    return this.taskRepository.updateSubtaskCompletedAsUser(
       id,
       completed,
       userId,
     );
   }
 
-  async updateTaskSubtasks(
+  async updateTaskSubtasksAsUser(
     taskId: string,
-    input: UpdateTaskSubtasksPatchInput,
+    patchInput: UpdateTaskSubtasksPatchInput,
     userId: string,
   ): Promise<Task> {
     // Parse and validate input
-    const validation = updateTaskSubtasksPatchInputSchema.safeParse(input);
-    if (!validation.success) {
+    const validationResult =
+      await updateTaskSubtasksPatchInputSchema.safeParseAsync(patchInput);
+    if (!validationResult.success) {
       // TODO: Better validation errors
-      const issue = validation.error.issues[0];
+      const issue = validationResult.error.issues[0];
       throw new ValidationError(`${issue.path.join('.')}: ${issue.message}`);
     }
 
@@ -252,22 +336,25 @@ export class TaskService {
       throw new NotFoundError(`Task not found: ${taskId}`);
     }
 
-    const patch = validation.data;
+    const patch = validationResult.data;
 
     await this.db.inTransaction(async () => {
       if (patch.deletions.length > 0) {
-        await this.taskRepository.deleteTaskSubtasks(taskId, patch.deletions);
+        await this.taskRepository.deleteSubtasksForTask(
+          taskId,
+          patch.deletions,
+        );
       }
 
       if (patch.updates.length > 0) {
-        await this.taskRepository.updateTaskSubtasks(
+        await this.taskRepository.updateSubtasksForTask(
           taskId,
           patch.updates.map(({ id, patch }) => ({ id, ...patch })),
         );
       }
 
       if (patch.additions.length > 0) {
-        await this.taskRepository.createTaskSubtasks(
+        await this.taskRepository.appendSubtasksForTask(
           taskId,
           patch.additions.map(({ subtask }) => subtask),
         );
@@ -276,6 +363,27 @@ export class TaskService {
 
     return task;
   }
+}
+
+function prevPosition(position: string) {
+  const out = [];
+  // Copy leading 0's to `out`
+  let i = 0;
+  while (i < position.length && position[i] === '0') {
+    out.push('0');
+    i++;
+  }
+
+  if (i >= position.length) {
+    // Position is all 0s
+    throw new Error('No position before 0');
+  }
+  // Subtract 1 from first non-0 character
+  out.push(
+    position[i] === '1' ? '0z' : (parseInt(position[i], 36) - 1).toString(36),
+  );
+
+  return out.join('');
 }
 
 function midPosition(smaller: string, larger: string) {
@@ -328,6 +436,26 @@ function midPosition(smaller: string, larger: string) {
     (parseInt(smaller[i] ?? '0', 36) + (parseInt('z', 36) + 1)) / 2,
   ).toString(36);
   out.push(mid);
+
+  return out.join('');
+}
+
+function nextPosition(position: string) {
+  if (position.length === 0) {
+    throw new Error('position length must be greater than 0');
+  }
+
+  const out = [];
+  // Copy leading z's to `out`
+  let i = 0;
+  while (i < position.length && position[i] === 'z') {
+    out.push('z');
+    i++;
+  }
+  // Add 1 to first non-z character
+  out.push(
+    i >= position.length ? '1' : (parseInt(position[i], 36) + 1).toString(36),
+  );
 
   return out.join('');
 }

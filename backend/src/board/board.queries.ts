@@ -247,6 +247,41 @@ const selectBoardColumnsByIdsIR: any = {"usedParamSet":{"ids":true},"params":[{"
 export const selectBoardColumnsByIds = new PreparedQuery<ISelectBoardColumnsByIdsParams,ISelectBoardColumnsByIdsResult>(selectBoardColumnsByIdsIR);
 
 
+/** 'SelectForUpdateBoardColumnsByIds' parameters type */
+export interface ISelectForUpdateBoardColumnsByIdsParams {
+  ids: readonly (string)[];
+}
+
+/** 'SelectForUpdateBoardColumnsByIds' return type */
+export interface ISelectForUpdateBoardColumnsByIdsResult {
+  boardId: string;
+  createdAt: Date;
+  id: string;
+  name: string;
+  position: number;
+  updatedAt: Date;
+}
+
+/** 'SelectForUpdateBoardColumnsByIds' query type */
+export interface ISelectForUpdateBoardColumnsByIdsQuery {
+  params: ISelectForUpdateBoardColumnsByIdsParams;
+  result: ISelectForUpdateBoardColumnsByIdsResult;
+}
+
+const selectForUpdateBoardColumnsByIdsIR: any = {"usedParamSet":{"ids":true},"params":[{"name":"ids","required":true,"transform":{"type":"array_spread"},"locs":[{"a":39,"b":43}]}],"statement":"select *\nfrom board_column\nwhere id in :ids!\nfor update"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * select *
+ * from board_column
+ * where id in :ids!
+ * for update
+ * ```
+ */
+export const selectForUpdateBoardColumnsByIds = new PreparedQuery<ISelectForUpdateBoardColumnsByIdsParams,ISelectForUpdateBoardColumnsByIdsResult>(selectForUpdateBoardColumnsByIdsIR);
+
+
 /** 'SelectBoardColumnTasksConnections' parameters type */
 export interface ISelectBoardColumnTasksConnectionsParams {
   boardColumnIds: readonly (string)[];
@@ -317,6 +352,43 @@ const insertBoardIR: any = {"usedParamSet":{"board":true},"params":[{"name":"boa
 export const insertBoard = new PreparedQuery<IInsertBoardParams,IInsertBoardResult>(insertBoardIR);
 
 
+/** 'InsertBoards' parameters type */
+export interface IInsertBoardsParams {
+  boards: readonly ({
+    id: string,
+    name: string,
+    appUserId: string
+  })[];
+}
+
+/** 'InsertBoards' return type */
+export interface IInsertBoardsResult {
+  appUserId: string;
+  createdAt: Date;
+  id: string;
+  name: string;
+  updatedAt: Date;
+}
+
+/** 'InsertBoards' query type */
+export interface IInsertBoardsQuery {
+  params: IInsertBoardsParams;
+  result: IInsertBoardsResult;
+}
+
+const insertBoardsIR: any = {"usedParamSet":{"boards":true},"params":[{"name":"boards","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"id","required":true},{"name":"name","required":true},{"name":"appUserId","required":true}]},"locs":[{"a":48,"b":55}]}],"statement":"insert into board(id, name, app_user_id)\nvalues :boards!\nreturning *"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * insert into board(id, name, app_user_id)
+ * values :boards!
+ * returning *
+ * ```
+ */
+export const insertBoards = new PreparedQuery<IInsertBoardsParams,IInsertBoardsResult>(insertBoardsIR);
+
+
 /** 'UpdateBoard' parameters type */
 export interface IUpdateBoardParams {
   id: string;
@@ -383,9 +455,9 @@ export const deleteBoardColumns = new PreparedQuery<IDeleteBoardColumnsParams,ID
 /** 'InsertBoardColumns' parameters type */
 export interface IInsertBoardColumnsParams {
   columns: readonly ({
-    idAlias: string | null | void,
+    id: string,
     name: string,
-    position: string,
+    position: number,
     boardId: string
   })[];
 }
@@ -395,7 +467,6 @@ export interface IInsertBoardColumnsResult {
   boardId: string;
   createdAt: Date;
   id: string;
-  idAlias: string | null;
   name: string;
   position: number;
   updatedAt: Date;
@@ -407,33 +478,14 @@ export interface IInsertBoardColumnsQuery {
   result: IInsertBoardColumnsResult;
 }
 
-const insertBoardColumnsIR: any = {"usedParamSet":{"columns":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"idAlias","required":false},{"name":"name","required":true},{"name":"position","required":true},{"name":"boardId","required":true}]},"locs":[{"a":170,"b":178}]}],"statement":"with\nnew_column_data as (\n    select\n        id_alias,\n        name,\n        position::smallint,\n        board_id::uuid,\n        gen_random_uuid() as id\n    from (values :columns!) as c (id_alias, name, position, board_id)\n),\nnew_column as (\n    insert into board_column(id, name, position, board_id)\n    select id, name, position, board_id\n    from new_column_data\n    returning *\n)\nselect\n    new_column.*,\n    new_column_data.id_alias\nfrom new_column\ninner join new_column_data on new_column_data.id = new_column.id\norder by new_column.position asc"};
+const insertBoardColumnsIR: any = {"usedParamSet":{"columns":true},"params":[{"name":"columns","required":true,"transform":{"type":"pick_array_spread","keys":[{"name":"id","required":true},{"name":"name","required":true},{"name":"position","required":true},{"name":"boardId","required":true}]},"locs":[{"a":62,"b":70}]}],"statement":"insert into board_column(id, name, position, board_id)\nvalues :columns!\nreturning *"};
 
 /**
  * Query generated from SQL:
  * ```
- * with
- * new_column_data as (
- *     select
- *         id_alias,
- *         name,
- *         position::smallint,
- *         board_id::uuid,
- *         gen_random_uuid() as id
- *     from (values :columns!) as c (id_alias, name, position, board_id)
- * ),
- * new_column as (
- *     insert into board_column(id, name, position, board_id)
- *     select id, name, position, board_id
- *     from new_column_data
- *     returning *
- * )
- * select
- *     new_column.*,
- *     new_column_data.id_alias
- * from new_column
- * inner join new_column_data on new_column_data.id = new_column.id
- * order by new_column.position asc
+ * insert into board_column(id, name, position, board_id)
+ * values :columns!
+ * returning *
  * ```
  */
 export const insertBoardColumns = new PreparedQuery<IInsertBoardColumnsParams,IInsertBoardColumnsResult>(insertBoardColumnsIR);

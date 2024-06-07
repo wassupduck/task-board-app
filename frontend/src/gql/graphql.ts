@@ -250,6 +250,7 @@ export type NewBoardInput = {
 };
 
 export type NewSubtaskInput = {
+  completed?: InputMaybe<Scalars['Boolean']['input']>;
   title: Scalars['String']['input'];
 };
 
@@ -305,6 +306,7 @@ export type Subtask = {
   completed: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
+  position: Scalars['String']['output'];
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };

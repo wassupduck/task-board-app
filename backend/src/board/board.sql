@@ -48,6 +48,15 @@ select *
 from board_column
 where id in :ids!;
 
+/* 
+    @name selectForUpdateBoardColumnsByIds
+    @param ids -> (...)
+*/
+select *
+from board_column
+where id in :ids!
+for update;
+
 /*
     @name selectBoardColumnTasksConnections
     @param boardColumnIds -> (...)
@@ -68,6 +77,14 @@ insert into board(name, app_user_id)
 values :board!
 returning *;
 
+/*
+    @name insertBoards
+    @param boards -> ((id!, name!, appUserId!)...)
+*/
+insert into board(id, name, app_user_id)
+values :boards!
+returning *;
+
 /* @name updateBoard */
 update board set
     name = coalesce(:name, name)
@@ -84,30 +101,11 @@ and board_id = :boardId!;
 
 /*
     @name insertBoardColumns
-    @param columns -> ((idAlias, name!, position!, boardId!)...)
+    @param columns -> ((id!, name!, position!, boardId!)...)
 */
-with
-new_column_data as (
-    select
-        id_alias,
-        name,
-        position::smallint,
-        board_id::uuid,
-        gen_random_uuid() as id
-    from (values :columns!) as c (id_alias, name, position, board_id)
-),
-new_column as (
-    insert into board_column(id, name, position, board_id)
-    select id, name, position, board_id
-    from new_column_data
-    returning *
-)
-select
-    new_column.*,
-    new_column_data.id_alias
-from new_column
-inner join new_column_data on new_column_data.id = new_column.id
-order by new_column.position asc;
+insert into board_column(id, name, position, board_id)
+values :columns!
+returning *;
 
 /* 
     @name updateBoardColumns

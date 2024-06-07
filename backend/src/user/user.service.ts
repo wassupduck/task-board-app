@@ -21,15 +21,16 @@ export class UserService {
     return await this.userRepository.getUserByUsername(username);
   }
 
-  async createUser(input: NewUserInput): Promise<User> {
-    const validation = newUserInputSchema.safeParse(input);
-    if (!validation.success) {
+  async createUser(newUserInput: NewUserInput): Promise<User> {
+    const validationResult =
+      await newUserInputSchema.safeParseAsync(newUserInput);
+    if (!validationResult.success) {
       // TODO: Better validation errors
-      const issue = validation.error.issues[0];
+      const issue = validationResult.error.issues[0];
       throw new ValidationError(`${issue.path.join('.')}: ${issue.message}`);
     }
 
-    const newUser = validation.data;
+    const newUser = validationResult.data;
 
     const passwordHash = await this.passwordService.hashPassword(
       newUser.password,

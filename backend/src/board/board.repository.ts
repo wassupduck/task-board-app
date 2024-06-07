@@ -4,9 +4,9 @@ import { Board } from './entities/board.entity.js';
 import {
   deleteBoardAsUser,
   deleteBoardColumns,
-  IInsertBoardColumnsResult,
   insertBoard,
   insertBoardColumns,
+  insertBoards,
   selectBoardByIdAsUser,
   selectBoardColumnsByBoardId,
   selectBoardColumnsByIds,
@@ -15,6 +15,7 @@ import {
   selectBoardsByUserId,
   selectForUpdateBoardByIdAsUser,
   selectForUpdateBoardColumnByIdAsUser,
+  selectForUpdateBoardColumnsByIds,
   updateBoard,
   updateBoardColumns,
 } from './board.queries.js';
@@ -29,12 +30,12 @@ import { NotFoundError } from '../common/errors/not-found-error.js';
 import { getDuplicateKeyValues } from '../database/helpers/unique-violation-error-duplicate-key-values.js';
 import { BoardColumnTasksConnection } from './entities/board-column-tasks-connection.entity.js';
 
-type NewBoard = Pick<Board, 'name' | 'appUserId'>;
-type EditBoard = Partial<Pick<Board, 'name'>>;
-type NewBoardColumn = Pick<BoardColumn, 'name' | 'position'>;
-type EditBoardColumn = Partial<Pick<BoardColumn, 'name' | 'position'>>;
-
-export type AliasToIdMapping = { [key: string]: string | undefined };
+export type NewBoard = Pick<Board, 'name' | 'appUserId'>;
+export type NewBoardWithId = NewBoard & Pick<Board, 'id'>;
+export type EditBoard = Partial<Pick<Board, 'name'>>;
+export type NewBoardColumn = Pick<BoardColumn, 'name' | 'position' | 'boardId'>;
+export type NewBoardColumnWithId = NewBoardColumn & Pick<BoardColumn, 'id'>;
+export type EditBoardColumn = Partial<Pick<BoardColumn, 'name' | 'position'>>;
 
 @Injectable()
 export class BoardRepository {
@@ -74,12 +75,16 @@ export class BoardRepository {
     });
   }
 
-  async getBoardColumns(boardId: string): Promise<BoardColumn[]> {
+  async getBoardColumnsByBoardId(boardId: string): Promise<BoardColumn[]> {
     return await this.db.queryAll(selectBoardColumnsByBoardId, { boardId });
   }
 
   async getBoardColumnsByIds(ids: string[]): Promise<BoardColumn[]> {
     return await this.db.queryAll(selectBoardColumnsByIds, { ids });
+  }
+
+  async getForUpdateBoardColumnsByIds(ids: string[]): Promise<BoardColumn[]> {
+    return await this.db.queryAll(selectForUpdateBoardColumnsByIds, { ids });
   }
 
   async getBoardColumnTasksConnections(
@@ -99,10 +104,37 @@ export class BoardRepository {
         error.cause instanceof UniqueViolationError &&
         error.cause.constraint === 'board_app_user_id_name_unique_idx'
       ) {
-        throw new BoardNameConflictError(board.name);
+        throw new BoardNameConflictError(board.name, board.appUserId);
       }
       throw error;
     }
+  }
+
+  /**
+   * Creates boards and returns them in the same order as `newBoards`.
+   */
+  async createBoards(newBoards: NewBoardWithId[]): Promise<Board[]> {
+    let boards: Board[];
+    try {
+      boards = await this.db.queryAll(insertBoards, { boards: newBoards });
+    } catch (error) {
+      if (
+        error instanceof DatabaseError &&
+        error.cause instanceof UniqueViolationError &&
+        error.cause.constraint === 'board_app_user_id_name_unique_idx'
+      ) {
+        const duplicateKeyValues = getDuplicateKeyValues(error.cause);
+        const userId = duplicateKeyValues?.['app_user_id'] ?? 'unknown';
+        const duplicateName = duplicateKeyValues?.['name'] ?? 'unknown';
+        throw new BoardNameConflictError(duplicateName, userId);
+      }
+      throw error;
+    }
+    // Board name is unique so can be used to order results
+    const boardByName = Object.fromEntries(
+      boards.map((board) => [board.name, board]),
+    );
+    return newBoards.map(({ name }) => boardByName[name]);
   }
 
   async updateBoard(id: string, fieldsToUpdate: EditBoard): Promise<Board> {
@@ -118,7 +150,9 @@ export class BoardRepository {
         error.cause instanceof UniqueViolationError &&
         error.cause.constraint === 'board_app_user_id_name_unique_idx'
       ) {
-        throw new BoardNameConflictError(fieldsToUpdate.name!);
+        const duplicateKeyValues = getDuplicateKeyValues(error.cause);
+        const userId = duplicateKeyValues?.['app_user_id'] ?? 'unknown';
+        throw new BoardNameConflictError(fieldsToUpdate.name!, userId);
       }
       throw error;
     }
@@ -128,19 +162,16 @@ export class BoardRepository {
     return board;
   }
 
+  /**
+   * Creates board columns and returns them in the same order as `newColumns`.
+   */
   async createBoardColumns(
-    boardId: string,
-    columns: (NewBoardColumn & { idAlias?: string })[],
-  ): Promise<[BoardColumn[], AliasToIdMapping]> {
-    let newColumns: IInsertBoardColumnsResult[];
+    newColumns: NewBoardColumnWithId[],
+  ): Promise<BoardColumn[]> {
+    let columns: BoardColumn[];
     try {
-      newColumns = await this.db.queryAll(insertBoardColumns, {
-        columns: columns.map((column) => ({
-          ...column,
-          idAlias: column.idAlias,
-          position: column.position.toString(),
-          boardId,
-        })),
+      columns = await this.db.queryAll(insertBoardColumns, {
+        columns: newColumns,
       });
     } catch (error) {
       if (
@@ -149,30 +180,36 @@ export class BoardRepository {
         error.cause.constraint === 'board_column_board_id_name_unique_idx'
       ) {
         const duplicateKeyValues = getDuplicateKeyValues(error.cause);
-        const duplicateColummName = duplicateKeyValues?.['name'] ?? 'unknown';
-        throw new BoardColumnNameConflictError(duplicateColummName);
+        const boardId = duplicateKeyValues?.['board_id'] ?? 'unknown';
+        const colummName = duplicateKeyValues?.['name'] ?? 'unknown';
+        throw new BoardColumnNameConflictError(colummName, boardId);
       }
       throw error;
     }
-
-    const aliasToIdMapping = newColumns.reduce((acc, column) => {
-      if (column.idAlias !== null) {
-        acc[column.idAlias] = column.id;
-      }
-      return acc;
-    }, {} as AliasToIdMapping);
-
-    return [newColumns, aliasToIdMapping];
+    // Column (boardId, name) is unique so can be used to order results
+    const columnLookupKey = ({
+      boardId,
+      name,
+    }: {
+      boardId: string;
+      name: string;
+    }) => `${boardId}_${name}`;
+    const columnLookup = Object.fromEntries(
+      columns.map((column) => [columnLookupKey(column), column]),
+    );
+    return newColumns.map(
+      (newColumn) => columnLookup[columnLookupKey(newColumn)],
+    );
   }
 
-  async deleteBoardColumns(
+  async deleteColumnsForBoard(
     boardId: string,
     columnIds: string[],
   ): Promise<void> {
     await this.db.queryAll(deleteBoardColumns, { boardId, columnIds });
   }
 
-  async updateBoardColumns(
+  async updateColumnsForBoard(
     boardId: string,
     columns: ({ id: string } & EditBoardColumn)[],
   ): Promise<BoardColumn[]> {

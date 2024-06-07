@@ -4,4 +4,6 @@ import { Field, InputType } from '@nestjs/graphql';
 export class NewSubtaskInput {
   @Field()
   title!: string;
+  @Field(() => Boolean, { nullable: true })
+  completed?: boolean;
 }

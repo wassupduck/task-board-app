@@ -22,7 +22,7 @@ insert into task(id, title, board_column_id, position) values
     ('cdb85227-5cf8-4410-9fa7-c851d8c6ae1f', 'Create wireframe prototype', 'b9af068e-d01c-47d4-94a9-618efbe0acec', 'm'),
     ('6202a452-7d50-4671-8d5d-1de8cf8b26a1', 'Conduct 5 wireframe tests', 'b9af068e-d01c-47d4-94a9-618efbe0acec', 'b');
 
-insert into subtask(id, title, completed, task_id) values
-    ('5559a668-10ad-4e7d-a532-bb4702f8dd63', 'Create account tables', true, '1208f29f-c002-4712-9a99-7e02bcf948ee'),
-    ('856ec7a9-f188-488c-a27d-25d560b1e2d0', 'Create endpoints', false, '1208f29f-c002-4712-9a99-7e02bcf948ee'),
-    ('775455f0-de06-4166-ac9d-246e669e277e', 'Testing', false, '1208f29f-c002-4712-9a99-7e02bcf948ee');
+insert into subtask(id, title, completed, task_id, position) values
+    ('5559a668-10ad-4e7d-a532-bb4702f8dd63', 'Create account tables', true, '1208f29f-c002-4712-9a99-7e02bcf948ee', 0),
+    ('856ec7a9-f188-488c-a27d-25d560b1e2d0', 'Create endpoints', false, '1208f29f-c002-4712-9a99-7e02bcf948ee', 1),
+    ('775455f0-de06-4166-ac9d-246e669e277e', 'Testing', false, '1208f29f-c002-4712-9a99-7e02bcf948ee', 2);

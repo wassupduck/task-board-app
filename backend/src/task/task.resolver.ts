@@ -83,7 +83,10 @@ export class TaskResolver {
   ): Promise<typeof CreateTaskResponse> {
     let task: Task, subtasks: Subtask[];
     try {
-      [task, subtasks] = await this.taskService.createTask(input.task, userId);
+      [task, subtasks] = await this.taskService.createTaskAsUser(
+        input.task,
+        userId,
+      );
     } catch (error) {
       if (error instanceof BoardColumnNotFoundError) {
         return new BoardColumnNotFoundErrorResponse(error.message);
@@ -107,7 +110,11 @@ export class TaskResolver {
   ): Promise<typeof UpdateTaskResponse> {
     let task: Task;
     try {
-      task = await this.taskService.updateTask(input.id, input.patch, userId);
+      task = await this.taskService.updateTaskAsUser(
+        input.id,
+        input.patch,
+        userId,
+      );
     } catch (error) {
       if (error instanceof BoardColumnNotFoundError) {
         return new BoardColumnNotFoundErrorResponse(error.message);
@@ -126,7 +133,7 @@ export class TaskResolver {
     @CurrentUser('id') userId: string,
   ): Promise<typeof DeleteTaskResponse> {
     try {
-      await this.taskService.deleteTask(input.id, userId);
+      await this.taskService.deleteTaskAsUser(input.id, userId);
     } catch (error) {
       const commonErrorResponse = responseFromCommonError(error);
       if (commonErrorResponse) return commonErrorResponse;
@@ -143,7 +150,11 @@ export class TaskResolver {
   ): Promise<typeof MoveTaskResponse> {
     let task: Task;
     try {
-      task = await this.taskService.moveTask(input.id, input.move, userId);
+      task = await this.taskService.moveTaskAsUser(
+        input.id,
+        input.move,
+        userId,
+      );
     } catch (error) {
       if (error instanceof BoardColumnNotFoundError) {
         return new BoardColumnNotFoundErrorResponse(error.message);
@@ -163,7 +174,7 @@ export class TaskResolver {
   ): Promise<typeof UpdateTaskSubtasksResponse> {
     let task: Task;
     try {
-      task = await this.taskService.updateTaskSubtasks(
+      task = await this.taskService.updateTaskSubtasksAsUser(
         input.taskId,
         input.patch,
         userId,
@@ -187,7 +198,7 @@ export class TaskResolver {
   ): Promise<typeof UpdateSubtaskCompletedResponse> {
     let subtask: Subtask;
     try {
-      subtask = await this.taskService.updateSubtaskCompletedById(
+      subtask = await this.taskService.updateSubtaskCompletedAsUser(
         input.id,
         input.completed,
         userId,

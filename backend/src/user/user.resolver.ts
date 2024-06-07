@@ -12,11 +12,13 @@ import { AuthService } from '../auth/auth.service.js';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import { Public } from '../auth/decorators/public.decorator.js';
 import { UnauthenticatedError } from '../auth/auth.errors.js';
+import { SignupService } from './signup.service.js';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
+    private readonly signupService: SignupService,
     private readonly authService: AuthService,
   ) {}
 
@@ -37,7 +39,7 @@ export class UserResolver {
   ): Promise<typeof SignupResponse> {
     let user: User;
     try {
-      user = await this.userService.createUser(input.user);
+      user = await this.signupService.signup(input.user);
     } catch (error) {
       if (error instanceof UserUsernameConflictError) {
         return new UserUsernameConflictErrorResponse(error.message);

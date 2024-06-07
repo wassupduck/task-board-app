@@ -8,7 +8,9 @@ import { TaskSubtasksConnection } from './entities/task-subtasks-connection.enti
 export function createTaskLoaders(taskService: TaskService): TaskLoaders {
   const tasksInColumnLoader = new Dataloader(
     async (columnIds: readonly string[]) => {
-      const tasks = await taskService.getTasksInColumns(columnIds as string[]);
+      const tasks = await taskService.getTasksByColumnIds(
+        columnIds as string[],
+      );
       const tasksByColumnId = Object.groupBy(
         tasks,
         ({ boardColumnId }) => boardColumnId,
@@ -19,8 +21,9 @@ export function createTaskLoaders(taskService: TaskService): TaskLoaders {
 
   const taskSubtasksConnectionLoader = new Dataloader(
     async (taskIds: readonly string[]) => {
-      const subtasksConnections =
-        await taskService.getSubtasksConnectionsByTaskIds(taskIds as string[]);
+      const subtasksConnections = await taskService.getTaskSubtasksConnections(
+        taskIds as string[],
+      );
       const subtasksConnectionsByTaskId: Partial<
         Record<string, TaskSubtasksConnection>
       > = Object.fromEntries(

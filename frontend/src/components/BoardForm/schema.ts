@@ -5,7 +5,7 @@ export const boardFormSchema = z.object({
     .string()
     .trim()
     .min(1, { message: "Name is required" })
-    .max(20, { message: "Name must be less than 20 characters" }),
+    .max(25, { message: "Name must be less than 26 characters" }),
   columns: z
     .array(
       z.object({

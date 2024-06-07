@@ -41,13 +41,51 @@ where board_column_id = :boardColumnId!
 order by position desc
 limit 1;
 
+/* 
+    @name selectLastTaskInBoardColumns 
+    @param boardColumnIds -> (...)
+*/
+select *
+from (
+    select
+        *,
+        row_number() over (
+            partition by board_column_id 
+            order by position desc
+        ) as rn
+    from task
+    where board_column_id in :boardColumnIds!
+) as t
+where rn = 1;
+
 /*
     @name insertTask
     @param task -> (title!, description!, boardColumnId!, position!)
 */
 insert into task(title, description, board_column_id, position)
-values :task
+values :task!
 returning *;
+
+/*
+    @name insertTasks
+    @param tasks -> ((id!, title!, description!, boardColumnId!, position!)...)
+    @param returnOrder -> ((id!, idx!)...)
+*/
+with
+new_task as (
+    insert into task(id, title, description, board_column_id, position)
+    values :tasks!
+    returning *
+)
+select new_task.*
+from new_task
+left join (
+    select
+        id::uuid,
+        idx::smallint
+    from (values :returnOrder!) as ro (id, idx)
+) as "order" on "order".id = new_task.id
+order by "order".idx asc nulls last;
 
 /* @name updateTask */
 update task set
@@ -71,7 +109,7 @@ where id = (
 returning *;
 
 /*
-    @name selectSubtasksConnectionsByTaskIds
+    @name selectTaskSubtasksConnections
     @param taskIds -> (...)
 */
 select
@@ -90,14 +128,32 @@ group by task.id;
 select *
 from subtask
 where task_id in :taskIds!
-order by task_id, created_at, id;
+order by task_id, position;
 
 /* 
     @name insertSubtasks
-    @param subtasks -> ((title!, taskId!)...)
+    @param subtasks -> ((title!, taskId!, completed!, position!)...)
 */
-insert into subtask(title, task_id)
+insert into subtask(title, task_id, completed, position)
 values :subtasks!
+returning *;
+
+/*
+    @name appendSubtasks
+    @param subtasks -> ((title!, completed!, _idx!)...)
+*/
+insert into subtask(title, completed, task_id, position)
+select
+    title,
+    completed::boolean,
+    :taskId!,
+    "offset" + _idx::smallint
+from (values :subtasks!) as c (title, completed, _idx)
+cross join (
+    select coalesce(max(position), -1) + 1 as "offset"
+    from subtask
+    where task_id = :taskId!
+)
 returning *;
 
 /*
@@ -113,7 +169,7 @@ where subtask.id = subtask_update.id::uuid
 and subtask.task_id = :taskId!
 returning subtask.*;
 
-/* @name updateSubtaskCompletedByIdAsUser */
+/* @name updateSubtaskCompletedAsUser */
 update subtask
 set completed = :completed!
 where id = (

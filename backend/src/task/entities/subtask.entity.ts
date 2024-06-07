@@ -8,6 +8,8 @@ export class Subtask {
   title!: string;
   @Field()
   completed!: boolean;
+  @Field(() => String)
+  position!: number;
   taskId!: string;
   @Field()
   createdAt!: Date;

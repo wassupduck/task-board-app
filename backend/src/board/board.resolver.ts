@@ -9,7 +9,6 @@ import {
 } from '@nestjs/graphql';
 import { BoardService } from './board.service.js';
 import { Board } from './entities/board.entity.js';
-import { TaskService } from '../task/index.js';
 import { BoardColumnsConnection } from './entities/board-columns-connection.entity.js';
 import { CreateBoardInput } from './dto/create-board.input.js';
 import { CreateBoardResponse } from './dto/create-board-response.dto.js';
@@ -34,14 +33,11 @@ import { CurrentUser } from '../auth/index.js';
 
 @Resolver(Board)
 export class BoardResolver {
-  constructor(
-    private readonly boardService: BoardService,
-    private readonly taskService: TaskService,
-  ) {}
+  constructor(private readonly boardService: BoardService) {}
 
   @Query(() => [Board])
   async boards(@CurrentUser('id') userId: string): Promise<Board[]> {
-    return this.boardService.getUserBoards(userId);
+    return this.boardService.getBoardsByUserId(userId);
   }
 
   @Query(() => Board, { nullable: true })
@@ -64,7 +60,7 @@ export class BoardResolver {
   ): Promise<typeof CreateBoardResponse> {
     let board: Board;
     try {
-      board = await this.boardService.createBoard(input.board, userId);
+      board = await this.boardService.createBoardAsUser(input.board, userId);
     } catch (error) {
       if (error instanceof BoardNameConflictError) {
         return new BoardNameConflictErrorResponse(error.message);
@@ -84,7 +80,7 @@ export class BoardResolver {
   ): Promise<typeof UpdateBoardResponse> {
     let board: Board;
     try {
-      board = await this.boardService.updateBoard(
+      board = await this.boardService.updateBoardAsUser(
         input.id,
         input.patch,
         userId,
@@ -108,7 +104,7 @@ export class BoardResolver {
   ): Promise<typeof UpdateBoardColumnsResponse> {
     let board: Board;
     try {
-      board = await this.boardService.updateBoardColumns(
+      board = await this.boardService.updateBoardColumnsAsUser(
         input.boardId,
         input.patch,
         userId,
@@ -131,7 +127,7 @@ export class BoardResolver {
     @CurrentUser('id') userId: string,
   ): Promise<typeof DeleteBoardResponse> {
     try {
-      await this.boardService.deleteBoard(input.id, userId);
+      await this.boardService.deleteBoardAsUser(input.id, userId);
     } catch (error) {
       const commonErrorResponse = responseFromCommonError(error);
       if (commonErrorResponse) return commonErrorResponse;
