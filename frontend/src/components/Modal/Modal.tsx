@@ -9,10 +9,10 @@ interface ModalProps extends Dialog.DialogProps {}
 const Modal = (props: ModalProps) => <Dialog.Root {...props}></Dialog.Root>;
 
 interface ModalContentProps {
-  variant?: "destructive";
   children: React.ReactNode;
   hidden?: boolean;
   overlay?: boolean;
+  variant?: "destructive";
 }
 
 Modal.Content = (props: ModalContentProps) => (

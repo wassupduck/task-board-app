@@ -7,6 +7,13 @@
     color: var(--color-text-primary);
 }
 
+.board-name {
+    padding-right: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .board-list {
     display: flex;
     flex-direction: column;

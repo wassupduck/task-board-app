@@ -1,13 +1,14 @@
 /// <reference types="vite-plugin-svgr/client" />
 import ChevronDownIcon from "../../assets/icon-chevron-down.svg?react";
 import ChevronUpIcon from "../../assets/icon-chevron-up.svg?react";
-import { useFetcher, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import BoardNav from "../BoardNav";
 import styles from "./MobileMenu.module.css";
 import * as Popover from "@radix-ui/react-popover";
 import ThemeToggle from "../ThemeToggle";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
 import { useEffect, useState } from "react";
+import useLogout from "../../hooks/useLogout";
 
 const MobileMenu_QueryFragment = graphql(`
   fragment MobileMenu_QueryFragment on Query {
@@ -23,6 +24,7 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu(props: MobileMenuProps) {
+  const logout = useLogout();
   const [open, setOpen] = useState(false);
   const [hasOpenModal, setHasOpenModal] = useState(false);
 
@@ -38,14 +40,6 @@ export function MobileMenu(props: MobileMenuProps) {
     }
   }
 
-  const fetcher = useFetcher();
-  const handleLogout = () => {
-    fetcher.submit(null, {
-      method: "post",
-      action: "/logout",
-    });
-  };
-
   const query = getFragmentData(MobileMenu_QueryFragment, props.query);
 
   return (
@@ -53,7 +47,11 @@ export function MobileMenu(props: MobileMenuProps) {
       <Popover.Trigger asChild>
         <button aria-label="Menu" className={styles.triggerButton}>
           {props.children}
-          {open && !hasOpenModal ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          {open && !hasOpenModal ? (
+            <ChevronUpIcon style={{ minWidth: "10px" }} />
+          ) : (
+            <ChevronDownIcon style={{ minWidth: "10px" }} />
+          )}
         </button>
       </Popover.Trigger>
       <Popover.Portal>
@@ -73,7 +71,7 @@ export function MobileMenu(props: MobileMenuProps) {
               <div className={styles.themeToggleWrapper}>
                 <ThemeToggle />
               </div>
-              <button className={styles.menuButton} onClick={handleLogout}>
+              <button className={styles.menuButton} onClick={logout}>
                 Logout
               </button>
             </div>

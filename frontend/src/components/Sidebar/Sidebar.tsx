@@ -1,10 +1,10 @@
 /// <reference types="vite-plugin-svgr/client" />
-import { useFetcher } from "react-router-dom";
 import HideSidebarIcon from "../../assets/icon-hide-sidebar.svg?react";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
 import BoardNav from "../BoardNav";
 import ThemeToggle from "../ThemeToggle";
 import styles from "./Sidebar.module.css";
+import useLogout from "../../hooks/useLogout";
 
 const Sidebar_QueryFragment = graphql(`
   fragment Sidebar_QueryFragment on Query {
@@ -19,14 +19,7 @@ interface SidebarProps {
 
 export default function Sidebar(props: SidebarProps) {
   const query = getFragmentData(Sidebar_QueryFragment, props.query);
-
-  const fetcher = useFetcher();
-  const handleLogout = () => {
-    fetcher.submit(null, {
-      method: "post",
-      action: "/logout",
-    });
-  };
+  const logout = useLogout();
 
   return (
     <div className={styles.wrapper}>
@@ -42,7 +35,7 @@ export default function Sidebar(props: SidebarProps) {
           <HideSidebarIcon />
           Hide Sidebar
         </button>
-        <button className={styles.sidebarButton} onClick={handleLogout}>
+        <button className={styles.sidebarButton} onClick={logout}>
           Logout
         </button>
       </div>

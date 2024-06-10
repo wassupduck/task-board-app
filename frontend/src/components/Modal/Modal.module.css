@@ -3,11 +3,7 @@
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(28 27 45 / 40%);
-
-    body[data-theme="dark"] & {
-        background: rgba(28 27 45 / 75%);
-    }
+    background: hsl(0deg 0% 0% / 50%);
 }
 
 .modal {

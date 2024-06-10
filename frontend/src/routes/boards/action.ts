@@ -18,5 +18,5 @@ export const action =
     await queryClient.invalidateQueries({
       queryKey: rootRouteQueryKey,
     });
-    return redirect(`${resp.board.id}`);
+    return redirect(`/boards/${resp.board.id}`);
   };

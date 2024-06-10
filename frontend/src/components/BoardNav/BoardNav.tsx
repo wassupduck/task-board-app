@@ -43,8 +43,8 @@ export default function BoardNav(props: BoardNavProps) {
                 } as CSSProperties
               }
             >
-              <BoardIcon />
-              <span>{board.name}</span>
+              <BoardIcon style={{ minWidth: "16px" }} />
+              <div className={styles.boardName}>{board.name}</div>
             </NavLink>
           </li>
         ))}

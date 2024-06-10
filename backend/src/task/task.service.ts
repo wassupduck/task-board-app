@@ -125,15 +125,15 @@ export class TaskService {
         Pick<z.infer<typeof newTaskInputSchema>, 'subtasks'>)[] = [];
       for (const [boardColumnId, newTasks] of newTasksByBoardColumnId) {
         const lastTaskInColumn = lastTaskInColumns[boardColumnId];
-        let position = lastTaskInColumn?.position ?? '0';
+        let newTaskPosition = nextPosition(lastTaskInColumn?.position ?? '0');
         for (const newTask of newTasks) {
-          position = nextPosition(position);
           tasksToCreate.push({
             id: randomUUID(),
             ...newTask,
-            position,
+            position: newTaskPosition,
             boardColumnId,
           });
+          newTaskPosition = nextPosition(newTaskPosition);
         }
       }
 

@@ -1,6 +1,7 @@
 .trigger-button {
     min-width: 32px;
-    padding: 16px 8px;
+    padding: 12px 12px;
+    margin: -12px -12px;
     display: grid;
     place-content: center;
 }

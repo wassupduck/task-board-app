@@ -1,6 +1,6 @@
 import Modal from "../Modal";
 import { useFetcher } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BoardsRouteActionData } from "../../routes/boards";
 import { useBoardForm } from "../BoardForm/hook";
 import { BoardFormData } from "../BoardForm/types";
@@ -14,6 +14,7 @@ interface BoardCreateModalProps {
 }
 
 export default function BoardCreateModal(props: BoardCreateModalProps) {
+  const [open, setOpen] = useState(false);
   const boardForm = useBoardForm({
     defaultValues: {
       columns: [{ name: "" }, { name: "" }],
@@ -36,6 +37,14 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
     }
   }
 
+  useEffect(() => {
+    // Successful submittion
+    if (open && fetcher.json !== undefined && fetcher.state === "loading") {
+      setOpen(false);
+      boardForm.reset();
+    }
+  }, [open, boardForm, fetcher]);
+
   const handleSubmit = (board: BoardFormData) => {
     fetcher.submit(board, {
       method: "post",
@@ -45,7 +54,13 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
   };
 
   return (
-    <Modal onOpenChange={props.onOpenChange}>
+    <Modal
+      open={open}
+      onOpenChange={(open) => {
+        setOpen(open);
+        props.onOpenChange?.(open);
+      }}
+    >
       <Modal.Trigger asChild>{props.children}</Modal.Trigger>
       <Modal.Content>
         <Modal.Title>Add New Board</Modal.Title>
