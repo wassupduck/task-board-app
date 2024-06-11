@@ -1,6 +1,7 @@
 {
   "githubSource": {
     "owner": "github-source-owner",
-    "repo": "github-source-repo"
+    "repo": "github-source-repo",
+    "oauthTokenSecretId": "github-source-oauth-token-secret-id"
   }
 }

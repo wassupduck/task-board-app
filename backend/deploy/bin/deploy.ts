@@ -23,7 +23,7 @@ const stagingServiceStack = new ServiceStack(
     imageRepo: stagingBaseStack.imageRepo,
   },
 );
-new StagingPipelineStack(app, 'StagingBackendPipelineStack', {
+new StagingPipelineStack(app, 'BackendStagingPipelineStack', {
   env: stagingEnv,
   imageRepo: stagingBaseStack.imageRepo,
   serviceStack: stagingServiceStack,

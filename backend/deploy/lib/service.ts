@@ -3,8 +3,9 @@ import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as sm from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
-import { Stack } from 'aws-cdk-lib';
+import { ArnFormat, Stack } from 'aws-cdk-lib';
 
 export interface ServiceProps {
   readonly vpc: ec2.IVpc;
@@ -13,10 +14,12 @@ export interface ServiceProps {
   readonly db: {
     readonly instanceResourceId: string;
     readonly instanceEndpointAddress: string;
-    readonly dbName: string;
-    readonly dbUserName: string;
     readonly instanceSecurityGroup: ec2.ISecurityGroup;
+    readonly dbName: string;
+    readonly dbUser: string;
   };
+  readonly jwtSecretSecretArn: string;
+  readonly frontendUrl: string;
 }
 
 export class Service extends Construct {
@@ -30,12 +33,20 @@ export class Service extends Construct {
     const taskRole = new iam.Role(this, 'TaskRole', {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
     });
+
     taskRole.addToPolicy(
       new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: ['rds-db:connect'],
         resources: [
-          `arn:aws:rds-db:${Stack.of(this).region}:${Stack.of(this).account}:dbuser:${props.db.instanceResourceId}/${props.db.dbUserName}`,
+          Stack.of(this).formatArn({
+            arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+            service: 'rds-db',
+            resource: 'dbuser',
+            resourceName: [props.db.instanceResourceId, props.db.dbUser].join(
+              '/',
+            ),
+          }),
         ],
       }),
     );
@@ -67,8 +78,18 @@ export class Service extends Construct {
           }),
           environment: {
             TASK_BOARD_APP_DATABASE_HOST: props.db.instanceEndpointAddress,
-            TASK_BOARD_APP_DATABASE_USER: props.db.dbUserName,
+            TASK_BOARD_APP_DATABASE_USER: props.db.dbUser,
             TASK_BOARD_APP_DATABASE_NAME: props.db.dbName,
+            TASK_BOARD_APP_FRONTEND_URL: props.frontendUrl,
+          },
+          secrets: {
+            TASK_BOARD_APP_JWT_SECRET: ecs.Secret.fromSecretsManager(
+              sm.Secret.fromSecretCompleteArn(
+                this,
+                'JwtSecretSecret',
+                props.jwtSecretSecretArn,
+              ),
+            ),
           },
         },
         securityGroups: [fargateServiceSecurityGroup],

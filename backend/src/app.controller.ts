@@ -1,10 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service.js';
+import { Public } from './auth/index.js';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Public()
   @Get()
   root(): string {
     return (
@@ -14,6 +16,7 @@ export class AppController {
   }
 
   // TODO: Remove once using database client in feature module
+  @Public()
   @Get('migration-version')
   currentMigrationVersion(): Promise<string> {
     return this.appService.currentMigrationVersion();

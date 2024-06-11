@@ -4,8 +4,10 @@
   "db": {
     "instanceResourceId": "db-ABCDEFGHIJKL01234",
     "instanceEndpointAddress": "example.aslfdewrlk.eu-west-2.rds.amazonaws.com",
-    "dbUserName": "dbuser",
+    "instanceSecurityGroupId": "sg-abcdefghijkl01234",
     "dbName": "task_board_app",
-    "instanceSecurityGroupId": "sg-abcdefghijkl01234"
-  }
+    "dbUser": "task_board_app_user"
+  },
+  "jwtSecretSecretArn": "arn:aws:secretsmanager:us-west-2:123456789012:secret:JwtSecretSecret-a1b2c3",
+  "frontendUrl": "https://www.task-board-app.com"
 }

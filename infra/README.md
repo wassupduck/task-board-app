@@ -15,6 +15,12 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Documentation
 
+### Deployment
+
+1. Bootstrap your environment by following the instruction [here](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html).
+2. Deploy all stacks.
+   `CDK_STAGING_ACCOUNT=$CDK_STAGING_ACCOUNT CDK_STAGING_REGION=$CDK_STAGING_REGION yarn cdk --profile $AWS_PROFILE deploy --all`
+
 ### Bastion Host
 
 #### Connect to bastion host
@@ -25,15 +31,17 @@ Steps to connect to the basion host:
 2.  Upload your public key to the instance metadata of the bastion host. After the key is uploaded, you have 60 seconds to start a connection with the bastion host. After 60 seconds, the public key is removed.
     - Send the SSH key to the bastion host by using EC2 Instance Connect. Enter the following command, where: `$INSTANCE_ID` is the ID of the EC2 instance and `$PUBLIC_KEY_FILE` is the path to your public key file, such as my_key.pub. Important: Be sure to use the public key and not the private key.
       ```sh
-      aws ec2-instance-connect send-ssh-public-key \
+      aws --profile $AWS_PROFILE ec2-instance-connect send-ssh-public-key \
           --instance-id $INSTANCE_ID \
           --instance-os-user ec2-user \
           --ssh-public-key file://$PUBLIC_KEY_FILE
       ```
 3.  Enter the following command to connect to the bastion host through Session Manager, where: `$PRIVATE_KEY_FILE` is the path to your private key, such as my_key and `$INSTANCE_ID` is the ID of the EC2 instance.
     ```sh
-    ssh -i $PRIVATE_KEY_FILE ec2-user@$INSTANCE_ID
+    AWS_PROFILE=$AWS_PROFILE ssh -i $PRIVATE_KEY_FILE ec2-user@$INSTANCE_ID
     ```
+
+See https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/access-a-bastion-host-by-using-session-manager-and-amazon-ec2-instance-connect.html for more details.
 
 #### Connect to RDS instance via bastion host
 
@@ -42,7 +50,7 @@ Steps to connect to the basion host:
 3. Get the RDS instance master user password.
 4. Create SSH tunnel. Enter the following command, where: `$INSTANCE_ID` is the ID of the bastion instance, `$RDS_INSTANCE_ENDPOINT` is the endpoint of the RDS instance, and `$PUBLIC_KEY_FILE` is the path to your public key file, such as my_key.pub. Important: Be sure to use the public key and not the private key.
    ```sh
-   ssh -N -i $PUBLIC_KEY_FILE ec2-user@$INSTANCE_ID -L 5432:$RDS_INSTANCE_ENDPOINT:5432
+   AWS_PROFILE=$AWS_PROFILE ssh -N -i $PUBLIC_KEY_FILE ec2-user@$INSTANCE_ID -L 5432:$RDS_INSTANCE_ENDPOINT:5432
    ```
 5. Connect to postgres. When prompted for a password, enter the master user password.
    ```sh

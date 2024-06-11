@@ -23,7 +23,9 @@ export class StagingPipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: StagingPipelineStackProps) {
     super(scope, id, props);
 
-    const config = this.configFromLookup('backend-pipeline-stack-config');
+    const config = this.configFromLookup(
+      'backend-staging-pipeline-stack-config',
+    );
 
     new StagingPipeline(this, 'StagingPipeline', {
       imageRepo: props.imageRepo,
@@ -40,7 +42,8 @@ export class StagingPipelineStack extends cdk.Stack {
     );
 
     if (configString.includes('dummy-value')) {
-      // Dummy config, see: https://sdhuang32.github.io/ssm-StringParameter-valueFromLookup-use-cases-and-internal-synth-flow/
+      // Dummy config
+      // see: https://sdhuang32.github.io/ssm-StringParameter-valueFromLookup-use-cases-and-internal-synth-flow/
       return {
         githubSource: {
           owner: 'github-source-owner',

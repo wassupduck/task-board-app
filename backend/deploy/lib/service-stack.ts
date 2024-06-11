@@ -12,10 +12,12 @@ interface ServiceStackConfig {
   db: {
     instanceResourceId: string;
     instanceEndpointAddress: string;
-    dbName: string;
-    dbUserName: string;
     instanceSecurityGroupId: string;
+    dbName: string;
+    dbUser: string;
   };
+  jwtSecretSecretArn: string;
+  frontendUrl: string;
 }
 
 export interface ServiceStackProps extends cdk.StackProps {
@@ -44,6 +46,7 @@ export class ServiceStack extends cdk.Stack {
     );
 
     this.service = new Service(this, 'StagingBackendService', {
+      ...config,
       vpc,
       ecsCluster: cluster,
       imageRepo: props.imageRepo,
@@ -61,7 +64,8 @@ export class ServiceStack extends cdk.Stack {
     );
 
     if (configString.includes('dummy-value')) {
-      // Dummy config, see: https://sdhuang32.github.io/ssm-StringParameter-valueFromLookup-use-cases-and-internal-synth-flow/
+      // Dummy config
+      // see: https://sdhuang32.github.io/ssm-StringParameter-valueFromLookup-use-cases-and-internal-synth-flow/
       return {
         vpcId: 'vpc-01234567890abcdef',
         ecsClusterName: 'ServiceStack-DummyEcsCluster-NT5EUXTNTXXD',
@@ -69,10 +73,13 @@ export class ServiceStack extends cdk.Stack {
           instanceResourceId: 'db-ABCDEFGHIJKL01234',
           instanceEndpointAddress:
             'example.aslfdewrlk.eu-west-2.rds.amazonaws.com',
-          dbUserName: 'dbuser',
-          dbName: 'task_board_app',
           instanceSecurityGroupId: 'sg-abcdefghijkl01234',
+          dbName: 'task_board_app',
+          dbUser: 'task_board_app_user',
         },
+        jwtSecretSecretArn:
+          'arn:aws:secretsmanager:us-west-2:123456789012:secret:Secret-a1b2c3',
+        frontendUrl: 'https://www.task-board-app.com',
       };
     }
 

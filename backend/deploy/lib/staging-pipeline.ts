@@ -26,11 +26,13 @@ export class StagingPipeline extends Construct {
 
     // By default, a cdk synth performed in a pipeline will not have permissions to
     // perform context lookups, and the lookups will fail. This is by design.
-    // The recommended way of using lookups is by running cdk synth on the developer workstation and
-    // checking in the cdk.context.json file, which contains the results of the context lookups.
-    // However given this is a public repo checking in the cdk.context.json is not recommended for security reasons.
+    // The recommended way of using lookups is by running cdk synth on the developer
+    // workstation and checking in the cdk.context.json file, which contains the
+    // results of the context lookups. However given this is a public repo checking-in
+    // the cdk.context.json is not recommended for security reasons.
     // To get around this we store the cdk.context.json file in s3 and and inject it
-    // into the build environment before cdk synth is performed. To update the service context, reset it locally, update the
+    // into the build environment before cdk synth is performed.
+    // To update the service context, reset it locally, update the
     // context paramater store value, and redeploy the pipeline stack.
     // Inspired from: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.pipelines-readme.html#context-lookups
     // TODO: Find a better way to do this.

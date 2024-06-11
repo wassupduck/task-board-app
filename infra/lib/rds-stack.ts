@@ -21,15 +21,12 @@ export class RdsStack extends cdk.Stack {
 
     const instance = new rds.DatabaseInstance(this, "DatabaseInstance", {
       engine: rds.DatabaseInstanceEngine.postgres({
-        version: rds.PostgresEngineVersion.VER_16_1,
+        version: rds.PostgresEngineVersion.VER_16_3,
       }),
-      instanceType: ec2.InstanceType.of(
-        ec2.InstanceClass.BURSTABLE4_GRAVITON,
-        ec2.InstanceSize.MICRO
-      ),
+      instanceType: new ec2.InstanceType("t4g.micro"),
       vpc: props.vpc,
       vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
       },
       iamAuthentication: true,
       securityGroups: [this.instanceSecurityGroup],
