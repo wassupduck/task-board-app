@@ -72,3 +72,11 @@ These parameters must store JSON values in plaintext. The format and expected ke
       ```bash
       CDK_STAGING_ACCOUNT=$CDK_STAGING_ACCOUNT CDK_STAGING_REGION=$CDK_STAGING_REGION yarn cdk --profile $AWS_PROFILE deploy BackendStagingPipelineStack
       ```
+
+## Updating config
+
+TODO
+
+```bash
+yarn cdk context --clear
+```

@@ -3,12 +3,17 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
+import * as r53 from 'aws-cdk-lib/aws-route53';
+import * as cm from 'aws-cdk-lib/aws-certificatemanager';
 import { Construct } from 'constructs';
-import { Service } from './service';
+import { Service, ServiceProps } from './service';
 
 interface ServiceStackConfig {
   vpcId: string;
   ecsClusterName: string;
+  hostedZoneName?: string;
+  domainName?: string;
+  certificateArn?: string;
   db: {
     instanceResourceId: string;
     instanceEndpointAddress: string;
@@ -45,7 +50,7 @@ export class ServiceStack extends cdk.Stack {
       config.db.instanceSecurityGroupId,
     );
 
-    this.service = new Service(this, 'StagingBackendService', {
+    let serviceProps: ServiceProps = {
       ...config,
       vpc,
       ecsCluster: cluster,
@@ -54,7 +59,32 @@ export class ServiceStack extends cdk.Stack {
         ...config.db,
         instanceSecurityGroup: dbSecurityGroup,
       },
-    });
+    };
+
+    if (config.hostedZoneName && config.domainName) {
+      const domainZone = r53.HostedZone.fromLookup(this, 'HostedZone', {
+        domainName: config.hostedZoneName,
+      });
+      serviceProps = {
+        ...serviceProps,
+        domainName: config.domainName,
+        domainZone,
+      };
+    }
+
+    if (config.certificateArn) {
+      const certificate = cm.Certificate.fromCertificateArn(
+        this,
+        'Certificate',
+        config.certificateArn,
+      );
+      serviceProps = {
+        ...serviceProps,
+        certificate,
+      };
+    }
+
+    this.service = new Service(this, 'StagingBackendService', serviceProps);
   }
 
   configFromLookup(ssmParameterName: string): ServiceStackConfig {

@@ -4,6 +4,9 @@ import * as ecr from 'aws-cdk-lib/aws-ecr';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as sm from 'aws-cdk-lib/aws-secretsmanager';
+import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as r53 from 'aws-cdk-lib/aws-route53';
+import * as cm from 'aws-cdk-lib/aws-certificatemanager';
 import { Construct } from 'constructs';
 import { ArnFormat, Stack } from 'aws-cdk-lib';
 
@@ -11,6 +14,9 @@ export interface ServiceProps {
   readonly vpc: ec2.IVpc;
   readonly ecsCluster: ecs.ICluster;
   readonly imageRepo: ecr.IRepository;
+  readonly domainZone?: r53.IHostedZone;
+  readonly domainName?: string;
+  readonly certificate?: cm.ICertificate;
   readonly db: {
     readonly instanceResourceId: string;
     readonly instanceEndpointAddress: string;
@@ -69,6 +75,11 @@ export class Service extends Construct {
         cluster: props.ecsCluster,
         memoryLimitMiB: 512,
         cpu: 256,
+        certificate: props.certificate,
+        sslPolicy: elb.SslPolicy.RECOMMENDED,
+        domainName: props.domainName,
+        domainZone: props.domainZone,
+        redirectHTTP: props.certificate !== undefined,
         taskImageOptions: {
           image: containerImage,
           containerPort: 3000,
