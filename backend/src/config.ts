@@ -13,6 +13,7 @@ const dbCACertFile = path.resolve(
 const frontendUrl = prodEnvVar('FRONTEND_URL', 'http://localhost:5173');
 
 const config = {
+  domainName: envVar('DOMAIN_NAME'),
   frontendUrl,
   db: {
     connectionString: envVar('DATABASE_CONNECTION_STRING'),

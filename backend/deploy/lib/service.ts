@@ -68,6 +68,19 @@ export class Service extends Construct {
       'Allow connections from Backend ECS service',
     );
 
+    const taskEnvironment: {
+      [key: string]: string;
+    } = {
+      TASK_BOARD_APP_DATABASE_HOST: props.db.instanceEndpointAddress,
+      TASK_BOARD_APP_DATABASE_USER: props.db.dbUser,
+      TASK_BOARD_APP_DATABASE_NAME: props.db.dbName,
+      TASK_BOARD_APP_FRONTEND_URL: props.frontendUrl,
+    };
+
+    if (props.domainName) {
+      taskEnvironment.TASK_BOARD_APP_DOMAIN_NAME = props.domainName;
+    }
+
     new ecsPatterns.ApplicationLoadBalancedFargateService(
       this,
       'FargateService',
@@ -87,12 +100,7 @@ export class Service extends Construct {
           logDriver: new ecs.AwsLogDriver({
             streamPrefix: 'backend-service-web',
           }),
-          environment: {
-            TASK_BOARD_APP_DATABASE_HOST: props.db.instanceEndpointAddress,
-            TASK_BOARD_APP_DATABASE_USER: props.db.dbUser,
-            TASK_BOARD_APP_DATABASE_NAME: props.db.dbName,
-            TASK_BOARD_APP_FRONTEND_URL: props.frontendUrl,
-          },
+          environment: taskEnvironment,
           secrets: {
             TASK_BOARD_APP_JWT_SECRET: ecs.Secret.fromSecretsManager(
               sm.Secret.fromSecretCompleteArn(

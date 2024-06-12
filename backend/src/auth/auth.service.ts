@@ -2,14 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthTokenPayload } from './auth.interfaces.js';
 import { FastifyReply } from 'fastify';
-import {
-  AUTH_TOKEN_COOKIE,
-  AUTH_TOKEN_COOKIE_OPTIONS,
-} from './auth.constants.js';
+import { AUTH_TOKEN_COOKIE } from './auth.constants.js';
 import { PasswordService } from './password.service.js';
 import { UserService } from '../user/user.service.js';
 import { User } from '../user/entities/user.entity.js';
 import { LoginCredentialsInput } from './dto/login-credentials.input.js';
+import { CookieSerializeOptions } from '@fastify/cookie';
+import config from '../config.js';
+
+const AUTH_TOKEN_COOKIE_OPTIONS: CookieSerializeOptions = {
+  path: '/graphql',
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+  domain: config.domainName,
+};
 
 @Injectable()
 export class AuthService {
