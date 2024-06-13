@@ -88,6 +88,7 @@ export class Service extends Construct {
         cluster: props.ecsCluster,
         memoryLimitMiB: 512,
         cpu: 256,
+        desiredCount: 2,
         certificate: props.certificate,
         sslPolicy: elb.SslPolicy.RECOMMENDED,
         domainName: props.domainName,
@@ -111,6 +112,19 @@ export class Service extends Construct {
             ),
           },
         },
+        capacityProviderStrategies: [
+          // Cost savings.
+          {
+            capacityProvider: 'FARGATE_SPOT',
+            weight: 1,
+            base: 1,
+          },
+          {
+            capacityProvider: 'FARGATE',
+            weight: 0,
+            base: 0,
+          },
+        ],
         securityGroups: [fargateServiceSecurityGroup],
       },
     );
