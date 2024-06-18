@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, redirect } from "react-router-dom";
 import { authProvider } from "../../auth/auth-provider";
 
-type ActionRequestJson = {
+export type ActionRequestJson = {
   credentials: { username: string; password: string };
   redirectTo?: string;
 };
@@ -21,5 +21,5 @@ export async function action({ request }: LoaderFunctionArgs) {
     return resp;
   }
 
-  return redirect(redirectTo || "/");
+  return redirect(redirectTo ?? "/");
 }

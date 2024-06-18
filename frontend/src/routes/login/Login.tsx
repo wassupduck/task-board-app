@@ -2,7 +2,7 @@ import styles from "./Login.module.css";
 import { Link, useActionData, useLocation, useSubmit } from "react-router-dom";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import { useLoginForm } from "../../components/LoginForm/hook";
-import { ActionData } from "./action";
+import { ActionData, ActionRequestJson } from "./action";
 import { LoginFormData } from "../../components/LoginForm/types";
 import { useState } from "react";
 import { Logo } from "../../components/Logo/Logo";
@@ -10,7 +10,7 @@ import { Logo } from "../../components/Logo/Logo";
 export function Login() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const from = params.get("from") || "/";
+  const from = params.get("from") ?? "/";
 
   const loginForm = useLoginForm();
   const submit = useSubmit();
@@ -31,7 +31,10 @@ export function Login() {
 
   const handleSubmit = (credentials: LoginFormData) => {
     submit(
-      { credentials, redirectTo: from },
+      {
+        credentials,
+        redirectTo: from,
+      } satisfies ActionRequestJson,
       {
         method: "post",
         replace: true,

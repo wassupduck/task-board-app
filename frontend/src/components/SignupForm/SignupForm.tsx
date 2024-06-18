@@ -17,7 +17,10 @@ export default function SignupForm(props: SignupFormProps) {
   const { errors } = formState;
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit(props.onSubmit)}>
+    <form
+      className={styles.form}
+      onSubmit={(event) => void handleSubmit(props.onSubmit)(event)}
+    >
       <div>
         <label htmlFor="username" className="form-label">
           Username

@@ -22,8 +22,9 @@ export function BoardDeleteModal(props: BoardDeleteModalProps) {
       <Modal.Content variant="destructive">
         <Modal.Title>Delete this board?</Modal.Title>
         <p>
-          Are you sure you want to delete the "{props.board.name}" board? This
-          action will remove all columns and tasks and cannot be reversed.
+          Are you sure you want to delete the &ldquo;{props.board.name}&rdquo;
+          board? This action will remove all columns and tasks and cannot be
+          reversed.
         </p>
         <Form
           action={`/boards/${props.board.id}`}

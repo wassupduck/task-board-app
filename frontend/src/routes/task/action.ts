@@ -8,6 +8,22 @@ import {
 } from "./queries";
 import { QueryClient } from "@tanstack/react-query";
 import { boardRouteQueryKey } from "../board/queries";
+import { UpdateTaskPatchInput } from "../../gql/graphql";
+
+type ActionPatchRequestUpdateTask = {
+  operation: "update-task";
+  patch: UpdateTaskPatchInput;
+};
+type ActionPatchRequestUpdateSubtaskCompleted = {
+  operation: "update-subtask-completed";
+  patch: {
+    id: string;
+    completed: boolean;
+  };
+};
+export type ActionPatchRequestJson =
+  | ActionPatchRequestUpdateTask
+  | ActionPatchRequestUpdateSubtaskCompleted;
 
 export const action =
   (queryClient: QueryClient) =>
@@ -31,19 +47,19 @@ export const action =
     }
 
     if (request.method === "PATCH") {
-      const data = await request.json();
-      const { intent, patch } = data;
+      const data = (await request.json()) as ActionPatchRequestJson;
+      const { operation, patch } = data;
 
       let resp;
-      if (intent === "update-task") {
+      if (operation === "update-task") {
         resp = await updateTask(taskId, patch);
         if (resp.__typename !== "UpdateTaskSuccess") {
           // TODO
         }
-      } else if (intent === "update-subtask-completed") {
+      } else if (operation === "update-subtask-completed") {
         // TODO: Move to /subtasks/:subTaskId route?
-        const { subtaskId, completed } = patch;
-        resp = await updateSubtaskCompleted(subtaskId, completed);
+        const { id, completed } = patch;
+        resp = await updateSubtaskCompleted(id, completed);
         if (resp.__typename !== "UpdateSubtaskCompletedSuccess") {
           // TODO
         }

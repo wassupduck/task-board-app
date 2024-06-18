@@ -24,7 +24,10 @@ export default function BoardForm(props: BoardFormProps) {
   const { errors } = formState;
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit(props.onSubmit)}>
+    <form
+      className={styles.form}
+      onSubmit={(event) => void handleSubmit(props.onSubmit)(event)}
+    >
       <div>
         <label htmlFor="name" className="form-label">
           Name
@@ -100,7 +103,7 @@ function BoardColumnsList(props: BoardColumnsListProps) {
                   disabled={idx === 0}
                   onClick={() => {
                     swap(idx, idx - 1);
-                    isSubmitted && trigger("columns");
+                    isSubmitted && void trigger("columns");
                   }}
                 >
                   <ChevronUpIcon width="15" height="15" />
@@ -112,7 +115,7 @@ function BoardColumnsList(props: BoardColumnsListProps) {
                   disabled={idx === fields.length - 1}
                   onClick={() => {
                     swap(idx, idx + 1);
-                    isSubmitted && trigger("columns");
+                    isSubmitted && void trigger("columns");
                   }}
                 >
                   <ChevronDownIcon width="15" height="15" />
@@ -126,7 +129,7 @@ function BoardColumnsList(props: BoardColumnsListProps) {
                     fields.length === 1
                       ? setValue(fieldName, "", { shouldDirty: true })
                       : remove(idx);
-                    isSubmitted && trigger("columns");
+                    isSubmitted && void trigger("columns");
                   }}
                 >
                   <CrossIcon width="15" />

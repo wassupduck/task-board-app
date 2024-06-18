@@ -95,12 +95,15 @@ export function EditBoard() {
       };
     }
 
-    const update: ActionRequestJson = {
-      board: (dirtyFields.name || undefined) && {
+    const update: ActionRequestJson = {};
+    if (dirtyFields.name) {
+      update.board = {
         name: editedBoard.name,
-      },
-      columns: dirtyFields.columns && updateColumnsPatch(),
-    };
+      };
+    }
+    if (dirtyFields.columns) {
+      update.columns = updateColumnsPatch();
+    }
 
     fetcher.submit(update, {
       method: "post",

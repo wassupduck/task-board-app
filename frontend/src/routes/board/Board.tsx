@@ -25,7 +25,7 @@ export function Board() {
   let { board } = data;
 
   const handleTaskMove = (taskId: string, columnId: string, index: number) => {
-    let positionAfter: string = "0";
+    let positionAfter = "0";
     if (index > 0) {
       const srcColumn = board.columns.nodes.find(
         ({ tasks }) => tasks.nodes.findIndex(({ id }) => id === taskId) >= 0

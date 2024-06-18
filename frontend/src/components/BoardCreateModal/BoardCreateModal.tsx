@@ -5,6 +5,7 @@ import { BoardsRouteActionData } from "../../routes/boards";
 import { useBoardForm } from "../BoardForm/hook";
 import { BoardFormData } from "../BoardForm/types";
 import BoardForm from "../BoardForm/BoardForm";
+import { ActionRequestJson as BoardsActionRequestJson } from "../../routes/boards/action";
 
 type FetcherData = Exclude<BoardsRouteActionData, Response>;
 
@@ -46,7 +47,7 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
   }, [open, boardForm, fetcher]);
 
   const handleSubmit = (board: BoardFormData) => {
-    fetcher.submit(board, {
+    fetcher.submit(board satisfies BoardsActionRequestJson, {
       method: "post",
       action: "boards",
       encType: "application/json",

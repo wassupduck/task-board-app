@@ -4,13 +4,13 @@ import { rootRouteQueryKey } from "../root/queries";
 import invariant from "tiny-invariant";
 import { boardRouteQueryKey, deleteBoard, moveTask } from "./queries";
 
-export type ActionPostRequestMoveTaskOperationJson = {
+export type ActionPostRequestMoveTask = {
   operation: "move-task";
   taskId: string;
   boardColumnId: string;
   positionAfter: string;
 };
-export type ActionPostRequestJson = ActionPostRequestMoveTaskOperationJson;
+export type ActionPostRequestJson = ActionPostRequestMoveTask;
 export type ActionData = Awaited<ReturnType<ReturnType<typeof action>>>;
 
 export const action =

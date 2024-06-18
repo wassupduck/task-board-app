@@ -4,7 +4,7 @@ import { useSignupForm } from "../../components/SignupForm/hook";
 import { Link, useActionData, useSubmit } from "react-router-dom";
 import { SignupFormData } from "../../components/SignupForm/types";
 import { useState } from "react";
-import { ActionData } from "./action";
+import { ActionData, ActionRequestJson } from "./action";
 import { Logo } from "../../components/Logo/Logo";
 
 export function Signup() {
@@ -28,13 +28,18 @@ export function Signup() {
     }
   }
 
-  const handleSubmit = (values: SignupFormData) => {
-    const newUser = { username: values.username, password: values.password };
-    submit(newUser, {
-      method: "post",
-      replace: true,
-      encType: "application/json",
-    });
+  const handleSubmit = ({ username, password }: SignupFormData) => {
+    submit(
+      {
+        username,
+        password,
+      } satisfies ActionRequestJson,
+      {
+        method: "post",
+        replace: true,
+        encType: "application/json",
+      }
+    );
   };
 
   return (

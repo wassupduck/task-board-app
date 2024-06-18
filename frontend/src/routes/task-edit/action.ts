@@ -44,7 +44,7 @@ export const action =
       }
     }
 
-    if (data.task || data.subtasks) {
+    if (data.task !== undefined || data.subtasks !== undefined) {
       await queryClient.invalidateQueries({
         queryKey: boardRouteQueryKey(boardId),
       });

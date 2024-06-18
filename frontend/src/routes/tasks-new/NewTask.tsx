@@ -5,6 +5,7 @@ import TaskForm from "../../components/TaskForm/TaskForm";
 import { useBoard } from "../board";
 import { getFragmentData, graphql } from "../../gql";
 import { TaskFormData } from "../../components/TaskForm/types";
+import { ActionRequestJson } from "./action";
 
 const NewTaskRoute_BoardFragment = graphql(`
   fragment NewTaskRoute_BoardFragment on Board {
@@ -36,7 +37,7 @@ export function NewTask() {
   const submit = useSubmit();
 
   const handleSubmit = (task: TaskFormData) => {
-    submit(task, {
+    submit(task satisfies ActionRequestJson, {
       method: "post",
       encType: "application/json",
     });

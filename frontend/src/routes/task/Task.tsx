@@ -18,6 +18,7 @@ import { taskRouteQuery } from "./queries";
 import PopoverListMenu from "../../components/PopoverListMenu/PopoverListMenu";
 import { TaskDeleteModal } from "../../components/TaskDeleteModal/TaskDeleteModal";
 import { useState } from "react";
+import { ActionPatchRequestJson } from "./action";
 
 const TaskRoute_BoardFragment = graphql(`
   fragment TaskRoute_BoardFragment on Board {
@@ -48,16 +49,19 @@ export function Task() {
   function handleSubtaskCompletedChange(subtaskId: string, completed: boolean) {
     fetcher.submit(
       {
-        intent: "update-subtask-completed",
-        patch: { subtaskId, completed },
-      },
+        operation: "update-subtask-completed",
+        patch: { id: subtaskId, completed },
+      } satisfies ActionPatchRequestJson,
       { method: "patch", encType: "application/json" }
     );
   }
 
   function handleColumnChange(boardColumnId: string) {
     fetcher.submit(
-      { intent: "update-task", patch: { boardColumnId } },
+      {
+        operation: "update-task",
+        patch: { boardColumnId },
+      } satisfies ActionPatchRequestJson,
       { method: "patch", encType: "application/json" }
     );
   }

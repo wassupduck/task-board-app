@@ -23,8 +23,8 @@ export function TaskDeleteModal(props: TaskDeleteModalProps) {
       <Modal.Content variant="destructive" overlay={props.overlay}>
         <Modal.Title>Delete this task?</Modal.Title>
         <p>
-          Are you sure you want to delete the "{props.task.title}" task and it's
-          subtasks? This action cannot be reversed.
+          Are you sure you want to delete the &ldquo;{props.task.title}&rdquo;
+          task and it&apos;s subtasks? This action cannot be reversed.
         </p>
         <Form method="DELETE" className={styles.form}>
           <Button

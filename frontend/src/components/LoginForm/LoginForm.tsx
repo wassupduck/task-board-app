@@ -17,7 +17,10 @@ export default function LoginForm(props: LoginFormProps) {
   const { errors } = formState;
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit(props.onSubmit)}>
+    <form
+      className={styles.form}
+      onSubmit={(event) => void handleSubmit(props.onSubmit)(event)}
+    >
       {errors.root?.authorizedError && (
         <p className="invalid-feedback" role="alert">
           {errors.root.authorizedError.message}

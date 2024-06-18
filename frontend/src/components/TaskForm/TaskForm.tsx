@@ -39,7 +39,10 @@ export default function TaskForm(props: TaskFormProps) {
   const board = getFragmentData(TaskForm_BoardFragment, props.board);
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit(props.onSubmit)}>
+    <form
+      className={styles.form}
+      onSubmit={(event) => void handleSubmit(props.onSubmit)(event)}
+    >
       <div>
         <label htmlFor="title" className="form-label">
           Title
@@ -138,9 +141,11 @@ function SubtasksList(props: SubtasksListProps) {
                   )}
                   <TextInput
                     {...fieldProps}
-                    onChange={async (e) => {
-                      await fieldProps.onChange(e);
-                      isSubmitted && trigger("subtasks");
+                    onChange={(e) => {
+                      void (async () => {
+                        await fieldProps.onChange(e);
+                        isSubmitted && void trigger("subtasks");
+                      })();
                     }}
                     placeholder={
                       ["e.g. Make coffee", "e.g. Drink coffee & smile"][idx] ??
@@ -160,7 +165,7 @@ function SubtasksList(props: SubtasksListProps) {
                     fields.length === 1
                       ? setValue(fieldName, "", { shouldDirty: true })
                       : remove(idx);
-                    isSubmitted && trigger("subtasks");
+                    isSubmitted && void trigger("subtasks");
                   }}
                 >
                   <CrossIcon width="15" />
