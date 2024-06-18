@@ -11,14 +11,11 @@ $ yarn install
 ## Running the app
 
 ```bash
-# development
-$ yarn run start
+# start docker-compose development environment
+$ yarn run dev:env:up
 
-# watch mode
+# start development server in watch mode
 $ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
 ```
 
 ## Test
@@ -34,6 +31,25 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
+## Migrations
+
+```bash
+# create new migration
+$ yarn run knex migrate:make $MIGRATION_NAME
+
+# run latest migrations
+$ yarn run migrate
+```
+
+## Add/update database queries
+
+1. Edit `sql` file.
+2. Run `pgtyped`.
+
+```bash
+$ yarn run pgtyped
+```
+
 ## TODO
 
-- Fix e2e tests (currently only working with dev env running)
+- Fix e2e tests

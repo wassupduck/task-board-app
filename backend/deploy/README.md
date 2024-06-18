@@ -1,8 +1,4 @@
-# Welcome to your CDK TypeScript project
-
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+# Task Board App Backend Deploy
 
 ## Useful commands
 
@@ -54,6 +50,21 @@ Two SSM Parameters must be created in the staging AWS account:
 
 These parameters must store JSON values in plaintext. The format and expected keys of each can be found in the `staging-pipeline-stack-config.template.json` and `service-stack-config.template.json` respectively.
 
+### Updating cdk.context.json
+
+1. Update the relevant SSM Parameter config e.g `backend-service-stack-config`.
+2. Reset the context key for the SSM Parameter.
+
+```bash
+# Reset the config key
+yarn cdk context --reset ssm:account=${AWS_ACCOUNT_ID}:parameterName=backend-service-stack-config:region=${AWS_REGION}
+
+# or clear all context
+yarn cdk context --clear
+```
+
+3. Redeploy the `BackendStagingPipelineStack` stack.
+
 ## Deploy
 
 1. Deploy the `BaseStack` Stack.
@@ -72,11 +83,3 @@ These parameters must store JSON values in plaintext. The format and expected ke
       ```bash
       CDK_STAGING_ACCOUNT=$CDK_STAGING_ACCOUNT CDK_STAGING_REGION=$CDK_STAGING_REGION yarn cdk --profile $AWS_PROFILE deploy BackendStagingPipelineStack
       ```
-
-## Updating config
-
-TODO
-
-```bash
-yarn cdk context --clear
-```
