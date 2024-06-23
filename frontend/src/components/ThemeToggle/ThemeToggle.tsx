@@ -4,7 +4,7 @@ import LightThemeIcon from "../../assets/icon-light-theme.svg?react";
 import DarkThemeIcon from "../../assets/icon-dark-theme.svg?react";
 import VisuallyHidden from "../VisuallyHidden";
 import { useEffect } from "react";
-import useTheme from "../../hooks/useTheme";
+import useTheme from "../../hooks/use-theme.hook";
 
 export default function ThemeToggle() {
   const [activeTheme, setActiveTheme] = useTheme();

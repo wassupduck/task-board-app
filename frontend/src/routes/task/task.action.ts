@@ -5,9 +5,9 @@ import {
   taskRouteQueryKey,
   updateSubtaskCompleted,
   updateTask,
-} from "./queries";
+} from "./task.queries";
 import { QueryClient } from "@tanstack/react-query";
-import { boardRouteQueryKey } from "../board/queries";
+import { boardRouteQueryKey } from "../board";
 import { UpdateTaskPatchInput } from "../../gql/graphql";
 
 type ActionPatchRequestUpdateTask = {

@@ -15,37 +15,3 @@
     font-weight: var(--font-weight-medium);
     color: var(--color-grey-medium);
 }
-
-.subtask-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-.subtask-list-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 12px;
-    background-color: var(--color-background-secondary);
-    border-radius: 4px;
-    font-size: var(--font-size-body-small);
-    font-weight: var(--font-weight-medium);
-    cursor: pointer;
-
-    &:hover {
-        background-color: var(--color-primary-250);
-    }
-}
-
-.subtask-list-item-label {
-    cursor: inherit;
-    color: var(--color-text-secondary);
-
-    &.completed {
-        text-decoration: line-through;
-        color: var(--color-text-primary);
-    }
-}

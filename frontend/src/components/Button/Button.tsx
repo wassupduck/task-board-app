@@ -8,7 +8,7 @@ export interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   size?: "small" | "medium" | "large";
 }
 
-export default function Button(props: ButtonProps) {
+export function Button(props: ButtonProps) {
   const { block, size, variant, children, ...rest } = props;
   return (
     <button
@@ -24,3 +24,5 @@ export default function Button(props: ButtonProps) {
     </button>
   );
 }
+
+export default Button;

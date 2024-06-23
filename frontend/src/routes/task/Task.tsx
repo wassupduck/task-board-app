@@ -5,20 +5,18 @@ import {
   useParams,
   useFetcher,
 } from "react-router-dom";
-import { FragmentType, getFragmentData, graphql } from "../../gql";
-import clsx from "clsx";
-import Checkbox from "../../components/Checkbox";
-import { Select, SelectItem } from "../../components/Select";
+import { getFragmentData, graphql } from "../../gql";
 import Modal from "../../components/Modal";
 import { useBoard } from "../board";
 import invariant from "tiny-invariant";
-import { LoaderData } from "./loader";
+import { LoaderData } from "./task.loader";
 import { useQuery } from "@tanstack/react-query";
-import { taskRouteQuery } from "./queries";
-import PopoverListMenu from "../../components/PopoverListMenu/PopoverListMenu";
-import { TaskDeleteModal } from "../../components/TaskDeleteModal/TaskDeleteModal";
+import { taskRouteQuery } from "./task.queries";
 import { useState } from "react";
-import { ActionPatchRequestJson } from "./action";
+import { ActionPatchRequestJson } from "./task.action";
+import { TaskActionsMenu } from "./TaskActionsMenu";
+import { SubtaskList } from "./SubtaskList";
+import { TaskColumnSelect } from "./TaskColumnSelect";
 
 const TaskRoute_BoardFragment = graphql(`
   fragment TaskRoute_BoardFragment on Board {
@@ -87,7 +85,7 @@ export function Task() {
               Subtasks ({task.subtasks.completedCount} of{" "}
               {task.subtasks.totalCount})
             </legend>
-            <SubtasksList
+            <SubtaskList
               subtasks={task.subtasks.nodes}
               onSubtaskCompletedChange={handleSubtaskCompletedChange}
             />
@@ -105,135 +103,5 @@ export function Task() {
         </div>
       </Modal.Content>
     </Modal>
-  );
-}
-
-interface TaskActionsMenuProps {
-  task: { id: string; title: string };
-  onModalOpenChange: (open: boolean) => void;
-}
-
-function TaskActionsMenu(props: TaskActionsMenuProps) {
-  return (
-    <PopoverListMenu onModalItemOpenChange={props.onModalOpenChange}>
-      <PopoverListMenu.Trigger label="Task actions" />
-      <PopoverListMenu.List align="center" sideOffset={8}>
-        <PopoverListMenu.LinkItem to={`./edit`}>
-          Edit Task
-        </PopoverListMenu.LinkItem>
-        <PopoverListMenu.ModalItem>
-          {({ onOpenChange }) => (
-            <TaskDeleteModal
-              task={props.task}
-              onOpenChange={onOpenChange}
-              overlay={false}
-            >
-              <PopoverListMenu.Button variant="destructive">
-                Delete Task
-              </PopoverListMenu.Button>
-            </TaskDeleteModal>
-          )}
-        </PopoverListMenu.ModalItem>
-      </PopoverListMenu.List>
-    </PopoverListMenu>
-  );
-}
-
-const SubtaskList_SubtaskFragment = graphql(`
-  fragment SubtaskList_SubtaskFragment on Subtask {
-    id
-    ...SubtaskListItem_SubtaskFragment
-  }
-`);
-
-interface SubtaskListProps {
-  subtasks: FragmentType<typeof SubtaskList_SubtaskFragment>[];
-  onSubtaskCompletedChange: (subtaskId: string, completed: boolean) => void;
-}
-
-function SubtasksList(props: SubtaskListProps) {
-  const subtasks = getFragmentData(SubtaskList_SubtaskFragment, props.subtasks);
-  return (
-    <ul className={styles.subtaskList}>
-      {subtasks.map((subtask) => (
-        <SubtaskListItem
-          key={subtask.id}
-          subtask={subtask}
-          onCompletedChange={(completed) =>
-            props.onSubtaskCompletedChange(subtask.id, completed)
-          }
-        />
-      ))}
-    </ul>
-  );
-}
-
-const SubtaskListItem_SubtaskFragment = graphql(`
-  fragment SubtaskListItem_SubtaskFragment on Subtask {
-    id
-    title
-    completed
-  }
-`);
-
-interface SubtaskListItemProps {
-  subtask: FragmentType<typeof SubtaskListItem_SubtaskFragment>;
-  onCompletedChange: (completed: boolean) => void;
-}
-
-function SubtaskListItem(props: SubtaskListItemProps) {
-  const subtask = getFragmentData(
-    SubtaskListItem_SubtaskFragment,
-    props.subtask
-  );
-
-  return (
-    <li
-      className={styles.subtaskListItem}
-      onClick={() => props.onCompletedChange(!subtask.completed)}
-    >
-      <Checkbox id={`subtask-${subtask.id}`} checked={subtask.completed} />
-      <label
-        htmlFor={`subtask-${subtask.id}`}
-        className={clsx(styles.subtaskListItemLabel, {
-          [styles.completed]: subtask.completed,
-        })}
-      >
-        {subtask.title}
-      </label>
-    </li>
-  );
-}
-
-const TaskColumnSelect_BoardColumnFragment = graphql(`
-  fragment TaskColumnSelect_BoardColumnFragment on BoardColumn {
-    id
-    name
-  }
-`);
-
-interface TaskColumnSelectProps {
-  selectedColumnId: string;
-  boardColumns: FragmentType<typeof TaskColumnSelect_BoardColumnFragment>[];
-  onColumnChange: (columnId: string) => void;
-}
-
-function TaskColumnSelect(props: TaskColumnSelectProps) {
-  const boardColumns = getFragmentData(
-    TaskColumnSelect_BoardColumnFragment,
-    props.boardColumns
-  );
-  return (
-    <Select
-      id="status"
-      value={props.selectedColumnId}
-      onValueChange={props.onColumnChange}
-    >
-      {boardColumns.map((column) => (
-        <SelectItem key={column.id} value={column.id}>
-          {column.name}
-        </SelectItem>
-      ))}
-    </Select>
   );
 }

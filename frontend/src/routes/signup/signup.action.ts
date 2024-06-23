@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, redirect } from "react-router-dom";
-import { signup } from "./queries";
+import { signup } from "./signup.queries";
 import { authProvider } from "../../auth/auth-provider";
 import { NewUserInput } from "../../gql/graphql";
 

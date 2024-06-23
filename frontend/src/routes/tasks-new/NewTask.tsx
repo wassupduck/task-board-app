@@ -1,11 +1,9 @@
 import { useNavigate, useNavigation, useSubmit } from "react-router-dom";
 import Modal from "../../components/Modal";
-import { useTaskForm } from "../../components/TaskForm/hook";
-import TaskForm from "../../components/TaskForm/TaskForm";
 import { useBoard } from "../board";
 import { getFragmentData, graphql } from "../../gql";
-import { TaskFormData } from "../../components/TaskForm/types";
-import { ActionRequestJson } from "./action";
+import { TaskFormData, useTaskForm, TaskForm } from "../../components/TaskForm";
+import { ActionRequestJson } from "./new-task.action";
 
 const NewTaskRoute_BoardFragment = graphql(`
   fragment NewTaskRoute_BoardFragment on Board {

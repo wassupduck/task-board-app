@@ -3,14 +3,14 @@ import TextInput from "../TextInput";
 import Button from "../Button";
 import styles from "./LoginForm.module.css";
 import { preventLeadingSpaces } from "../../utils";
-import { UseLoginFormReturn, LoginFormData } from "./types";
+import { UseLoginFormReturn, LoginFormData } from "./login-form.types";
 
 export interface LoginFormProps {
   form: UseLoginFormReturn;
   onSubmit: (board: LoginFormData) => void;
 }
 
-export default function LoginForm(props: LoginFormProps) {
+export function LoginForm(props: LoginFormProps) {
   const { form } = props;
   const { register, handleSubmit, formState } = form;
   // Must read all formState values to subscribe to changes
@@ -64,3 +64,5 @@ export default function LoginForm(props: LoginFormProps) {
     </form>
   );
 }
+
+export default LoginForm;

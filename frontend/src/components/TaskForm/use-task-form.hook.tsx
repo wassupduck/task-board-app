@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormProps } from "react-hook-form";
-import { TaskFormData } from "./types";
-import { taskFormSchema } from "./schema";
+import { TaskFormData } from "./task-form.types";
+import { taskFormSchema } from "./task-form.schema";
 
 interface UseTaskFormProps {
   defaultValues?: UseFormProps<TaskFormData>["defaultValues"];

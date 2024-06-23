@@ -1,0 +1,28 @@
+@value tabletAndSmaller from "../../breakpoints.module.css";
+
+.wrapper {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.heading {
+    font-size: var(--font-size-heading-large);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media tabletAndSmaller {
+        font-size: var(--font-size-heading-medium);
+    }
+}
+
+.button-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}

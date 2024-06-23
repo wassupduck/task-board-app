@@ -1,3 +1,3 @@
 export { Login as Component } from "./Login";
-export { loader } from "./loader";
-export { action } from "./action";
+export { loader } from "./login.loader";
+export { action } from "./login.action";

@@ -1,1 +1,1 @@
-export { action } from "./action";
+export { action } from "./logout.action";

@@ -23,7 +23,7 @@
     flex-direction: column;
 }
 
-.item-button {
+.list-item-button {
     display: block;
     width: 100%;
     padding: 8px 12px;

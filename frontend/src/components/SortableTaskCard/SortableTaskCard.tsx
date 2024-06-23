@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TaskCard, TaskCardProps } from "../TaskCard/TaskCard";
+import { TaskCard, TaskCardProps } from "../TaskCard";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
 import { Link } from "react-router-dom";
 
@@ -48,3 +48,5 @@ export function SortableTaskCard(props: SortableTaskCardProps) {
     </Link>
   );
 }
+
+export default SortableTaskCard;

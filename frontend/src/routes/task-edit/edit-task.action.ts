@@ -1,13 +1,14 @@
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
 import invariant from "tiny-invariant";
-import { boardRouteQueryKey } from "../board/queries";
+import { boardRouteQueryKey } from "../board";
 import {
   UpdateTaskPatchInput,
   UpdateTaskSubtasksPatchInput,
 } from "../../gql/graphql";
-import { taskRouteQueryKey, updateTask } from "../task/queries";
-import { updateTaskSubtasks } from "./queries";
+import { taskRouteQueryKey } from "../task";
+import { updateTask } from "../task/task.queries";
+import { updateTaskSubtasks } from "./edit-task.queries";
 
 export type ActionRequestJson = {
   task?: UpdateTaskPatchInput;

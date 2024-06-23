@@ -13,20 +13,15 @@ import {
   pointerWithin,
   rectIntersection,
   UniqueIdentifier,
-  useDroppable,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
-import { TaskCard } from "../TaskCard/TaskCard";
+import { TaskCard } from "../TaskCard";
 import styles from "./Board.module.css";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { SortableTaskCard } from "../SortableTaskCard/SortableTaskCard";
-import { CSSProperties, useCallback, useState } from "react";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { useCallback, useState } from "react";
+import { Column } from "./Column";
 
 const Board_BoardFragment = graphql(`
   fragment Board_BoardFragment on Board {
@@ -269,64 +264,4 @@ export function Board(props: BoardProps) {
   );
 }
 
-const Column_BoardColumnFragment = graphql(`
-  fragment Column_BoardColumnFragment on BoardColumn {
-    id
-    name
-    tasks {
-      totalCount
-      nodes {
-        id
-        ...SortableTaskCard_TaskFragment
-      }
-    }
-  }
-`);
-
-interface ColumnProps {
-  column: FragmentType<typeof Column_BoardColumnFragment>;
-}
-
-function Column(props: ColumnProps) {
-  const column = getFragmentData(Column_BoardColumnFragment, props.column);
-
-  const { setNodeRef } = useDroppable({
-    id: `column:${column.id}`,
-  });
-
-  const tasks = column.tasks.nodes;
-
-  return (
-    <section className={styles.column}>
-      <header className={styles.columnHeader}>
-        <div
-          className={styles.columnIndicator}
-          style={{ "--color": columnColor(column.id) } as CSSProperties}
-        ></div>
-        <h2 className={styles.columnHeading}>
-          {column.name} ({column.tasks.totalCount})
-        </h2>
-      </header>
-      <ol ref={setNodeRef} className={styles.columnTaskList}>
-        <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
-          {tasks.map((task) => (
-            <SortableTaskCard key={task.id} task={task} />
-          ))}
-        </SortableContext>
-      </ol>
-    </section>
-  );
-}
-
-function columnColor(uuid: string) {
-  const p = uuid.split("-");
-  const h = parseInt(p[0], 16) / 4294967295;
-  const s = parseInt(p[1], 16) / 65535;
-  const l = parseInt(p[2], 16) / 65535;
-
-  const hue = 360 * h;
-  const saturation = 70 + 30 * s;
-  const lightness = 70 + 10 * l;
-
-  return `hsl(${hue}, ${saturation}%, ${lightness}%`;
-}
+export default Board;

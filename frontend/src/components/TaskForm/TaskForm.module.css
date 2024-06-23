@@ -1,44 +1,7 @@
-.form {
+.wrapper {
     display: flex;
     flex-direction: column;
     gap: 24px;
-}
-
-.subtask-list-container {
-    margin-right: -10px;
-}
-
-.subtask-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 200px;
-    overflow-y: auto;
-    padding-right: 2px;
-    margin-bottom: 12px;
-}
-
-.subtask-list-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.delete-subtask-button {
-    display: grid;
-    place-content: center;
-    padding: 8px;
-    min-width: calc(15px + 16px);
-    color: var(--color-grey-medium);
-
-    &:disabled {
-        opacity: 0.25;
-        cursor: unset;
-    }
-
-    &:not(:disabled):hover {
-        color: var(--color-danger);
-    }
 }
 
 .description {

@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import { LoaderData } from "./loader";
+import { LoaderData } from "./board.loader";
 
 export type BoardRouteContext = {
   board: LoaderData["board"];

@@ -1,8 +1,8 @@
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
-import { rootRouteQueryKey } from "../root/queries";
+import { rootRouteQueryKey } from "../root/root.queries";
 import invariant from "tiny-invariant";
-import { boardRouteQueryKey, deleteBoard, moveTask } from "./queries";
+import { boardRouteQueryKey, deleteBoard, moveTask } from "./board.queries";
 
 export type ActionPostRequestMoveTask = {
   operation: "move-task";

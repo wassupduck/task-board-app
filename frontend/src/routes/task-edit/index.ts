@@ -1,3 +1,3 @@
 export { EditTask as Component } from "./EditTask";
-export { loader } from "./loader";
-export { action } from "./action";
+export { loader } from "./edit-task.loader";
+export { action } from "./edit-task.action";

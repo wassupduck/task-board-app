@@ -1,2 +1,2 @@
 export { NewTask as Component } from "./NewTask";
-export { action } from "./action";
+export { action } from "./new-task.action";

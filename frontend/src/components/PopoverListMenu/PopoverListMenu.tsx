@@ -2,29 +2,14 @@
 import VerticalEllipsisIcon from "../../assets/icon-vertical-ellipsis.svg?react";
 import styles from "./PopoverListMenu.module.css";
 import * as Popover from "@radix-ui/react-popover";
-import React, { createContext, useContext, useState } from "react";
+import React, { useState } from "react";
 import VisuallyHidden from "../VisuallyHidden";
 import clsx from "clsx";
 import { Link, LinkProps } from "react-router-dom";
-
-interface PopoverListMenuContextType {
-  hasOpenModal: boolean;
-  onModalItemOpenChange: (open: boolean) => void;
-}
-
-const PopoverListMenuContext = createContext<
-  PopoverListMenuContextType | undefined
->(undefined);
-
-function usePopoverListMenuContext() {
-  const context = useContext(PopoverListMenuContext);
-  if (context === undefined) {
-    throw new Error(
-      "usePopoverListMenuContext must be used within a PopoverListMenuContext.Provider"
-    );
-  }
-  return context;
-}
+import {
+  PopoverListMenuContextProvider,
+  usePopoverListMenuContext,
+} from "./PopoverListMenu.context";
 
 interface PopoverListMenuProps {
   children: React.ReactNode;
@@ -33,10 +18,8 @@ interface PopoverListMenuProps {
 
 function PopoverListMenu(props: PopoverListMenuProps) {
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const [hasOpenModal, setHasOpenModal] = useState(false);
 
-  function onModalItemOpenChange(open: boolean) {
-    setHasOpenModal(open);
+  function handleModalItemOpenChange(open: boolean) {
     if (open === false) {
       setPopoverOpen(false);
     }
@@ -44,13 +27,13 @@ function PopoverListMenu(props: PopoverListMenuProps) {
   }
 
   return (
-    <PopoverListMenuContext.Provider
-      value={{ hasOpenModal, onModalItemOpenChange }}
+    <PopoverListMenuContextProvider
+      onModalItemOpenChange={handleModalItemOpenChange}
     >
       <Popover.Root open={popoverOpen} onOpenChange={setPopoverOpen}>
         {props.children}
       </Popover.Root>
-    </PopoverListMenuContext.Provider>
+    </PopoverListMenuContextProvider>
   );
 }
 
@@ -90,7 +73,7 @@ interface LinkItemProps extends LinkProps {}
 function LinkItem(props: LinkItemProps) {
   return (
     <li>
-      <Link className={styles.itemButton} {...props}>
+      <Link className={styles.listItemButton} {...props}>
         {props.children}
       </Link>
     </li>
@@ -118,7 +101,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={clsx(styles.itemButton, variant && styles[variant])}
+        className={clsx(styles.listItemButton, variant && styles[variant])}
         {...rest}
       >
         {children}

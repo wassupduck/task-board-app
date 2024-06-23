@@ -6,16 +6,14 @@ import {
   useSubmit,
 } from "react-router-dom";
 import Modal from "../../components/Modal";
-import TaskForm from "../../components/TaskForm/TaskForm";
-import { useTaskForm } from "../../components/TaskForm/hook";
 import invariant from "tiny-invariant";
 import { useBoard } from "../board";
 import { useQuery } from "@tanstack/react-query";
 import { getFragmentData, graphql } from "../../gql";
-import { LoaderData } from "./loader";
-import { editTaskRouteQuery } from "./queries";
-import { TaskFormData } from "../../components/TaskForm/types";
-import { ActionRequestJson } from "./action";
+import { LoaderData } from "./edit-task.loader";
+import { editTaskRouteQuery } from "./edit-task.queries";
+import { TaskFormData, useTaskForm, TaskForm } from "../../components/TaskForm";
+import { ActionRequestJson } from "./edit-task.action";
 import {
   NewSubtaskInput,
   Subtask,

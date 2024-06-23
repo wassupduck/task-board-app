@@ -2,10 +2,8 @@ import Modal from "../Modal";
 import { useFetcher } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { BoardsRouteActionData } from "../../routes/boards";
-import { useBoardForm } from "../BoardForm/hook";
-import { BoardFormData } from "../BoardForm/types";
-import BoardForm from "../BoardForm/BoardForm";
-import { ActionRequestJson as BoardsActionRequestJson } from "../../routes/boards/action";
+import { BoardFormData, useBoardForm, BoardForm } from "../BoardForm";
+import { BoardsActionRequestJson } from "../../routes/boards";
 
 type FetcherData = Exclude<BoardsRouteActionData, Response>;
 
@@ -14,7 +12,7 @@ interface BoardCreateModalProps {
   children: React.ReactNode;
 }
 
-export default function BoardCreateModal(props: BoardCreateModalProps) {
+export function BoardCreateModal(props: BoardCreateModalProps) {
   const [open, setOpen] = useState(false);
   const boardForm = useBoardForm({
     defaultValues: {
@@ -74,3 +72,5 @@ export default function BoardCreateModal(props: BoardCreateModalProps) {
     </Modal>
   );
 }
+
+export default BoardCreateModal;

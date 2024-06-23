@@ -1,56 +1,5 @@
-.form {
+.wrapper {
     display: flex;
     flex-direction: column;
     gap: 24px;
-}
-
-.new-column-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.new-column {
-    margin-right: -8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.button-group {
-    display: flex;
-}
-
-.column-button {
-    display: grid;
-    place-content: center;
-    padding: 8px;
-    min-width: calc(15px + 16px);
-    color: var(--color-grey-medium);
-
-    &:disabled {
-        opacity: 0.25;
-        cursor: unset;
-    }
-
-    &:not(:disabled) {
-        &:hover {
-            color: var(--color-grey-dark);
-        }
-
-        &.danger:hover {
-            color: var(--color-danger);
-        }
-    }
-
-    body[data-theme="dark"] &:not(:disabled) {
-        &:hover {
-            color: var(--color-grey-light);
-        }
-
-        &.danger:hover {
-            color: var(--color-danger);
-        }
-    }
 }

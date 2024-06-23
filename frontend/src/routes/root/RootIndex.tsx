@@ -1,7 +1,7 @@
 import { Navigate, useLoaderData, useParams } from "react-router-dom";
-import { LoaderData } from "./loader";
+import { LoaderData } from "./root.loader";
 import { useQuery } from "@tanstack/react-query";
-import { rootRouteQuery } from "./queries";
+import { rootRouteQuery } from "./root.queries";
 
 export function RootIndex() {
   const initialData = useLoaderData() as LoaderData;

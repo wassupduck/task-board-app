@@ -50,3 +50,5 @@ export function TaskDeleteModal(props: TaskDeleteModalProps) {
     </Modal>
   );
 }
+
+export default TaskDeleteModal;

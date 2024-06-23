@@ -15,7 +15,7 @@ interface ModalContentProps {
   variant?: "destructive";
 }
 
-Modal.Content = (props: ModalContentProps) => (
+const Content = (props: ModalContentProps) => (
   <Dialog.Portal>
     {(props.overlay ?? true) && <Dialog.Overlay className={styles.overlay} />}
     <Dialog.Content
@@ -37,7 +37,7 @@ Modal.Content = (props: ModalContentProps) => (
 
 interface ModalTitleProps extends Dialog.DialogTitleProps {}
 
-Modal.Title = (props: ModalTitleProps) => {
+const Title = (props: ModalTitleProps) => {
   return (
     <Dialog.Title
       {...props}
@@ -54,5 +54,7 @@ Modal.Title = (props: ModalTitleProps) => {
 
 Modal.Trigger = Dialog.Trigger;
 Modal.Close = Dialog.Close;
+Modal.Title = Title;
+Modal.Content = Content;
 
 export default Modal;

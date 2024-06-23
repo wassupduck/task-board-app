@@ -1,9 +1,9 @@
 import { ActionFunctionArgs, redirect } from "react-router-dom";
 import { QueryClient } from "@tanstack/react-query";
 import invariant from "tiny-invariant";
-import { updateBoard, updateBoardColumns } from "./queries";
-import { rootRouteQueryKey } from "../root/queries";
-import { boardRouteQueryKey } from "../board/queries";
+import { updateBoard, updateBoardColumns } from "./edit-board.queries";
+import { rootRouteQueryKey } from "../root";
+import { boardRouteQueryKey } from "../board";
 import {
   UpdateBoardColumnsPatchInput,
   UpdateBoardPatchInput,

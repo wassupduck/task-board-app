@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { rootRouteQuery } from "./queries";
+import { rootRouteQuery } from "./root.queries";
 
 export type LoaderData = Awaited<ReturnType<ReturnType<typeof loader>>>;
 

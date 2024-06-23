@@ -8,15 +8,13 @@ import * as Popover from "@radix-ui/react-popover";
 import ThemeToggle from "../ThemeToggle";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
 import { useEffect, useState } from "react";
-import useLogout from "../../hooks/useLogout";
+import useLogout from "../../hooks/use-logout.hook";
 
 const MobileMenu_QueryFragment = graphql(`
   fragment MobileMenu_QueryFragment on Query {
     ...BoardNav_QueryFragment
   }
 `);
-
-export interface BoardNavProps {}
 
 interface MobileMenuProps {
   query: FragmentType<typeof MobileMenu_QueryFragment>;
@@ -81,3 +79,5 @@ export function MobileMenu(props: MobileMenuProps) {
     </Popover.Root>
   );
 }
+
+export default MobileMenu;

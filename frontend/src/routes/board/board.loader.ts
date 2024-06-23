@@ -4,7 +4,7 @@ import {
   boardRouteQuery,
   boardRouteQueryKey,
   fetchBoardRouteData,
-} from "./queries";
+} from "./board.queries";
 import invariant from "tiny-invariant";
 
 export type LoaderData = Awaited<ReturnType<ReturnType<typeof loader>>>;

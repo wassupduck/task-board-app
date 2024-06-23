@@ -2,7 +2,7 @@ import styles from "./VisuallyHidden.module.css";
 
 import React from "react";
 
-export default function VisuallyHidden({
+export function VisuallyHidden({
   children,
   ...delegated
 }: {
@@ -42,3 +42,5 @@ export default function VisuallyHidden({
     </div>
   );
 }
+
+export default VisuallyHidden;

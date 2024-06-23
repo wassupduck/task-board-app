@@ -1,2 +1,2 @@
 export { EditBoard as Component } from "./EditBoard";
-export { action } from "./action";
+export { action } from "./edit-board.action";

@@ -1,17 +1,19 @@
-import { useBoardForm } from "../../components/BoardForm/hook";
+import {
+  useBoardForm,
+  BoardFormData,
+  BoardForm,
+} from "../../components/BoardForm";
 import Modal from "../../components/Modal";
 import { getFragmentData, graphql } from "../../gql";
-import BoardForm from "../../components/BoardForm/BoardForm";
 import { useFetcher, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { BoardFormData } from "../../components/BoardForm/types";
-import { ActionData, ActionRequestJson } from "./action";
+import { ActionData, ActionRequestJson } from "./edit-board.action";
 import {
   UpdateBoardColumnInput,
   UpdateBoardColumnsPatchAdditionInput,
   UpdateBoardColumnsPatchInput,
 } from "../../gql/graphql";
-import { useBoard } from "../board/context";
+import { useBoard } from "../board";
 
 type FetcherData = Exclude<ActionData, Response>;
 

@@ -1,11 +1,13 @@
 import styles from "./Signup.module.css";
-import SignupForm from "../../components/SignupForm/SignupForm";
-import { useSignupForm } from "../../components/SignupForm/hook";
 import { Link, useActionData, useSubmit } from "react-router-dom";
-import { SignupFormData } from "../../components/SignupForm/types";
+import {
+  SignupFormData,
+  useSignupForm,
+  SignupForm,
+} from "../../components/SignupForm";
 import { useState } from "react";
-import { ActionData, ActionRequestJson } from "./action";
-import { Logo } from "../../components/Logo/Logo";
+import { ActionData, ActionRequestJson } from "./signup.action";
+import { Logo } from "../../components/Logo";
 
 export function Signup() {
   const signupForm = useSignupForm();

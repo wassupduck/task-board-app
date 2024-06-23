@@ -1,14 +1,12 @@
-/// <reference types="vite-plugin-svgr/client" />
-import CrossIcon from "../../assets/icon-cross.svg?react";
 import styles from "./TaskForm.module.css";
 import TextInput from "../TextInput";
 import Button from "../Button";
-import VisuallyHidden from "../VisuallyHidden";
-import { Controller, useFieldArray } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { preventLeadingSpaces } from "../../utils";
-import { TaskFormData, UseTaskFormReturn } from "./types";
-import { Select, SelectItem } from "../Select";
+import { TaskFormData, UseTaskFormReturn } from "./task-form.types";
+import Select from "../Select";
 import { FragmentType, getFragmentData, graphql } from "../../gql";
+import { SubtaskList } from "./SubtaskList";
 
 const TaskForm_BoardFragment = graphql(`
   fragment TaskForm_BoardFragment on Board {
@@ -29,7 +27,7 @@ export interface TaskFormProps {
   disableSubmit?: boolean;
 }
 
-export default function TaskForm(props: TaskFormProps) {
+export function TaskForm(props: TaskFormProps) {
   const { form } = props;
   const { register, control, handleSubmit, formState } = form;
   // Must read all formState values to subscribe to changes
@@ -40,7 +38,7 @@ export default function TaskForm(props: TaskFormProps) {
 
   return (
     <form
-      className={styles.form}
+      className={styles.wrapper}
       onSubmit={(event) => void handleSubmit(props.onSubmit)(event)}
     >
       <div>
@@ -80,7 +78,7 @@ export default function TaskForm(props: TaskFormProps) {
       </div>
       <fieldset>
         <legend className="form-label">Subtasks</legend>
-        <SubtasksList form={form} />
+        <SubtaskList form={form} />
       </fieldset>
       <div>
         <label htmlFor="status" className="form-label">
@@ -92,9 +90,9 @@ export default function TaskForm(props: TaskFormProps) {
           render={({ field }) => (
             <Select id="status" {...field} onValueChange={field.onChange}>
               {board.columns.nodes.map((column) => (
-                <SelectItem key={column.id} value={column.id}>
+                <Select.Item key={column.id} value={column.id}>
                   {column.name}
-                </SelectItem>
+                </Select.Item>
               ))}
             </Select>
           )}
@@ -107,83 +105,4 @@ export default function TaskForm(props: TaskFormProps) {
   );
 }
 
-interface SubtasksListProps {
-  form: UseTaskFormReturn;
-}
-
-function SubtasksList(props: SubtasksListProps) {
-  const { form } = props;
-  const { register, trigger, setValue, watch, control, formState } = form;
-  // Must read all formState values to subscribe to changes
-  const { isSubmitted, errors } = formState;
-
-  const { fields, append, remove } = useFieldArray({
-    control: control,
-    name: "subtasks",
-  });
-  const watchSubtask0Title = watch("subtasks.0.title");
-
-  return (
-    <>
-      <div className={styles.subtaskListContainer}>
-        <ol className={styles.subtaskList}>
-          {fields.map((field, idx) => {
-            const fieldName = `subtasks.${idx}.title` as const;
-            const fieldProps = register(fieldName);
-            return (
-              <li key={field.id} className={styles.subtaskListItem}>
-                <label style={{ flex: 1 }}>
-                  <VisuallyHidden>Subtask {idx + 1}</VisuallyHidden>
-                  {errors.subtasks?.[idx]?.title && (
-                    <p className="invalid-feedback" role="alert">
-                      {errors.subtasks[idx]?.title?.message}
-                    </p>
-                  )}
-                  <TextInput
-                    {...fieldProps}
-                    onChange={(e) => {
-                      void (async () => {
-                        await fieldProps.onChange(e);
-                        isSubmitted && void trigger("subtasks");
-                      })();
-                    }}
-                    placeholder={
-                      ["e.g. Make coffee", "e.g. Drink coffee & smile"][idx] ??
-                      "e.g. Back to work"
-                    }
-                    aria-invalid={
-                      errors.subtasks?.[idx]?.title ? "true" : "false"
-                    }
-                    onKeyDown={preventLeadingSpaces}
-                  />
-                </label>
-                <button
-                  type="button"
-                  className={styles.deleteSubtaskButton}
-                  disabled={fields.length === 1 && watchSubtask0Title === ""}
-                  onClick={() => {
-                    fields.length === 1
-                      ? setValue(fieldName, "", { shouldDirty: true })
-                      : remove(idx);
-                    isSubmitted && void trigger("subtasks");
-                  }}
-                >
-                  <CrossIcon width="15" />
-                  <VisuallyHidden>Delete subtask</VisuallyHidden>
-                </button>
-              </li>
-            );
-          })}
-        </ol>
-      </div>
-      <Button
-        type="button"
-        block={true}
-        variant="secondary"
-        onClick={() => append({ title: "" })}
-      >
-        Add New Subtask
-      </Button>
-    </>
-  );
-}
+export default TaskForm;

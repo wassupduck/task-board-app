@@ -2,7 +2,7 @@
 import LogoDark from "../../assets/logo-dark.svg?react";
 import LogoLight from "../../assets/logo-light.svg?react";
 import LogoMobile from "../../assets/logo-mobile.svg?react";
-import useTheme from "../../hooks/useTheme";
+import useTheme from "../../hooks/use-theme.hook";
 
 interface LogoProps {
   mobile?: boolean;
@@ -18,3 +18,5 @@ export function Logo({ mobile = false }: LogoProps) {
     <LogoLight />
   );
 }
+
+export default Logo;

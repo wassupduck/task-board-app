@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, redirect } from "react-router-dom";
-import { createBoard } from "./queries";
+import { createBoard } from "./boards.queries";
 import { QueryClient } from "@tanstack/react-query";
-import { rootRouteQueryKey } from "../root/queries";
+import { rootRouteQueryKey } from "../root";
 import { NewBoardInput } from "../../gql/graphql";
 
 export type ActionRequestJson = NewBoardInput;

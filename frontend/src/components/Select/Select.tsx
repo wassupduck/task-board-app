@@ -4,6 +4,12 @@ import * as SelectPrimitive from "@radix-ui/react-select";
 import styles from "./Select.module.css";
 import React, { ComponentPropsWithoutRef } from "react";
 
+type SelectType = React.ForwardRefExoticComponent<
+  SelectProps & React.RefAttributes<HTMLButtonElement>
+> & {
+  Item: typeof Item;
+};
+
 interface SelectProps
   extends ComponentPropsWithoutRef<typeof SelectPrimitive.Root> {
   id?: string;
@@ -35,12 +41,12 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
       </SelectPrimitive.Root>
     );
   }
-);
+) as SelectType;
 
 interface SelectItemProps
   extends ComponentPropsWithoutRef<typeof SelectPrimitive.Item> {}
 
-export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
+const Item = React.forwardRef<HTMLDivElement, SelectItemProps>(
   ({ children, ...props }, forwardedRef) => {
     return (
       <SelectPrimitive.Item
@@ -53,3 +59,7 @@ export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
     );
   }
 );
+
+Select.Item = Item;
+
+export default Select;

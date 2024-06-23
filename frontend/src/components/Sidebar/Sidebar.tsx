@@ -4,7 +4,7 @@ import { FragmentType, getFragmentData, graphql } from "../../gql";
 import BoardNav from "../BoardNav";
 import ThemeToggle from "../ThemeToggle";
 import styles from "./Sidebar.module.css";
-import useLogout from "../../hooks/useLogout";
+import useLogout from "../../hooks/use-logout.hook";
 
 const Sidebar_QueryFragment = graphql(`
   fragment Sidebar_QueryFragment on Query {
@@ -17,7 +17,7 @@ interface SidebarProps {
   onHideSidebar: () => void;
 }
 
-export default function Sidebar(props: SidebarProps) {
+export function Sidebar(props: SidebarProps) {
   const query = getFragmentData(Sidebar_QueryFragment, props.query);
   const logout = useLogout();
 
@@ -42,3 +42,5 @@ export default function Sidebar(props: SidebarProps) {
     </div>
   );
 }
+
+export default Sidebar;

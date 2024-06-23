@@ -4,11 +4,11 @@ import styles from "./Root.module.css";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { Outlet, useLoaderData } from "react-router-dom";
-import { LoaderData } from "./loader";
+import { LoaderData } from "./root.loader";
 import clsx from "clsx";
 import VisuallyHidden from "../../components/VisuallyHidden";
 import { useQuery } from "@tanstack/react-query";
-import { rootRouteQuery } from "./queries";
+import { rootRouteQuery } from "./root.queries";
 import { useLocalStorage, useMediaQuery } from "@uidotdev/usehooks";
 import breakpoints from "../../breakpoints.module.css";
 

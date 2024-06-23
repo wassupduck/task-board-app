@@ -22,7 +22,7 @@ export interface BoardNavProps {
   activeLinkOffset?: string;
 }
 
-export default function BoardNav(props: BoardNavProps) {
+export function BoardNav(props: BoardNavProps) {
   const query = getFragmentData(BoardNav_QueryFragment, props.query);
   const boards = query.boards;
 
@@ -62,3 +62,5 @@ export default function BoardNav(props: BoardNavProps) {
     </nav>
   );
 }
+
+export default BoardNav;

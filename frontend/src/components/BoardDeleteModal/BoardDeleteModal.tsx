@@ -54,3 +54,5 @@ export function BoardDeleteModal(props: BoardDeleteModalProps) {
     </Modal>
   );
 }
+
+export default BoardDeleteModal;

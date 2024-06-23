@@ -1,11 +1,13 @@
 import styles from "./Login.module.css";
 import { Link, useActionData, useLocation, useSubmit } from "react-router-dom";
-import LoginForm from "../../components/LoginForm/LoginForm";
-import { useLoginForm } from "../../components/LoginForm/hook";
-import { ActionData, ActionRequestJson } from "./action";
-import { LoginFormData } from "../../components/LoginForm/types";
+import { ActionData, ActionRequestJson } from "./login.action";
+import {
+  LoginFormData,
+  useLoginForm,
+  LoginForm,
+} from "../../components/LoginForm";
 import { useState } from "react";
-import { Logo } from "../../components/Logo/Logo";
+import { Logo } from "../../components/Logo";
 
 export function Login() {
   const location = useLocation();

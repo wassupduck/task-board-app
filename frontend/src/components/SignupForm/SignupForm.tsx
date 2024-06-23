@@ -3,14 +3,14 @@ import TextInput from "../TextInput";
 import Button from "../Button";
 import styles from "./SignupForm.module.css";
 import { preventLeadingSpaces } from "../../utils";
-import { UseSignupFormReturn, SignupFormData } from "./types";
+import { UseSignupFormReturn, SignupFormData } from "./signup-form.types";
 
 export interface SignupFormProps {
   form: UseSignupFormReturn;
   onSubmit: (board: SignupFormData) => void;
 }
 
-export default function SignupForm(props: SignupFormProps) {
+export function SignupForm(props: SignupFormProps) {
   const { form } = props;
   const { register, handleSubmit, formState } = form;
   // Must read all formState values to subscribe to changes
@@ -75,3 +75,5 @@ export default function SignupForm(props: SignupFormProps) {
     </form>
   );
 }
+
+export default SignupForm;
