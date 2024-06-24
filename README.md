@@ -36,3 +36,9 @@ This is a full-stack solution to the [Kanban task management web app challenge o
 - **Docker**: For containerizing the application.
 - **AWS**: For cloud hosting and services, including VPC, ECS, RDS, Codepipline and Cloudformation.
 - **AWS CDK**: For defining cloud infrastructure as code.
+
+## About
+
+In March 2023, I decided to take a year-long break from work to focus on independent learning. During this break, I spent most of my time reading, practising and studying topics in mathematics (mostly related to 3D computer graphics), functional programming, database internals, and computer architecture.
+
+At the start of 2024, to prepare for my return to work, I decided to brush up on my web development skills and complete a small portfolio project. During this period, I completed [Josh Comeau's CSS-for-JS course](https://css-for-js.dev/) and spent time learning modern React. I then spent the next few months (March-May) working part-time on this project.
