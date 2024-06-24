@@ -2,14 +2,6 @@
 
 ![preview](preview.png)
 
-## About
-
-In March 2023 I began a year-long sabbatical to explore various interests outside of web development. During this break, I focused on 3D computer graphics and animation, functional programming, digital design, and computer architecture.
-
-As 2023 drew to a close I started looking for my next career opportunity. However, given the challenging job market at the time I decided to pause my job search for a few more months. To refresh my web development skills and prepare for my return to work I dedicated the early months of 2024 to upskilling and completing a small portfolio project.
-
-During this period, I completed [Josh Comeau's CSS-for-JS course](https://css-for-js.dev/) and spent time learning modern React. I then spent the next few months (March-May) working part-time on this project.
-
 ## Overview
 
 This is a full-stack solution to the [Kanban task management web app challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/kanban-task-management-web-app-wgQLt-HlbB). Frontend Mentor challenges help you improve your coding skills by building realistic projects.
